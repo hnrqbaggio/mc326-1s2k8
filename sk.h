@@ -83,16 +83,16 @@ IndSec * criaSk(TIndice *, FILE *, const int).
  * Insere uma SK no vetor que contem o indice secundario pra um
  * determinado campo, e atualiza a lista invertida no disco.
  *
- * Parametros: o vetor de SKs, uma string que contem o valor do campo
- * do registro, o valor do noh cabeca da avail list do arquivo de
- * indice e uma constante que indica o tipo de campo ao qual o indice
- * se refere.
+ * Parametros: o vetor de SKs, um ponteiro pro arquivop de indice, uma
+ * string com a chave primaria do registro, um string com o token e
+ * uma referencia ao valor do noh cabeca da avail list do arquivo de
+ * indice.
  *
  * Retorno: O vetor de SKs atualizado.
  */
-IndSec * insereSk(SkVetor *, char *, int, const int).
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int avail).
 
-/** 
+/**
  * Funcao usada para realocar espaco para o vetor da SK caso seja
  * necessario. Ela ira verificar se o numero de elementos eh
  * sufuciente para o espaco alocado para o vetor e reservar mais caso

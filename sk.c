@@ -3,7 +3,9 @@
 
 IndSec * geraSk(TIndice *, FILE *, const int).
 
-/*Funcao que,caso exista o arquivo de SKs, carrega a parte que deve ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no disco*/
+/* Funcao que,caso exista o arquivo de SKs, carrega a parte que deve
+  ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no
+  disco */
 IndSec * carregaSk(FILE *arqSk){
   /*Declaracao de variaveis*/
   IndSec *sk;
@@ -79,7 +81,7 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
   return secundario;
 }
 
-IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int avail) {
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail) {
   Sk * temp = (Sk *) malloc(sizeof(Sk));
   Sk * temp2 = (Sk *) malloc(sizeof(Sk));
   Sk * result;
@@ -108,7 +110,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int avail)
     
     }
 
-    if (avail == FIM_DE_LISTA) {
+    if (*avail == FIM_DE_LISTA) {
       temp2->next = temp->next;
 
       fseek(fsk, tamDisco, SEEK_SET);
@@ -121,7 +123,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int avail)
 
     } else {
       
-      fseek(fsk, avail, SEEK_SET);
+      fseek(fsk, *avail, SEEK_SET);
       fscanf(fsk, "%d", tam);
       prox = ant = FIM_DE_LISTA;
 
@@ -139,7 +141,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int avail)
 	fprintf(fsk, "%d", prox);
 
       } else {
-	avail = prox;
+	*avail = prox;
       }
 
       fseek(fsk, -1*sizeof(int), SEEK_CUR);

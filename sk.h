@@ -2,12 +2,15 @@
 #include <catalogo.h>
 
 /**
- * Constantes usadas para determinar o tipo do campo para o indice 
-*/
+ * Constantes usadas para determinar o tipo do campo para o indice
+ */
 #define TITULO 0
 #define TIPO 1
 #define AUTOR 2
 #define ANO 3
+
+/** Constante usada para indicar o fim de uma lista invertida. */
+#define FIM_DE_LISTA -1
 
 /**
  * Estrutura que representa um chave secundaria.
@@ -35,7 +38,6 @@ typedef struct _vetorsk{
   int tamanho;
   int alocado;
   int tamDisco;
-  int head;
 } IndSec;
 
 /**
@@ -81,11 +83,14 @@ IndSec * criaSk(TIndice *, FILE *, const int).
  * Insere uma SK no vetor que contem o indice secundario pra um
  * determinado campo, e atualiza a lista invertida no disco.
  *
- * Parametros: o vetor de SKs e uma string que contem o valor do campo do registro.
+ * Parametros: o vetor de SKs, uma string que contem o valor do campo
+ * do registro, o valor do noh cabeca da avail list do arquivo de
+ * indice e uma constante que indica o tipo de campo ao qual o indice
+ * se refere.
  *
  * Retorno: O vetor de SKs atualizado.
  */
-IndSec * insereSk(SkVetor *, char *, const int).
+IndSec * insereSk(SkVetor *, char *, int, const int).
 
 /** 
  * Funcao usada para realocar espaco para o vetor da SK caso seja

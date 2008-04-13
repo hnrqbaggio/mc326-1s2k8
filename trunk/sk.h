@@ -2,6 +2,14 @@
 #include <catalogo.h>
 
 /**
+ * Constantes usadas para determinar o tipo do campo para o indice 
+*/
+#define TITULO 0
+#define TIPO 1
+#define AUTOR 2
+#define ANO 3
+
+/**
  * Estrutura que representa um chave secundaria.
  * 
  * key eh o vetor que contem a string que eh a chave propriamente
@@ -77,4 +85,16 @@ IndSec * criaSk(TIndice *, FILE *, const int).
  *
  * Retorno: O vetor de SKs atualizado.
  */
-IndSec * insereSk(SkVetor *, char *).
+IndSec * insereSk(SkVetor *, char *, const int).
+
+/** 
+ * Funcao usada para realocar espaco para o vetor da SK caso seja
+ * necessario. Ela ira verificar se o numero de elementos eh
+ * sufuciente para o espaco alocado para o vetor e reservar mais caso
+ * seja necessario.
+ *
+ * Parametros: o vetor de SKs.
+ *
+ * Retorno: O vetor de SKs, realocado ou nao. 
+ */
+IndSec * realocaIndSec(IndSec *).

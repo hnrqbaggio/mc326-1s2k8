@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <catalogo.h>
 
-/*
+/**
  * Estrutura que representa um chave secundaria.
  * 
  * key eh o vetor que contem a string que eh a chave propriamente
@@ -16,15 +16,17 @@ typedef struct _sk{
 
 /**
  * Estrutura que representa um indice secundario, formado por um vetor
- * de chaves secundarias e tres inteiros auxiliares que indicam o
- * numero de elementos no indice, o espaco alocado na memoria para
- * este indice, e o noh cabeca a avail list desse indice, que sera
- * usado na operacao de insercao e remocao de chaves.
+ * de chaves secundarias e quatro inteiros que indicam o numero de
+ * elementos no indice, o espaco alocado na memoria para este indice,
+ * o tamanho da parte do indice no disco, e o noh cabeca da avail list
+ * desse indice, que sera usado na operacao de insercao e remocao de
+ * chaves.
  */
 typedef struct _vetorsk{
   Sk *vetor;
   int tamanho;
   int alocado;
+  int tamDisco;
   int head;
 } IndSec;
 
@@ -64,7 +66,7 @@ IndSec * carregaSk(FILE *).
  * indica o tipo de campo que formara o indice.
  *
  * Retorna o ponteiro para a estrutura que representa o vetor de SKs.
-*/
+ */
 IndSec * criaSk(TIndice *, FILE *, const int).
 
 /**

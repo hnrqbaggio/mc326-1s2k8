@@ -104,7 +104,9 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
     result = (Sk*) bsearch(temp, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
 
     if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
-			
+			/*Aponta para SK encontrada*/
+			temp = result;
+
     } else { /* Nao ha nenhuma ocorrencia da SK, insere um novo elemento no vetor do indice */
 			
 			/*Verifica se nao precisa ser realocado espaco*/
@@ -128,38 +130,42 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
       fprintf(base, "%d", temp2->next);
       fprintf(base, "%s", temp2->key);
 
-      temp->next = indSecun->tamDisco; /* Atualiza a cabeca da lista invertida */
+      indSecun->vetor[tam].next = indSecun->tamDisco; /* Atualiza a cabeca da lista invertida */
       indSecun->tamDisco += temp2->lenght; /* Atualiza a proxima posicao livre do disco */
 
     } else {/*Caso a Avail List nao e vazia, percorre ela e insere no primeiro espaco que ha espaco suficiente*/
 			
       fseek(fsk, *avail, SEEK_SET);
       fscanf(fsk, "%d", tam);
-      prox = ant = FIM_DE_LISTA;
+			ant = prox = *avail;
 
+			/*Percorre a avail list procurando um local que haja espaco*/
       while (tam < temp2->lenght) {
 				ant = prox;
 				fscanf(fsk, "%d", prox);
+				if(prox == -1){
+					/*Insere no final do arquivo*/
+					/*O codigo tah esculaxado assim...precisaremos reformular essa funcao...uia o jeito q tah esse codigo....hauhsuahs*/
+
+				}
 				fseek(fsk, prox, SEEK_SET);
 				fscanf(fsk, "%d", tam);
       }
-
       fscanf(fsk, "%d", prox);
 
-      if (ant != FIM_DE_LISTA) {
-				fseek(fsk, ant+sizeof(int), SEEK_SET);
-				fprintf(fsk, "%d", prox);
-
-      } else {
-				*avail = prox;
-      }
-
+			/*Grava no arquivo os dados da SK(tamanho,proximo,pk)*/
       fseek(fsk, -1*sizeof(int), SEEK_CUR);
       fprintf(base, "%d", temp2->next);
       fprintf(base, "%s", temp2->key);
 
+			/*Atualiza a avail list no arquivo.*/
+			fseek(fsk, ant+sizeof(int), SEEK_SET);
+			fprintf(fsk, "%d", prox);
+
       if (tam > temp2->lengh) fprintf(fsk, "%c", '\0'); /* Pra nao misturar com dados antigos */
 
+			/*Atualiza a SK na RAM*/
+			/*NÃO SEI O TAMANHO EM BYTES DO LOCAL QUE INSERI NO ARQUIVO! OQ EU FAÇO!?!? OH MY GOD!*/
     }
     token = strtok(NULL, " ");
   }

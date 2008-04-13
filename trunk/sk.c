@@ -71,32 +71,85 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
     fseek(base, offset_ext, SEEK_CUR);
     fgets(campo, tam, base); /* Le o campo do registro */
 
-    /* Agora quebra o campo em varias substrings - os tokens*/ 
-    token = strtok(campo, " ");
-    while (token) {
-      /* Insere a SK relativa ao token, sendo q neste caso a avail list eh vazia. */
-      secundario = insereSk(secundario, token, FIM_DE_LISTA, tipoCampo);
-      token = strtok(NULL, " ");
-    }
+    /* Insere a SK relativa ao token, sendo q neste caso a avail list eh vazia. */
+    secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, FIM_DE_LISTA);
+ 
   }
 
   return secundario;
 }
 
-IndSec * insereSk(IndSec *indSecun, char *token, int avail,  const int tipoCampo) {
-  Sk * temp, *result;
-  FILE *fsk; /* Arquivo de indice secundario */
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int avail) {
+  Sk * temp = (Sk *) malloc(sizeof(Sk));
+  Sk * temp2 = (Sk *) malloc(sizeof(Sk));
+  Sk * result;
+  char * token;
+  int prox, anterior, tam;
 
-  strcpy(temp->key, token);
-  temp->next = -1;
-  temp->lenght = strlen(token);
+  /* Quebra a string em varios tokens */
+  token = strtok(campo, " ");
+  while (token) { /* Realiza a insercao para cada novo token existente na string. */
 
-  result = (Sk*) bsearch(temp, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+    /* Inicializo os valores num elemento que usarei como chave da
+       busca binaria no indice. */
+    strcpy(temp->key, token);
+    temp->next = -1;
+    temp->lenght = strlen(token)+2*sizeof(int);
 
-  if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
+    strcpy(temp2->key, pk);
+    temp2->next = -1;
+    temp2->lenght = strlen(pk)+2*sizeof(int);
+
+    result = (Sk*) bsearch(temp, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+
+    if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
+      
+    } else { /* Nao ha nenhuma ocorrencia da SK, insere um novo elemento no vetor do indice */
     
-  } else { /* Nao ha nenhuma ocorrencia da SK, insere um novo elemento no vetor do indice */
-    
+    }
+
+    if (avail == FIM_DE_LISTA) {
+      temp2->next = temp->next;
+
+      fseek(fsk, tamDisco, SEEK_SET);
+      fprintf(base, "%d", temp2->lenght);
+      fprintf(base, "%d", temp2->next);
+      fprintf(base, "%s", temp2->key);
+
+      temp->next = indSecun->tamDisco; /* Atualiza a cabeca da lista invertida */
+      indSecun->tamDisco += temp2->lenght; /* Atualiza a proxima posicao livre do disco */
+
+    } else {
+      
+      fseek(fsk, avail, SEEK_SET);
+      fscanf(fsk, "%d", tam);
+      prox = ant = FIM_DE_LISTA;
+
+      while (tam < temp2->lenght) {
+	ant = prox;
+	fscanf(fsk, "%d", prox);
+	fseek(fsk, prox, SEEK_SET);
+	fscanf(fsk, "%d", tam);
+      }
+
+      fscanf(fsk, "%d", prox);
+
+      if (ant != FIM_DE_LISTA) {
+	fseek(fsk, ant+sizeof(int), SEEK_SET);
+	fprintf(fsk, "%d", prox);
+
+      } else {
+	avail = prox;
+      }
+
+      fseek(fsk, -1*sizeof(int), SEEK_CUR);
+      fprintf(base, "%d", temp2->next);
+      fprintf(base, "%s", temp2->key);
+
+      if (tam > temp2->lengh) fprintf(fsk, "%c", '\0'); /* Pra nao misturar com dados antigos */
+
+    }
+    token = strtok(NULL, " ");
   }
 }
 
@@ -111,3 +164,5 @@ IndSec * realocaIndSec(IndSec *sec) {
 
   return sec;
 }
+
+

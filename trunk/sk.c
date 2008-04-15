@@ -82,97 +82,73 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
 
 IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail) {
   Sk * temp = (Sk *) malloc(sizeof(Sk));
-  Sk * temp2 = (Sk *) malloc(sizeof(Sk));
   Sk * result;
   char * token;
-  int prox, anterior, tam;
+  int tam;
 
   /* Quebra a string em varios tokens */
   token = strtok(campo, " ");
+
   while (token) { /* Realiza a insercao para cada novo token existente na string. */
 
     /* Inicializo os valores num elemento que usarei como chave da
        busca binaria no indice. */
     strcpy(temp->key, token);
     temp->next = -1;
-    temp->lenght = strlen(token)+2*sizeof(int);
-
-    strcpy(temp2->key, pk);
-    temp2->next = -1;
-    temp2->lenght = strlen(pk)+2*sizeof(int);
+    temp->lenght = strlen(token) + 2*sizeof(int);
 
     result = (Sk*) bsearch(temp, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
 
     if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
-			/*Aponta para SK encontrada*/
-			temp = result;
+      
+      temp = result; /*Aponta para SK encontrada*/
 
     } else { /* Nao ha nenhuma ocorrencia da SK, insere um novo elemento no vetor do indice */
 			
-			/*Verifica se nao precisa ser realocado espaco*/
-			indSecun = realocaIndSec(indSecun);
+      /*Verifica se nao precisa ser realocado espaco*/
+      indSecun = realocaIndSec(indSecun);
 			
-			/*Insere a SK no final do vetor*/
-			tam = indSecun->tamanho;
-			strcpy(indSecun->vetor[tam].key, temp->key);
-			indSecun->vetor[tam].next = temp->next;
-			indSecun->vetor[tam].lenght = temp->lenght;
+      /*Insere a SK no final do vetor*/
+      tam = indSecun->tamanho;
+      strcpy(indSecun->vetor[tam].key, temp->key);
+      indSecun->vetor[tam].next = temp->next;
+      indSecun->vetor[tam].lenght = temp->lenght;
 			
-			/*Atualiza o tamanho do vetor*/
-    	(indSecun->tamanho)++;
+      /*Atualiza o tamanho do vetor*/
+      (indSecun->tamanho)++;
     }
-		/*Caso Avail List e vazia, ou seja, nao existe espacos livres no arquivo, insere no final*/
-    if (*avail == FIM_DE_LISTA) {
-      temp2->next = temp->next;
 
-      fseek(fsk, tamDisco, SEEK_SET);
-      fprintf(base, "%d", temp2->lenght);
-      fprintf(base, "%d", temp2->next);
-      fprintf(base, "%s", temp2->key);
+    /* Insercao da chave primaria na parte em disco, usando a avail
+       list. */
+    
+    if (*avail != -1) { /* Ira inserir num 'buraco' do arquivo. */
+      offset = *avail + 2*sizeof(int);
 
-      indSecun->vetor[tam].next = indSecun->tamDisco; /* Atualiza a cabeca da lista invertida */
-      indSecun->tamDisco += temp2->lenght; /* Atualiza a proxima posicao livre do disco */
+      temp->next = *avail;
+      fseek(fsk, offset, SEEK_SET);
+      fprintf(fsk, "%s", pk);
+      fscanf(fsk, "%d", avail); /* Pega o proximo elemento da lista e atualiza a cabeca. */
 
-    } else {/*Caso a Avail List nao e vazia, percorre ela e insere no primeiro espaco que ha espaco suficiente*/
-			
-      fseek(fsk, *avail, SEEK_SET);
-      fscanf(fsk, "%d", tam);
-			ant = prox = *avail;
+    } else {
+      /* Calcula onde termina a parte do indice que fica no disco.
+       * tamDisco indica o numero de PKs no disco, o acrescimo do
+       * tamanho do int * 2 eh devido ao cabecalho do arquivo. */
+      offset = indSecum->tamDisco * TAM_PK + 2 * sizeof(int);
+      (indSecum->tamDisco)++;
 
-			/*Percorre a avail list procurando um local que haja espaco*/
-      while (tam < temp2->lenght) {
-				ant = prox;
-				fscanf(fsk, "%d", prox);
-				if(prox == -1){
-					/*Insere no final do arquivo*/
-					/*O codigo tah esculaxado assim...precisaremos reformular essa funcao...uia o jeito q tah esse codigo....hauhsuahs*/
-
-				}
-				fseek(fsk, prox, SEEK_SET);
-				fscanf(fsk, "%d", tam);
-      }
-      fscanf(fsk, "%d", prox);
-
-			/*Grava no arquivo os dados da SK(tamanho,proximo,pk)*/
-      fseek(fsk, -1*sizeof(int), SEEK_CUR);
-      fprintf(base, "%d", temp2->next);
-      fprintf(base, "%s", temp2->key);
-
-			/*Atualiza a avail list no arquivo.*/
-			fseek(fsk, ant+sizeof(int), SEEK_SET);
-			fprintf(fsk, "%d", prox);
-
-      if (tam > temp2->lengh) fprintf(fsk, "%c", '\0'); /* Pra nao misturar com dados antigos */
-
-			/*Atualiza a SK na RAM*/
-			/*NÃO SEI O TAMANHO EM BYTES DO LOCAL QUE INSERI NO ARQUIVO! OQ EU FAÇO!?!? OH MY GOD!*/
+      fseek(fsk, offset, SEEK_SET);
+      fprintf(fsk, "%s", pk);
+      fprintf(fsk, "%d", temp->next);
+      temp->next = indSecum->tamDisco;
     }
-    token = strtok(NULL, " ");
+    
+
+    token = strtok(NULL, " "); /* Pega um novo token na string, pra fazer uma nova SK. */
   }
-	/*Ordena o vetor de SKs*/
-	qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+  /*Ordena o vetor de SKs*/
+  qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
 	
-	return indSecun;
+  return indSecun;
 }
 
 

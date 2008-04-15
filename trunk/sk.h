@@ -1,5 +1,7 @@
 #include <stdio.h>
-#include <catalogo.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 /**
  * Constantes usadas para determinar o tipo do campo para o indice
@@ -53,7 +55,7 @@ typedef struct _vetorsk{
  *
  * Retorno: um ponteiro pra um vetor de sks.
  */
-IndSec * geraSk(TIndice *, FILE *, const int).
+IndSec * geraSk(TIndice *, FILE *, const int);
 
 /**
  * Carrega um indice secundario a partir do arquivo em disco.
@@ -63,7 +65,7 @@ IndSec * geraSk(TIndice *, FILE *, const int).
  *
  * Parametro: o ponteiro pra o arquivo de indice.
  */
-IndSec * carregaSk(FILE *).
+IndSec * carregaSk(FILE *);
 
 /**
  * Cria o indice secundario a partir da base de dados, carregando as
@@ -77,7 +79,7 @@ IndSec * carregaSk(FILE *).
  *
  * Retorna o ponteiro para a estrutura que representa o vetor de SKs.
  */
-IndSec * criaSk(TIndice *, FILE *, const int).
+IndSec * criaSk(TIndice *, FILE *, const int);
 
 /**
  * Insere uma SK no vetor que contem o indice secundario pra um
@@ -90,7 +92,7 @@ IndSec * criaSk(TIndice *, FILE *, const int).
  *
  * Retorno: O vetor de SKs atualizado.
  */
-IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int avail).
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail);
 
 /**
  * Funcao usada para realocar espaco para o vetor da SK caso seja
@@ -102,4 +104,4 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int avail)
  *
  * Retorno: O vetor de SKs, realocado ou nao. 
  */
-IndSec * realocaIndSec(IndSec *).
+IndSec * realocaIndSec(IndSec *);

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "catalogo.h"
 #include "leitura.h"
+#include "sk.h"
 
 int main(int argc, char **argv){
   int ent;
@@ -19,6 +20,7 @@ int main(int argc, char **argv){
   FILE *arq;
   TIndice *ind;
   ElementoIndice *elem;
+	IndSec *indSk;
   char temp[TAM_TITULO + 1]; /* String auxiliar para a leitura das emtradas */
 
   arq = abreCatalogo(NOME_BASE);
@@ -37,6 +39,7 @@ int main(int argc, char **argv){
     printf("* 2 - Buscar obra por titulo *\n");
     printf("* 3 - Listar todas as obras  *\n");
     printf("* 4 - Sair                   *\n");
+    printf("* 5 - Gerar SK's             *\n");
     printf("******************************\n");
     printf("Entre com umas das opcoes acima: ");
     scanf("%d", &ent);
@@ -74,6 +77,10 @@ int main(int argc, char **argv){
       fechaCatalogo(arq);
       gravaIndice(ind);
       free(elem);
+      break;
+		case 5:
+      /*Gera SK, somente para debugarmos*/
+      indSk = geraSk(ind, arq, TITULO);
       break;
     }
   }

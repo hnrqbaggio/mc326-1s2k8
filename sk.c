@@ -1,7 +1,55 @@
-#include <sk.h>
+#include "catalogo.h"
+#include "leitura.h"
+#include "sk.h"
 
+/* Constroi um indice secundario.  Se existe o arquivo de indice, ele 
+carrega parte de estrutura pra memoria e deixa a outra no disco.
+ Caso nao exista o indice, ele ira constri-lo a partir da base de
+ dados.*/
 
-IndSec * geraSk(TIndice *, FILE *, const int).
+/*Tetando fazer funfa pra comecar a debugar*/
+IndSec * geraSk(TIndice *indPrim, FILE *base, const int tipoCampo){
+
+	/*IndSec *indSk;*/
+	FILE *fsk;
+
+	switch (tipoCampo){
+  case 0: /* Campo a ser lido eh o titulo. */
+    fsk = fopen("titulo.sk","r");
+		if (fsk){
+			return  criaSk(indPrim, base, tipoCampo);
+		} else {
+			return carregaSk(fsk);
+		}
+    break;
+  case 1: /* Campo Tipo */
+    fsk = fopen("tipo.sk","r");
+		if (fsk == NULL){
+			return  criaSk(indPrim, base, tipoCampo);
+		} else {
+			return carregaSk(fsk);
+		}
+    break;
+  case 2: /* Campo Autor */
+    fsk = fopen("autor.sk","r");
+		if (fsk == NULL){
+			return  criaSk(indPrim, base, tipoCampo);
+		} else {
+			return carregaSk(fsk);
+		}
+    break;
+  case 3: /* Campo Ano */
+    fsk = fopen("ano.sk","r");
+		if (fsk == NULL){
+			return  criaSk(indPrim, base, tipoCampo);
+		} else {
+			return carregaSk(fsk);
+		}
+    break;
+  }
+	/*return fsk;*/
+}
+
 
 /* Funcao que,caso exista o arquivo de SKs, carrega a parte que deve
   ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no
@@ -21,12 +69,12 @@ IndSec * carregaSk(FILE *arqSk){
   fscanf(arqSk, "%d", sk->tamDisco);
 
   /*Posiciona o ponteiro do arquivo para o inicio da parte que deve ficar na RAM*/
-  fseek(arqSk, sek->tamDisco, SEEK_SET);
+  fseek(arqSk, sk->tamDisco, SEEK_SET);
 
   /*Enquanto nao chega ao final do arquivo, */
   while (fscanf(arqSk, "%d", sk->vetor[tamSk].lenght) ){
     fgets(sk->vetor[tamSk].key, sk->vetor[tamSk].lenght, arqSk);
-    tamSK++;
+    tamSk++;
     fscanf(arqSk, "%d", sk->vetor[tamSk].next);
     sk = realocaIndSec(sk);
   }
@@ -34,10 +82,11 @@ IndSec * carregaSk(FILE *arqSk){
 }
 
 IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
-  int i;
+  int i, tam;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */
   char * campo;
   IndSec * secundario = NULL; /* O indice secundario */
+	FILE *fsk = NULL;
 
   switch (tipoCampo){
   case 0: /* Campo a ser lido eh o titulo. */
@@ -84,7 +133,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
   Sk * temp = (Sk *) malloc(sizeof(Sk));
   Sk * result;
   char * token;
-  int tam;
+  int tam, offset;
 
   /* Quebra a string em varios tokens */
   token = strtok(campo, " ");
@@ -133,13 +182,13 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
       /* Calcula onde termina a parte do indice que fica no disco.
        * tamDisco indica o numero de PKs no disco, o acrescimo do
        * tamanho do int * 2 eh devido ao cabecalho do arquivo. */
-      offset = indSecum->tamDisco * TAM_PK + 2 * sizeof(int);
-      (indSecum->tamDisco)++;
+      offset = indSecun->tamDisco * TAM_TITULO + 2 * sizeof(int);
+      (indSecun->tamDisco)++;
 
       fseek(fsk, offset, SEEK_SET);
       fprintf(fsk, "%s", pk);
       fprintf(fsk, "%d", temp->next);
-      temp->next = indSecum->tamDisco;
+      temp->next = indSecun->tamDisco;
     }
     
 

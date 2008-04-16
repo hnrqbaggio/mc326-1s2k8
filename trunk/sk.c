@@ -10,44 +10,44 @@ carrega parte de estrutura pra memoria e deixa a outra no disco.
 /*Tetando fazer funfa pra comecar a debugar*/
 IndSec * geraSk(TIndice *indPrim, FILE *base, const int tipoCampo){
 
-	/*IndSec *indSk;*/
-	FILE *fsk;
+  /*IndSec *indSk;*/
+  FILE *fsk;
 
-	switch (tipoCampo){
+  switch (tipoCampo){
   case 0: /* Campo a ser lido eh o titulo. */
     fsk = fopen("titulo.sk","r");
-		if (fsk){
-			return  criaSk(indPrim, base, tipoCampo);
-		} else {
-			return carregaSk(fsk);
-		}
+    if (fsk){
+      return  criaSk(indPrim, base, tipoCampo);
+    } else {
+      return carregaSk(fsk);
+    }
     break;
   case 1: /* Campo Tipo */
     fsk = fopen("tipo.sk","r");
-		if (fsk == NULL){
-			return  criaSk(indPrim, base, tipoCampo);
-		} else {
-			return carregaSk(fsk);
-		}
+    if (fsk == NULL){
+      return  criaSk(indPrim, base, tipoCampo);
+    } else {
+      return carregaSk(fsk);
+    }
     break;
   case 2: /* Campo Autor */
     fsk = fopen("autor.sk","r");
-		if (fsk == NULL){
-			return  criaSk(indPrim, base, tipoCampo);
-		} else {
-			return carregaSk(fsk);
-		}
+    if (fsk == NULL){
+      return  criaSk(indPrim, base, tipoCampo);
+    } else {
+      return carregaSk(fsk);
+    }
     break;
   case 3: /* Campo Ano */
     fsk = fopen("ano.sk","r");
-		if (fsk == NULL){
-			return  criaSk(indPrim, base, tipoCampo);
-		} else {
-			return carregaSk(fsk);
-		}
+    if (fsk == NULL){
+      return  criaSk(indPrim, base, tipoCampo);
+    } else {
+      return carregaSk(fsk);
+    }
     break;
   }
-	/*return fsk;*/
+  /*return fsk;*/
 }
 
 
@@ -130,10 +130,10 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
 }
 
 IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail) {
-  Sk * temp = (Sk *) malloc(sizeof(Sk));
+  Sk * sk = (Sk *) malloc(sizeof(Sk));
   Sk * result;
   char * token;
-  int tam, offset;
+  int tam, offset, temp;
 
   /* Quebra a string em varios tokens */
   token = strtok(campo, " ");
@@ -142,15 +142,18 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
 
     /* Inicializo os valores num elemento que usarei como chave da
        busca binaria no indice. */
-    strcpy(temp->key, token);
-    temp->next = -1;
-    temp->lenght = strlen(token) + 2*sizeof(int);
+    strcpy(sk->key, token);
+    sk->next = -1;
+    sk->lenght = strlen(token) + 2*sizeof(int);
 
-    result = (Sk*) bsearch(temp, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+    result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+
+    /* Insercao da SK no indice na RAM */
 
     if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
       
-      temp = result; /*Aponta para SK encontrada*/
+      sk = result; /*Aponta para SK encontrada*/
+      /* Isso vai dar leak, pq tamo abandonando um malloc. */
 
     } else { /* Nao ha nenhuma ocorrencia da SK, insere um novo elemento no vetor do indice */
 			
@@ -159,9 +162,9 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
 			
       /*Insere a SK no final do vetor*/
       tam = indSecun->tamanho;
-      strcpy(indSecun->vetor[tam].key, temp->key);
-      indSecun->vetor[tam].next = temp->next;
-      indSecun->vetor[tam].lenght = temp->lenght;
+      strcpy(indSecun->vetor[tam].key, sk->key);
+      indSecun->vetor[tam].next = sk->next;
+      indSecun->vetor[tam].lenght = sk->lenght;
 			
       /*Atualiza o tamanho do vetor*/
       (indSecun->tamanho)++;
@@ -171,29 +174,38 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
        list. */
     
     if (*avail != -1) { /* Ira inserir num 'buraco' do arquivo. */
-      offset = *avail + 2*sizeof(int);
 
-      temp->next = *avail;
-      fseek(fsk, offset, SEEK_SET);
+      temp = *avail; /* Pega o inicio da avail list. */
+
+      offset = temp * TAM_TITULO + 2 * sizeof(int); 
+      fseek(fsk, offset, SEEK_SET); /* Posiciona o cursor pra gravar a nova PK */
       fprintf(fsk, "%s", pk);
-      fscanf(fsk, "%d", avail); /* Pega o proximo elemento da lista e atualiza a cabeca. */
+      fscanf(fsk, "%d", avail); /* Pega o proximo elemento da avail list. */
+
+      /* Vai inserir o novo elemento na lista da SK. */
+      fseek(fsk, -1*sizeof(int), SEEK_CUR); 
+      fprintf(fsk, "%d", sk->next);
+      sk->next = temp;
 
     } else {
       /* Calcula onde termina a parte do indice que fica no disco.
        * tamDisco indica o numero de PKs no disco, o acrescimo do
        * tamanho do int * 2 eh devido ao cabecalho do arquivo. */
       offset = indSecun->tamDisco * TAM_TITULO + 2 * sizeof(int);
-      (indSecun->tamDisco)++;
 
-      fseek(fsk, offset, SEEK_SET);
+      /* Insere a nova PK no fim da parte em disco. Com o proximo
+	 elemento sendo o primeiro da lista da qual sk eh a cabeca. */
       fprintf(fsk, "%s", pk);
-      fprintf(fsk, "%d", temp->next);
-      temp->next = indSecun->tamDisco;
+      fprintf(fsk, "%d", sk->next);
+      sk->next = indSecum->tamDisco;
+
+      (indSecun->tamDisco)++;
     }
     
 
     token = strtok(NULL, " "); /* Pega um novo token na string, pra fazer uma nova SK. */
   }
+
   /*Ordena o vetor de SKs*/
   qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
 	

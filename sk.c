@@ -47,7 +47,7 @@ IndSec * geraSk(TIndice *indPrim, FILE *base, const int tipoCampo){
     }
     break;
   }
-  /*return fsk;*/
+  return NULL;
 }
 
 
@@ -66,16 +66,16 @@ IndSec * carregaSk(FILE *arqSk){
   sk->tamanho = 0;
 	
   /*Leitura do tamanho do SK que fica no disco*/
-  fscanf(arqSk, "%d", sk->tamDisco);
+  fscanf(arqSk, "%d", &(sk->tamDisco));
 
   /*Posiciona o ponteiro do arquivo para o inicio da parte que deve ficar na RAM*/
   fseek(arqSk, sk->tamDisco, SEEK_SET);
 
   /*Enquanto nao chega ao final do arquivo, */
-  while (fscanf(arqSk, "%d", sk->vetor[tamSk].lenght) ){
+  while (fscanf(arqSk, "%d", &(sk->vetor[tamSk].lenght)) ){
     fgets(sk->vetor[tamSk].key, sk->vetor[tamSk].lenght, arqSk);
     tamSk++;
-    fscanf(arqSk, "%d", sk->vetor[tamSk].next);
+    fscanf(arqSk, "%d", &(sk->vetor[tamSk].next));
     sk = realocaIndSec(sk);
   }
   return sk;
@@ -84,9 +84,14 @@ IndSec * carregaSk(FILE *arqSk){
 IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
   int i, tam;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */
-  char * campo;
-  IndSec * secundario = NULL; /* O indice secundario */
+  char  campo[201];
+  IndSec * secundario = (IndSec *)malloc(sizeof(IndSec)); /* O indice secundario */
 	FILE *fsk = NULL;
+
+	/*Inicializando o vetor de SKs*/ 
+  secundario->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
+  secundario->alocado = VETOR_MIN;
+  secundario->tamanho = 0;
 
   switch (tipoCampo){
   case 0: /* Campo a ser lido eh o titulo. */
@@ -146,9 +151,13 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
     sk->next = -1;
     sk->lenght = strlen(token) + 2*sizeof(int);
 
-    result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
-
-    /* Insercao da SK no indice na RAM */
+		if (indSecun == NULL)
+		{
+    	result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+		} else {
+			result = 0;
+		}
+		/* Insercao da SK no indice na RAM */
 
     if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
       
@@ -197,7 +206,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
 	 elemento sendo o primeiro da lista da qual sk eh a cabeca. */
       fprintf(fsk, "%s", pk);
       fprintf(fsk, "%d", sk->next);
-      sk->next = indSecum->tamDisco;
+      sk->next = indSecun->tamDisco;
 
       (indSecun->tamDisco)++;
     }

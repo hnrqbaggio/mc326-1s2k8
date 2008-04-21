@@ -8,42 +8,42 @@ carrega parte de estrutura pra memoria e deixa a outra no disco.
  dados.*/
 
 /*Tetando fazer funfa pra comecar a debugar*/
-IndSec * geraSk(TIndice *indPrim, FILE *base, const int tipoCampo){
+IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo){
 
   /*IndSec *indSk;*/
   FILE *fsk;
 
   switch (tipoCampo){
   case 0: /* Campo a ser lido eh o titulo. */
-    fsk = fopen("titulo.sk","r");
-    if (fsk){
-      return  criaSk(indPrim, base, tipoCampo);
+    fsk = fopen("titulo.si","r");
+    if (fsk == NULL){
+      return criaSk(indPrim, base, avail, tipoCampo);
     } else {
-      return carregaSk(fsk);
+      return carregaSk(fsk, avail);
     }
     break;
   case 1: /* Campo Tipo */
-    fsk = fopen("tipo.sk","r");
+    fsk = fopen("tipo.si","r");
     if (fsk == NULL){
-      return  criaSk(indPrim, base, tipoCampo);
+      return criaSk(indPrim, base, avail, tipoCampo);
     } else {
-      return carregaSk(fsk);
+      return carregaSk(fsk, avail);
     }
     break;
   case 2: /* Campo Autor */
-    fsk = fopen("autor.sk","r");
+    fsk = fopen("autor.si","r");
     if (fsk == NULL){
-      return  criaSk(indPrim, base, tipoCampo);
+      return criaSk(indPrim, base, avail, tipoCampo);
     } else {
-      return carregaSk(fsk);
+      return carregaSk(fsk, avail);
     }
     break;
   case 3: /* Campo Ano */
-    fsk = fopen("ano.sk","r");
+    fsk = fopen("ano.si","r");
     if (fsk == NULL){
-      return  criaSk(indPrim, base, tipoCampo);
+      return criaSk(indPrim, base, avail, tipoCampo);
     } else {
-      return carregaSk(fsk);
+      return carregaSk(fsk, avail);
     }
     break;
   }
@@ -54,7 +54,7 @@ IndSec * geraSk(TIndice *indPrim, FILE *base, const int tipoCampo){
 /* Funcao que,caso exista o arquivo de SKs, carrega a parte que deve
   ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no
   disco */
-IndSec * carregaSk(FILE *arqSk){
+IndSec * carregaSk(FILE *arqSk, availList *avail){
   /*Declaracao de variaveis*/
   IndSec *sk;
   int tamSk = 0;
@@ -81,14 +81,17 @@ IndSec * carregaSk(FILE *arqSk){
   return sk;
 }
 
-IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
+IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo) {
   int i, tam;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */
   char  campo[201];
   IndSec * secundario = (IndSec *)malloc(sizeof(IndSec)); /* O indice secundario */
-	FILE *fsk = NULL;
+  FILE *fsk;
 
-	/*Inicializando o vetor de SKs*/ 
+  /* Como vamos criar o indice, a lista invertida eh vazia. */
+  *avail = -1;
+
+  /*Inicializando o vetor de SKs*/ 
   secundario->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
   secundario->alocado = VETOR_MIN;
   secundario->tamanho = 0;
@@ -97,27 +100,27 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
   case 0: /* Campo a ser lido eh o titulo. */
     tam = TAM_TITULO;
     offset_ext = 0;
-    fsk = fopen("titulo.sk","w");
+    fsk = fopen("titulo.si","w");
     break;
   case 1: /* Campo Tipo */
     tam = TAM_TIPO;
     offset_ext = TAM_TITULO;
-    fsk = fopen("tipo.sk","w");
+    fsk = fopen("tipo.si","w");
     break;
   case 2: /* Campo Autor */
     tam = TAM_AUTOR;
     offset_ext = TAM_TITULO + TAM_TIPO;
-    fsk = fopen("autor.sk","w");
+    fsk = fopen("autor.si","w");
     break;
   case 3: /* Campo Ano */
     tam = TAM_ANO;
     offset_ext = TAM_TITULO + TAM_TIPO + TAM_AUTOR;
-    fsk = fopen("ano.sk","w");
+    fsk = fopen("ano.si","w");
     break;
   }
   
-  fprintf(fsk, "%d%d", 0, 0); /* Criando o arquivo com os campos do cabecalho zerados. */
-  fclose(fsk);
+  fprintf(fsk, "%d%d", -1, 0); /* Criando o arquivo com os campos do cabecalho zerados. */
+
 
   for (i = 0; i < indPrim->tamanho; i++) {
     offset = indPrim->vetor[i].nrr * TAM_REG;
@@ -127,14 +130,14 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, const int tipoCampo) {
     fgets(campo, tam, base); /* Le o campo do registro */
 
     /* Insere a SK relativa ao token, sendo q neste caso a avail list eh vazia. */
-    secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, FIM_DE_LISTA);
+    secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, avail);
  
   }
-
+  fclose(fsk);
   return secundario;
 }
 
-IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail) {
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail) {
   Sk * sk = (Sk *) malloc(sizeof(Sk));
   Sk * result;
   char * token;
@@ -151,13 +154,9 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail
     sk->next = -1;
     sk->lenght = strlen(token) + 2*sizeof(int);
 
-		if (indSecun == NULL)
-		{
-    	result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
-		} else {
-			result = 0;
-		}
-		/* Insercao da SK no indice na RAM */
+    result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+
+    /* Insercao da SK no indice na RAM */
 
     if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
       

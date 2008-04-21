@@ -43,6 +43,12 @@ typedef struct _vetorsk{
 } IndSec;
 
 /**
+ * Este inteiro será usado para representar a cabeca de uma avail
+ * list, que sera um alista invertida de posicoes livres no disco.
+ */
+typedef int availList;
+
+/**
  * Constroi um indice secundario.  Se existe o arquivo de indice, ele
  * carrega parte de estrutura pra memoria e deixa a outra no disco.
  * Caso nao exista o indice, ele ira constri-lo a partir da base de
@@ -55,7 +61,7 @@ typedef struct _vetorsk{
  *
  * Retorno: um ponteiro pra um vetor de sks.
  */
-IndSec * geraSk(TIndice *, FILE *, const int);
+IndSec * geraSk(TIndice *, FILE *, availList*, const int);
 
 /**
  * Carrega um indice secundario a partir do arquivo em disco.
@@ -65,7 +71,7 @@ IndSec * geraSk(TIndice *, FILE *, const int);
  *
  * Parametro: o ponteiro pra o arquivo de indice.
  */
-IndSec * carregaSk(FILE *);
+IndSec * carregaSk(FILE *, availList* );
 
 /**
  * Cria o indice secundario a partir da base de dados, carregando as
@@ -79,7 +85,7 @@ IndSec * carregaSk(FILE *);
  *
  * Retorna o ponteiro para a estrutura que representa o vetor de SKs.
  */
-IndSec * criaSk(TIndice *, FILE *, const int);
+IndSec * criaSk(TIndice *, FILE *, availList *, const int);
 
 /**
  * Insere uma SK no vetor que contem o indice secundario pra um
@@ -92,7 +98,7 @@ IndSec * criaSk(TIndice *, FILE *, const int);
  *
  * Retorno: O vetor de SKs atualizado.
  */
-IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, int *avail);
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail);
 
 /**
  * Funcao usada para realocar espaco para o vetor da SK caso seja

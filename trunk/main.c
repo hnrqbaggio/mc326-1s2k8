@@ -20,7 +20,9 @@ int main(int argc, char **argv){
   FILE *arq;
   TIndice *ind;
   ElementoIndice *elem;
-	IndSec *indSk;
+  IndSec *indSk;
+  availList availTitulo = -1;
+
   char temp[TAM_TITULO + 1]; /* String auxiliar para a leitura das emtradas */
 
   arq = abreCatalogo(NOME_BASE);
@@ -78,9 +80,9 @@ int main(int argc, char **argv){
       gravaIndice(ind);
       free(elem);
       break;
-		case 5:
+    case 5:
       /*Gera SK, somente para debugarmos*/
-      indSk = geraSk(ind, arq, TITULO);
+      indSk = geraSk(ind, arq, &availTitulo, TITULO);
       break;
     }
   }

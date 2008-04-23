@@ -127,7 +127,7 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
 
     fseek(base, offset, SEEK_SET); 
     fseek(base, offset_ext, SEEK_CUR);
-    fgets(campo, tam, base); /* Le o campo do registro */
+    fgets(campo, tam + 1, base); /* Le o campo do registro */
 
     /* Insere a SK relativa ao token, sendo q neste caso a avail list eh vazia. */
     secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, avail);
@@ -138,7 +138,7 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
 }
 
 IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail) {
-  Sk * sk = (Sk *) malloc(sizeof(Sk));
+  Sk * sk = (Sk *) malloc(sizeof(Sk)), *sk2;
   Sk * result;
   char * token;
   int tam, offset, temp;
@@ -154,14 +154,15 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
     sk->next = -1;
     sk->lenght = strlen(token) + 2*sizeof(int);
 
-    result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+    result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
 
     /* Insercao da SK no indice na RAM */
+    sk2 = sk; 
 
     if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
-      
+ 
+      /*free(sk); Libera o espaco que naum sera mais usado. */      
       sk = result; /*Aponta para SK encontrada*/
-      /* Isso vai dar leak, pq tamo abandonando um malloc. */
 
     } else { /* Nao ha nenhuma ocorrencia da SK, insere um novo elemento no vetor do indice */
 			
@@ -173,6 +174,8 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
       strcpy(indSecun->vetor[tam].key, sk->key);
       indSecun->vetor[tam].next = sk->next;
       indSecun->vetor[tam].lenght = sk->lenght;
+
+      sk = &(indSecun->vetor[tam]);
 			
       /*Atualiza o tamanho do vetor*/
       (indSecun->tamanho)++;
@@ -185,7 +188,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
 
       temp = *avail; /* Pega o inicio da avail list. */
 
-      offset = temp * TAM_TITULO + 2 * sizeof(int); 
+      offset = temp * (TAM_TITULO + sizeof(int)) + 2 * sizeof(int); 
       fseek(fsk, offset, SEEK_SET); /* Posiciona o cursor pra gravar a nova PK */
       fprintf(fsk, "%s", pk);
       fscanf(fsk, "%d", avail); /* Pega o proximo elemento da avail list. */
@@ -199,7 +202,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
       /* Calcula onde termina a parte do indice que fica no disco.
        * tamDisco indica o numero de PKs no disco, o acrescimo do
        * tamanho do int * 2 eh devido ao cabecalho do arquivo. */
-      offset = indSecun->tamDisco * TAM_TITULO + 2 * sizeof(int);
+      offset = indSecun->tamDisco * (TAM_TITULO + sizeof(int)) + 2 * sizeof(int);
 
       /* Insere a nova PK no fim da parte em disco. Com o proximo
 	 elemento sendo o primeiro da lista da qual sk eh a cabeca. */
@@ -210,12 +213,12 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
       (indSecun->tamDisco)++;
     }
     
-
+    sk = sk2;
     token = strtok(NULL, " "); /* Pega um novo token na string, pra fazer uma nova SK. */
   }
 
   /*Ordena o vetor de SKs*/
-  qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compare);
+  qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
 	
   return indSecun;
 }
@@ -230,6 +233,28 @@ IndSec * realocaIndSec(IndSec *sec) {
   }
 
   return sec;
+}
+/* Funcao de comparacao utilizada pela bsearch. */
+int compareSk(const void *a, const void *b) {
+  char *str1, *str2;
+  int i, x, y;
+
+  /* Calculo do tamanho das strings. */
+  x = (*(Sk *)a).lenght - 2 * sizeof(int);
+  y = (*(Sk *)b).lenght - 2 * sizeof(int);
+
+  str1 = (*(Sk *)a).key;
+  str2 = (*(Sk *)b).key;
+
+  /* Copia os valores dos parametros, convertendo pra maiuscula */
+  for (i = 0; i <= x; i++) str1[i] = toupper(str1[i]);
+  str1[i] = '\0';
+
+  for (i = 0; i <= y; i++) str2[i] = toupper(str2[i]);
+  str2[i] = '\0';
+ 
+  return strcmp(str1, str2);
+
 }
 
 

@@ -15,18 +15,31 @@
 #include "sk.h"
 
 int main(int argc, char **argv){
+   
+  char temp[TAM_TITULO + 1];
   int ent;
   char option;
+ 
+  /* Ponteiro pra base de dados. */
   FILE *arq;
+
+  /* Variavais de indice primario e sua avail list da base de dados. */
   TIndice *ind;
   ElementoIndice *elem;
-  IndSec *indSk;
-  availList availTitulo = -1;
+  availList availBase = FIM_DE_LISTA;
 
-  char temp[TAM_TITULO + 1]; /* String auxiliar para a leitura das emtradas */
+  /* Variaveis de indice secundario e respectivas avail lists. */
+  IndSec *secTitulo, *secAutor, *secTipo, *secAno;
+  availList availTitulo, availTipo, availAno, availAutor;
+  availTitulo = availTipo = availAno = availAutor = FIM_DE_LISTA;
 
   arq = abreCatalogo(NOME_BASE);
   ind = carregaIndice(arq, ind);
+
+  secTitulo =  geraSk(ind, arq, &availTitulo, TITULO);
+  secTipo =  geraSk(ind, arq, &availTipo, TIPO);
+  secAutor =  geraSk(ind, arq, &availAutor, AUTOR);
+  secAno =  geraSk(ind, arq, &availAno, ANO);
 
   elem = (ElementoIndice *) malloc(sizeof(ElementoIndice));
 
@@ -79,10 +92,6 @@ int main(int argc, char **argv){
       fechaCatalogo(arq);
       gravaIndice(ind);
       free(elem);
-      break;
-    case 5:
-      /*Gera SK, somente para debugarmos*/
-      indSk = geraSk(ind, arq, &availTitulo, TITULO);
       break;
     }
   }

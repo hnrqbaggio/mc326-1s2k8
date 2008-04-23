@@ -111,3 +111,8 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
  * Retorno: O vetor de SKs, realocado ou nao. 
  */
 IndSec * realocaIndSec(IndSec *);
+
+/**
+ *comenta aki porra
+*/
+int compareSk(const void *, const void *);

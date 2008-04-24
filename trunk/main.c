@@ -92,6 +92,10 @@ int main(int argc, char **argv){
       fechaCatalogo(arq);
       gravaIndice(ind);
       free(elem);
+			gravaIndSk(secTitulo, TITULO);
+			gravaIndSk(secTipo, TIPO);
+			gravaIndSk(secAutor, AUTOR);
+			gravaIndSk(secAno, ANO);
       break;
     }
   }

@@ -101,6 +101,17 @@ IndSec * criaSk(TIndice *, FILE *, availList *, const int);
 IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail);
 
 /**
+ * Grava o indice secundário da RAM para o arquivo no final deste, e 
+ * grava também o tamanho do arquivo que sempre esta em disco.
+ * Libera a memoria utilizada nesses e fecha o arquivo de SK.
+ *
+ * Parametros: o vetor de SKs e uma constante que define o tipo da SK
+ *
+ * Retorno: void 
+*/
+void gravaIndSk(IndSec *, const int);
+
+/**
  * Funcao usada para realocar espaco para o vetor da SK caso seja
  * necessario. Ela ira verificar se o numero de elementos eh
  * sufuciente para o espaco alocado para o vetor e reservar mais caso

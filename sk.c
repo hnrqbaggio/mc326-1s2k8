@@ -223,6 +223,51 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
   return indSecun;
 }
 
+void gravaIndSk(IndSec *sec, const int tipoCampo) {
+
+	FILE *fsk;
+	int i = 0, tam;
+	
+	/*Define o tipo de campo e abre o arquivo correspondente*/
+	switch (tipoCampo){
+  case 0: /* Campo a ser lido eh o titulo. */
+    fsk = fopen("titulo.si","r+");
+		tam = TAM_TITULO;
+    break;
+  case 1: /* Campo Tipo */
+    fsk = fopen("tipo.si","r+");
+		tam = TAM_TIPO;
+    break;
+  case 2: /* Campo Autor */
+    fsk = fopen("autor.si","r+");
+		tam = TAM_AUTOR;
+    break;
+  case 3: /* Campo Ano */
+    fsk = fopen("ano.si","r+");
+		tam = TAM_ANO;
+    break;
+	}
+
+	/*Gravo o tamanho da parte que esta no disco*/
+	fseek(fsk, sizeof(int), SEEK_SET);
+	fprintf(fsk, "%d", sec->tamDisco);
+
+	/*Pulo para o fim do arquivo e gravo as SKs*/
+	fseek(fsk, sec->tamDisco * tam, SEEK_CUR);
+	for (i = 0; i < sec->tamanho; i++) {
+    fprintf(fsk, "%d", sec->vetor[i].lenght);  /* grava o tamanho da sk */
+    fprintf(fsk, "%s", sec->vetor[i].key); /* grava a key */
+		fprintf(fsk, "%d", sec->vetor[i].next);/* grava o proximo elemento na lista invertida */
+  }
+
+  /* Libera memoria da estrutura E dos seus campos. */
+  free(sec->vetor);
+  free(sec);
+  fclose(fsk);
+	
+	return;
+}
+
 
 /* Realoca espaco para o vetor caso seja necessario. */
 IndSec * realocaIndSec(IndSec *sec) {
@@ -233,7 +278,9 @@ IndSec * realocaIndSec(IndSec *sec) {
   }
 
   return sec;
+
 }
+
 /* Funcao de comparacao utilizada pela bsearch. */
 int compareSk(const void *a, const void *b) {
   char *str1, *str2;
@@ -256,5 +303,4 @@ int compareSk(const void *a, const void *b) {
   return strcmp(str1, str2);
 
 }
-
 

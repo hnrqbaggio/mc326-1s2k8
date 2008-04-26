@@ -83,7 +83,7 @@ IndSec * carregaSk(FILE *arqSk, availList *avail){
 
 IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo) {
 
-  int i, tam, a = -1, t = 0;
+  int i, tam;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */
   char  campo[201];
   IndSec * secundario = (IndSec *)malloc(sizeof(IndSec)); /* O indice secundario */
@@ -228,24 +228,22 @@ void gravaIndSk(IndSec *sec, const int tipoCampo) {
 
 	FILE *fsk;
 	int i = 0, tam;
+	/*Tamanho da PK gravada no disco*/
+	tam = TAM_TITULO + TAM_NUMERO;
 	
 	/*Define o tipo de campo e abre o arquivo correspondente*/
 	switch (tipoCampo){
   case 0: /* Campo a ser lido eh o titulo. */
     fsk = fopen("titulo.si","r+");
-		tam = TAM_TITULO;
     break;
   case 1: /* Campo Tipo */
     fsk = fopen("tipo.si","r+");
-		tam = TAM_TIPO;
     break;
   case 2: /* Campo Autor */
     fsk = fopen("autor.si","r+");
-		tam = TAM_AUTOR;
     break;
   case 3: /* Campo Ano */
     fsk = fopen("ano.si","r+");
-		tam = TAM_ANO;
     break;
 	}
 

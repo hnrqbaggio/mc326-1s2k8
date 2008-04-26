@@ -66,23 +66,24 @@ IndSec * carregaSk(FILE *arqSk, availList *avail){
   sk->tamanho = 0;
 	
   /*Leitura do tamanho do SK que fica no disco*/
-  fscanf(arqSk, "%d", &(sk->tamDisco));
+  fscanf(arqSk, FORMATO_INT, &(sk->tamDisco));
 
   /*Posiciona o ponteiro do arquivo para o inicio da parte que deve ficar na RAM*/
   fseek(arqSk, sk->tamDisco, SEEK_SET);
 
   /*Enquanto nao chega ao final do arquivo, */
-  while (fscanf(arqSk, "%d", &(sk->vetor[tamSk].lenght)) ){
+  while (fscanf(arqSk, FORMATO_INT, &(sk->vetor[tamSk].lenght)) ){
     fgets(sk->vetor[tamSk].key, sk->vetor[tamSk].lenght, arqSk);
     tamSk++;
-    fscanf(arqSk, "%d", &(sk->vetor[tamSk].next));
+    fscanf(arqSk, FORMATO_INT, &(sk->vetor[tamSk].next));
     sk = realocaIndSec(sk);
   }
   return sk;
 }
 
 IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo) {
-  int i, tam;
+
+  int i, tam, a = -1, t = 0;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */
   char  campo[201];
   IndSec * secundario = (IndSec *)malloc(sizeof(IndSec)); /* O indice secundario */
@@ -118,9 +119,9 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
     fsk = fopen("ano.si","w");
     break;
   }
-  
-  fprintf(fsk, "%d%d", -1, 0); /* Criando o arquivo com os campos do cabecalho zerados. */
 
+  /* Criando o arquivo com os campo do cabecalho zerado. */ 
+  fprintf(fsk, FORMATO_INT, 0);
 
   for (i = 0; i < indPrim->tamanho; i++) {
     offset = indPrim->vetor[i].nrr * TAM_REG;
@@ -152,7 +153,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
        busca binaria no indice. */
     strcpy(sk->key, token);
     sk->next = -1;
-    sk->lenght = strlen(token) + 2*sizeof(int);
+    sk->lenght = strlen(token) + 2*TAM_NUMERO;
 
     result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
 
@@ -188,26 +189,26 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
 
       temp = *avail; /* Pega o inicio da avail list. */
 
-      offset = temp * (TAM_TITULO + sizeof(int)) + 2 * sizeof(int); 
+      offset = temp * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO; 
       fseek(fsk, offset, SEEK_SET); /* Posiciona o cursor pra gravar a nova PK */
       fprintf(fsk, "%s", pk);
-      fscanf(fsk, "%d", avail); /* Pega o proximo elemento da avail list. */
+      fscanf(fsk, FORMATO_INT, avail); /* Pega o proximo elemento da avail list. */
 
       /* Vai inserir o novo elemento na lista da SK. */
-      fseek(fsk, -1*sizeof(int), SEEK_CUR); 
-      fprintf(fsk, "%d", sk->next);
+      fseek(fsk, -1*TAM_NUMERO, SEEK_CUR); 
+      fprintf(fsk, FORMATO_INT, sk->next);
       sk->next = temp;
 
     } else {
       /* Calcula onde termina a parte do indice que fica no disco.
        * tamDisco indica o numero de PKs no disco, o acrescimo do
        * tamanho do int * 2 eh devido ao cabecalho do arquivo. */
-      offset = indSecun->tamDisco * (TAM_TITULO + sizeof(int)) + 2 * sizeof(int);
+      offset = indSecun->tamDisco * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
 
       /* Insere a nova PK no fim da parte em disco. Com o proximo
 	 elemento sendo o primeiro da lista da qual sk eh a cabeca. */
       fprintf(fsk, "%s", pk);
-      fprintf(fsk, "%d", sk->next);
+      fprintf(fsk, FORMATO_INT, sk->next);
       sk->next = indSecun->tamDisco;
 
       (indSecun->tamDisco)++;
@@ -249,15 +250,14 @@ void gravaIndSk(IndSec *sec, const int tipoCampo) {
 	}
 
 	/*Gravo o tamanho da parte que esta no disco*/
-	fseek(fsk, sizeof(int), SEEK_SET);
-	fprintf(fsk, "%d", sec->tamDisco);
+	fprintf(fsk, FORMATO_INT, sec->tamDisco);
 
 	/*Pulo para o fim do arquivo e gravo as SKs*/
 	fseek(fsk, sec->tamDisco * tam, SEEK_CUR);
 	for (i = 0; i < sec->tamanho; i++) {
-    fprintf(fsk, "%d", sec->vetor[i].lenght);  /* grava o tamanho da sk */
+    fprintf(fsk, FORMATO_INT, sec->vetor[i].lenght);  /* grava o tamanho da sk */
     fprintf(fsk, "%s", sec->vetor[i].key); /* grava a key */
-		fprintf(fsk, "%d", sec->vetor[i].next);/* grava o proximo elemento na lista invertida */
+		fprintf(fsk, FORMATO_INT, sec->vetor[i].next);/* grava o proximo elemento na lista invertida */
   }
 
   /* Libera memoria da estrutura E dos seus campos. */
@@ -287,8 +287,8 @@ int compareSk(const void *a, const void *b) {
   int i, x, y;
 
   /* Calculo do tamanho das strings. */
-  x = (*(Sk *)a).lenght - 2 * sizeof(int);
-  y = (*(Sk *)b).lenght - 2 * sizeof(int);
+  x = (*(Sk *)a).lenght - 2 * TAM_NUMERO;
+  y = (*(Sk *)b).lenght - 2 * TAM_NUMERO;
 
   str1 = (*(Sk *)a).key;
   str2 = (*(Sk *)b).key;

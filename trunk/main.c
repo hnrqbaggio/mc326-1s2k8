@@ -33,7 +33,7 @@ int main(int argc, char **argv){
   availList availTitulo, availTipo, availAno, availAutor;
   availTitulo = availTipo = availAno = availAutor = FIM_DE_LISTA;
 
-  arq = abreCatalogo(NOME_BASE);
+  arq = abreCatalogo(ARQ_BASE);
   ind = carregaIndice(arq, ind);
 
   secTitulo =  geraSk(ind, arq, &availTitulo, TITULO);

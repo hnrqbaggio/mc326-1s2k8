@@ -3,6 +3,18 @@
 #include <string.h>
 #include <ctype.h>
 
+/* Nomes dos arquivos de indices secundarios. */
+#define ARQ_IS_TITULO ("titulo.si")
+#define ARQ_IS_TIPO ("tipo.si")
+#define ARQ_IS_AUTOR ("autor.si")
+#define ARQ_IS_ANO ("ano.si")
+
+/* Nomes dos arquivos de avail list. */
+#define ARQ_AVAIL_TITULO ("titulo.av")
+#define ARQ_AVAIL_TIPO ("tipo.av")
+#define ARQ_AVAIL_AUTOR ("autor.av")
+#define ARQ_AVAIL_ANO ("ano.av")
+
 /**
  * Constantes usadas para determinar o tipo do campo para o indice
  */

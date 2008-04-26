@@ -35,7 +35,7 @@ TIndice * carregaIndice(FILE *base, TIndice *indice) {
   int *tam;      /* apontador pro numero de elementos do vetor de
 		    indice. Pra facilitar a leitura do codigo. */
 
-  arq_ind = fopen(NOME_INDICE, "r");
+  arq_ind = fopen(ARQ_PK, "r");
   indice = (TIndice *) malloc(sizeof(TIndice));
   indice->vetor = (ElementoIndice *) malloc(sizeof(ElementoIndice) * VETOR_MIN);
   indice->alocado = VETOR_MIN;
@@ -82,7 +82,7 @@ void gravaIndice(TIndice *indice) {
   FILE *ind;
   int i;
 
-  ind = fopen(NOME_INDICE, "w");
+  ind = fopen(ARQ_PK, "w");
 
   for (i = 0; i < indice->tamanho; i++) {
     fprintf(ind, "%s", indice->vetor[i].pk);  /* grava a chave primaria   */
@@ -107,7 +107,7 @@ void consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
     TObra reg;
     FILE *saida;
 
-    saida = fopen(NOME_HTML, "w");
+    saida = fopen(ARQ_HTML, "w");
 		
     fseek(base, TAM_REG * (temp->nrr), SEEK_SET);
 
@@ -125,7 +125,7 @@ void consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
     if (saida) {
       printf("\n--------------------------------------------------\n");
       printf("Registo encontrado e saida gerada com sucesso.\n");
-      printf("A consulta esta disponivel no arquivo %s.\n", NOME_HTML);
+      printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
       printf("--------------------------------------------------\n");				
     } else {
       printf("\n--------------------\n");
@@ -152,7 +152,7 @@ void listaBase(FILE *base, TIndice *indice) {
   FILE *saida;
   ElementoIndice *temp;
 
-  saida = fopen(NOME_HTML, "w");
+  saida = fopen(ARQ_HTML, "w");
 
   temp = indice->vetor;	
   for (i = 0; i < indice->tamanho; i++) {
@@ -175,7 +175,7 @@ void listaBase(FILE *base, TIndice *indice) {
     }
   }
   printf("\n--------------------------------------------------\n");
-  printf("A consulta esta disponivel no arquivo %s.\n", NOME_HTML);
+  printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
   printf("--------------------------------------------------\n")	;
 
   fclose(saida);

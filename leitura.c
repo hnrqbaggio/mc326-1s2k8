@@ -65,6 +65,8 @@ void insereObra(FILE *arq, TIndice *ind) {
 /* Funcao para a leitura dos campos de texto */
 void leTexto(char *campo, int tamanho, char *msg){
   int valido = 1;
+  int i;
+  char c;
   char temp[TAM_TITULO+4]; /* vetor para pegar a entrada e tamanho titulo + 4 como margem de erro pra leitura */
 
   do {
@@ -73,19 +75,24 @@ void leTexto(char *campo, int tamanho, char *msg){
 
     valido = 1;
     printf(msg);
-    fgets(temp, sizeof(temp), stdin);
+    c = getchar();
 
-    temp[strlen(temp)-1] = '\0'; /* fgets pega '\n' */
+    while (c ==' ') c=getchar();
+    campo[0]=c;
+    for (i=1;i<tamanho;i++){
+      c=getchar();
 
-    if (strlen(temp) >= tamanho) valido = 0; /* entrada mto grande */
+      if (c=='\n') break;
+      campo[i]=c; 
 
-    /* verifica se esta vazia ou se comeca com espaco. */
-    if (temp[0] == '\0' || temp[0] == ' ' ) valido = 0;
+      if ((campo[i-1]==' ') && (campo[i]==' ')) i--;
+
+    }
+
+    campo[i]='\0';
 
   } while (!valido);
-
-  strcpy(campo, temp);
-
+    LimpaBuffer();
 }
 
 /* Funcao para a leitura dos campos que recebem numeros */

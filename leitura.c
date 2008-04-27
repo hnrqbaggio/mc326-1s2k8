@@ -67,7 +67,6 @@ void leTexto(char *campo, int tamanho, char *msg){
   int valido = 1;
   int i;
   char c;
-  char temp[TAM_TITULO+4]; /* vetor para pegar a entrada e tamanho titulo + 4 como margem de erro pra leitura */
 
   do {
     LimpaBuffer();
@@ -75,21 +74,24 @@ void leTexto(char *campo, int tamanho, char *msg){
 
     valido = 1;
     printf(msg);
-    c = getchar();
+    c = getchar();/*pega a primeira string*/
 
-    while (c ==' ') c=getchar();
-    campo[0]=c;
+    while (c ==' ') c=getchar();/*analisa se tem espacos desnecessarios*/
+    campo[0]=c;/*caso nao tenha espacos no comeco ele ja coloca no vetor*/
+    
+    /*le string por sting*/
     for (i=1;i<tamanho;i++){
       c=getchar();
 
-      if (c=='\n') break;
-      campo[i]=c; 
+      if (c=='\n') break;/*para quando acha um \n*/
+      campo[i]=c; /*escreve no vetor*/
 
+      /*se ele le dois espaços juntos ele só faz valer um*/
       if ((campo[i-1]==' ') && (campo[i]==' ')) i--;
 
     }
 
-    campo[i]='\0';
+    campo[i]='\0';/*coloca um \0 no final do vetor*/
 
   } while (!valido);
     LimpaBuffer();

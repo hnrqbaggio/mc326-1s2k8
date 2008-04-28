@@ -13,12 +13,13 @@
 #include "catalogo.h"
 #include "leitura.h"
 #include "sk.h"
+#include "menu.h"
 
 int main(int argc, char **argv){
    
   char temp[TAM_TITULO + 1];
   int ent;
-  char option;
+  int option;
  
   /* Ponteiro pra base de dados. */
   FILE *arq;
@@ -33,9 +34,11 @@ int main(int argc, char **argv){
   availList availTitulo, availTipo, availAno, availAutor;
   availTitulo = availTipo = availAno = availAutor = FIM_DE_LISTA;
 
+	/*Abre a base e o indice primario*/
   arq = abreCatalogo(ARQ_BASE);
   ind = carregaIndice(arq, ind);
 
+	/*Abre os indices secundarios*/
   secTitulo =  geraSk(ind, arq, &availTitulo, TITULO);
   secTipo =  geraSk(ind, arq, &availTipo, TIPO);
   secAutor =  geraSk(ind, arq, &availAutor, AUTOR);
@@ -43,43 +46,49 @@ int main(int argc, char **argv){
 
   elem = (ElementoIndice *) malloc(sizeof(ElementoIndice));
 
-  /*menu do programa*/
+  /*Entrada do programa*/
   printf("|------------------------------------|\n");
   printf("|Catalogo de Obras de Arte - Grupo 24|\n");
   printf("|------------------------------------|\n");
 
+	/*Looping do menu do programa*/
   do {
-    printf("\n******************************\n");
-    printf("* 1 - Inserir nova obra      *\n");
-    printf("* 2 - Buscar obra por titulo *\n");
-    printf("* 3 - Listar todas as obras  *\n");
-    printf("* 4 - Sair                   *\n");
-    printf("* 5 - Gerar SK's             *\n");
-    printf("******************************\n");
-    printf("Entre com umas das opcoes acima: ");
-    scanf("%d", &ent);
+		/*Imprime o menu principal e le a entrada do usuario*/
+		ent = geraMenu(&ent);
 		
-    switch (ent) {
-    case 1:
+		switch (ent) {
+    case 1:/*Inserir nova obra*/
       /*Funcionalidades do TP1*/
       insereObra(arq, ind);
       break;
 
     case 2:
-      do { 
-	/* Leitura do nome a ser procurado. Completa com espaços o nome
-	   para ter o mesmo tamanho que o nome gravado na base.dat*/
-	leTexto(temp, sizeof(temp), "Digite o nome da obra: ");
-	preencher(temp, sizeof(temp));
-
-	strcpy(elem->pk, temp);
-	elem->nrr = -1; /* apenas para inicializar. */
-
-	/*Busca o nrr do pk e mostra no html*/
-	consulta(elem, arq, ind);
-	printf("\nDeseja fazer uma nova consulta? [s/n]: ");	    
-      } while (scanf("%c", &option) == 1 && option != 'n');
-
+      do {
+				/*Imprime o menu de busca*/
+				option = geraMenuBusca(&option);
+				
+				switch (option) {
+				/*Aqui o codigo de busca multipla*/
+					case 1:/*Busca pelo titulo*/
+						break;
+						
+					case 2:/*Busca pelo tipo*/
+						break;
+						
+					case 3:/*Busca pelo autor*/
+						break;
+						
+					case 4:/*Busca por ano*/
+						break;
+						
+					case 0:/*Menu anterior*/
+						break;
+						
+					default:
+						printf("\n*** Opcao invalida *** \n");
+						break;
+				}
+      } while (option != 0);
       break;
 
     case 3:
@@ -87,7 +96,7 @@ int main(int argc, char **argv){
       listaBase(arq, ind);
       break;
 
-    case 4:
+    case 0:
       /*fecha todos os arquivos abertos e libera memoria para sair do programa*/
       fechaCatalogo(arq);
       gravaIndice(ind);
@@ -97,9 +106,13 @@ int main(int argc, char **argv){
 			gravaIndSk(secAutor, AUTOR);
 			gravaIndSk(secAno, ANO);
       break;
+			
+		default:
+			printf("\n*** Opcao invalida *** \n");
+			break;	
     }
   }
-  while (ent != 4); 
+  while (ent != 0); 
 
   return 0;
 }

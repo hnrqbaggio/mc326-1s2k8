@@ -30,7 +30,7 @@ void insereObra(FILE *arq, TIndice *ind) {
 
 	/*Campos com numeros*/
 	leNumeros(obra.ano, sizeof(obra.ano), "Ano de Publicacao (ate 4 digitos): ");
-	leNumeros(obra.valor, sizeof(obra.valor), "Valor (ate 12 digitos): ");
+ 	leNumeros(obra.valor, sizeof(obra.valor), "Valor (ate 12 digitos): ");
 
 	/*Campo Imagem*/
 	leImagem(obra.imagem, sizeof(obra.imagem),"Identificador da Imagem (6 digitos + extensao): " );

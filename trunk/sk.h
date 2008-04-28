@@ -1,3 +1,6 @@
+#ifndef _SK_H
+#define _SK_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -139,3 +142,5 @@ IndSec * realocaIndSec(IndSec *);
  *comenta aki porra
 */
 int compareSk(const void *, const void *);
+
+#endif

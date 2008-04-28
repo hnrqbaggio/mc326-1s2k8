@@ -1,3 +1,6 @@
+#ifndef _LEITURA_H
+#define _LEITURA_H
+
 #include <stdio.h>
 #include <stdio_ext.h>
 #include <string.h>
@@ -54,3 +57,5 @@ void leImagem(char *, int, char *);
  * tamanho dos campos fixos quando forem salvos na base.
  */
 void preencher(char *, int);
+
+#endif

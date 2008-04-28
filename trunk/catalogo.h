@@ -1,3 +1,6 @@
+#ifndef _CATALOGO_H
+#define _CATALOGO_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -156,3 +159,5 @@ int compare(const void *a, const void *b);
  * seja necessario. 
  */
 TIndice * realocaIndice(TIndice *ind);
+
+#endif

@@ -7,7 +7,6 @@ carrega parte de estrutura pra memoria e deixa a outra no disco.
  Caso nao exista o indice, ele ira constri-lo a partir da base de
  dados.*/
 
-/*Tetando fazer funfa pra comecar a debugar*/
 IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo){
 
   /*IndSec *indSk;*/
@@ -56,29 +55,37 @@ IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
   disco */
 IndSec * carregaSk(FILE *arqSk, availList *avail){
   /*Declaracao de variaveis*/
-  IndSec *sk;
+  IndSec *indSk;
   int tamSk = 0;
-	
+	Sk * sk = (Sk *) malloc(sizeof(Sk));
+
   /*Inicializando o vetor de SKs*/
-  sk = (IndSec *)malloc(sizeof(IndSec)); 
-  sk->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
-  sk->alocado = VETOR_MIN;
-  sk->tamanho = 0;
+	indSk = (IndSec *)malloc(sizeof(IndSec)); 
+	indSk->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
+	indSk->alocado = VETOR_MIN;
+	indSk->tamanho = 0;
 	
   /*Leitura do tamanho do SK que fica no disco*/
-  fscanf(arqSk, FORMATO_INT, &(sk->tamDisco));
+	fscanf(arqSk, FORMATO_INT, &(indSk->tamDisco));
 
   /*Posiciona o ponteiro do arquivo para o inicio da parte que deve ficar na RAM*/
-  fseek(arqSk, sk->tamDisco, SEEK_SET);
+	fseek(arqSk, indSk->tamDisco * (TAM_TITULO + TAM_NUMERO), SEEK_CUR);
 
-  /*Enquanto nao chega ao final do arquivo, */
-  while (fscanf(arqSk, FORMATO_INT, &(sk->vetor[tamSk].lenght)) ){
-    fgets(sk->vetor[tamSk].key, sk->vetor[tamSk].lenght, arqSk);
-    tamSk++;
-    fscanf(arqSk, FORMATO_INT, &(sk->vetor[tamSk].next));
-    sk = realocaIndSec(sk);
+  /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
+  while (fscanf(arqSk, FORMATO_INT, &(sk->lenght)) != EOF){
+    fgets(sk->key, 1 + sk->lenght, arqSk);
+    fscanf(arqSk, FORMATO_INT, &(sk->next));
+		
+		/*Gravo no vetor de Sk e atualizo o tamanho deste*/
+		strcpy(indSk->vetor[tamSk].key, sk->key);
+		indSk->vetor[tamSk].next = sk->next;
+		indSk->vetor[tamSk].lenght = sk->lenght;
+		tamSk++;
+		indSk->tamanho = tamSk;
+		/*Verifica se precisa ser realocado memoria*/
+		indSk = realocaIndSec(indSk);	
   }
-  return sk;
+	return indSk;
 }
 
 IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo) {
@@ -153,7 +160,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
        busca binaria no indice. */
     strcpy(sk->key, token);
     sk->next = -1;
-    sk->lenght = strlen(token) + 2*TAM_NUMERO;
+    sk->lenght = strlen(token);
 
     result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
 
@@ -285,8 +292,8 @@ int compareSk(const void *a, const void *b) {
   int i, x, y;
 
   /* Calculo do tamanho das strings. */
-  x = (*(Sk *)a).lenght - 2 * TAM_NUMERO;
-  y = (*(Sk *)b).lenght - 2 * TAM_NUMERO;
+  x = (*(Sk *)a).lenght;
+  y = (*(Sk *)b).lenght;
 
   str1 = (*(Sk *)a).key;
   str2 = (*(Sk *)b).key;

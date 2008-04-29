@@ -209,11 +209,12 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
     } else {
       /* Calcula onde termina a parte do indice que fica no disco.
        * tamDisco indica o numero de PKs no disco, o acrescimo do
-       * tamanho do int * 2 eh devido ao cabecalho do arquivo. */
+       * tamanho numero eh devido ao cabecalho do arquivo. */
       offset = indSecun->tamDisco * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
 
       /* Insere a nova PK no fim da parte em disco. Com o proximo
 	 elemento sendo o primeiro da lista da qual sk eh a cabeca. */
+			fseek(fsk, offset, SEEK_SET); 
       fprintf(fsk, "%s", pk);
       fprintf(fsk, FORMATO_INT, sk->next);
       sk->next = indSecun->tamDisco;
@@ -281,7 +282,6 @@ IndSec * realocaIndSec(IndSec *sec) {
     sec->alocado *= 2;
     sec->vetor = (Sk *) realloc(sec->vetor, sizeof(Sk) * sec->alocado);
   }
-
   return sec;
 
 }

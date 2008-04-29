@@ -21,6 +21,14 @@
 
 /*** Funcoes de leitura das entradas do usuario ***/
 /* 
+ * Funcao responsavel pela leitura e tratamento da entrada do usuario.
+ * Recebe o indice primario para verificar se a obra ja existe e atualizar este.
+ * Retorna a obra a ser inserida na base.
+ */
+TObra * leObra(TIndice *, TObra *);
+
+/*** Funcoes de leitura das entradas do usuario ***/
+/* 
  * Essa funcao principal para insercao de uma nova obra. Utiliza
  * funcoes auxiliares que tratam tipos diferentes de dados e possiveis
  * entradas invalidas. Ao final de uma entrada do usuario, ele grava

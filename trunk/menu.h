@@ -6,7 +6,7 @@
   * inserir, buscar, mostrar todas as obras, sair.
   * O retorno é a opcao escolhinda
 */
-int geraMenu (int *);
+int geraMenu ();
 
 /**
   * Funcao que gera menu de busca para que usuario escolha o tipo de busca a ser realizada:
@@ -14,4 +14,4 @@ int geraMenu (int *);
   * A opcao de remocao sera dada ao usuario apos ele consultar uma obra do catalogo.
   * O retorno é a opcao escolhinda
 */
-int geraMenuBusca (int *);
+int geraMenuBusca ();

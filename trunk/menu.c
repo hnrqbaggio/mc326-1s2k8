@@ -1,7 +1,8 @@
 #include "menu.h"
 
-int geraMenu(int *ent) {
-		
+int geraMenu() {
+	
+	int ent;
 
   printf("\n******************************\n");
   printf("* 1 - Inserir nova obra      *\n");
@@ -10,12 +11,14 @@ int geraMenu(int *ent) {
 	printf("* 0 - Sair                   *\n");
 	printf("******************************\n");
 	printf("Entre com umas das opcoes acima: ");
-	scanf("%d", ent);
+	scanf("%d", &ent);
 	
-	return *ent;
+	return ent;
 }
 
-int geraMenuBusca(int *ent) {
+int geraMenuBusca() {
+	
+	int ent;
 	
 	printf("\n\n******************************\n");
 	printf("*   1 - Buscar pelo titulo      *\n");
@@ -25,7 +28,7 @@ int geraMenuBusca(int *ent) {
 	printf("*   0 - Voltar ao menu anterior *\n");
 	printf("******************************\n");
 	printf("Entre com umas das opcoes acima: ");
-	scanf("%d", ent);
+	scanf("%d", &ent);
 	
-	return *ent;
+	return ent;
 }

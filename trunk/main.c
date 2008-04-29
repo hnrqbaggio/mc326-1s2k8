@@ -16,13 +16,15 @@
 #include "menu.h"
 
 int main(int argc, char **argv){
-   
-  char temp[TAM_TITULO + 1];
+
   int ent;
   int option;
+	TObra obra, obra2;
  
   /* Ponteiro pra base de dados. */
   FILE *arq;
+	/* Ponteiro utilizado para abrir os arquivos de indice secundario*/
+	FILE *fsk;
 
   /* Variavais de indice primario e sua avail list da base de dados. */
   TIndice *ind;
@@ -54,18 +56,24 @@ int main(int argc, char **argv){
 	/*Looping do menu do programa*/
   do {
 		/*Imprime o menu principal e le a entrada do usuario*/
-		ent = geraMenu(&ent);
+		ent = geraMenu();
 		
 		switch (ent) {
     case 1:/*Inserir nova obra*/
-      /*Funcionalidades do TP1*/
-      insereObra(arq, ind);
+      /*leitura da obra a ser inserida e gravacao no indice primario*/
+      obra = *(leObra(ind, &obra));
+			/*Insercao nos indices secundarios*/
+			/*titulo*/
+			fsk = fopen(ARQ_IS_TITULO,"r+");
+			strcpy(obra2.titulo, obra.titulo);
+			secTitulo = insereSk(secTitulo, fsk, obra2.titulo, obra.titulo, &availTitulo);
+			fclose(fsk);
       break;
 
     case 2:
       do {
 				/*Imprime o menu de busca*/
-				option = geraMenuBusca(&option);
+				option = geraMenuBusca();
 				
 				switch (option) {
 				/*Aqui o codigo de busca multipla*/

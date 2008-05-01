@@ -1,15 +1,25 @@
 #include "avail.h"
 
-int opcl_avail(FILE* avail){
+int openAvail(const char *nomeArqAvail){
   int leitura;
+  FILE *fav;
 
-  /* Se o arquivo nao existe eu abro um novo */
-  if(avail == NULL) fopen(avail, r+);
+  fav = fopen(nomeArqAvail, "r");
 
-  else fclose (avail);
+  if (fav) {
+    fscanf(fav, FORMATO_INT, &leitura);
+    fclose(fav);
+  } else { /* Sem arquivo eh lista vazia. */
+    leitura = -1;
+  }
 
-  fscanf(avail,"%d", &leitura);
-
-    fclose(avail);
   return leitura;
+}
+
+void gravaAvail(availList avail, const char *nomeArq) {
+  FILE *fav;
+
+  fav = fopen(nomeArq, "w"); /* Sobrescreve o arq antigo. */
+  fprintf(fav, FORMATO_INT, avail);
+  fclose(fav);
 }

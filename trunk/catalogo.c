@@ -4,7 +4,7 @@
 /* Funcao que abre o arquivo com as obras e amazena num ponterio. */
 FILE * abreCatalogo(char *nome) {
   FILE *arq;
-  arq = fopen(nome, "a+");
+  arq = fopen(nome, "r+");
 
   if (!arq) exit(0); /* erro na abertura do arquivo. */
 

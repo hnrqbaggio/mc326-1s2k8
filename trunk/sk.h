@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "catalogo.h"
 
 /* Nomes dos arquivos de indices secundarios. */
 #define ARQ_IS_TITULO ("titulo.si")

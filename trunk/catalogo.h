@@ -16,9 +16,9 @@
 #define TAM_REG (TAM_TITULO+TAM_TIPO+TAM_AUTOR+TAM_ANO+TAM_VALOR+TAM_IMAGEM)
 
 /* Defines para os nomes dos arquivos.*/
-#define ARQ_BASE ("base24.dat")       /* Base de dados */
-#define ARQ_HTML ("base24.html")      /* Html para saida dos resultados de busca */
-#define ARQ_PK ("indice.dat")         /* Arquivo que contem os registros do indice primario */
+#define ARQ_BASE ("/tmp/base00.dat")       /* Base de dados */
+#define ARQ_HTML ("/tmp/base24.html")      /* Html para saida dos resultados de busca */
+#define ARQ_PK ("indice.pi")         /* Arquivo que contem os registros do indice primario */
 #define ARQ_AVAIL_BASE ("base24.av")  /* Avail list da base de dados */
 
 /* 

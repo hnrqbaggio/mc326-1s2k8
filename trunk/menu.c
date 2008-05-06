@@ -8,6 +8,7 @@ int geraMenu() {
   printf("* 1 - Inserir nova obra      *\n");
 	printf("* 2 - Buscar obra            *\n");
 	printf("* 3 - Listar todas as obras  *\n");
+	printf("* 4 - Remover registro       *\n");
 	printf("* 0 - Sair                   *\n");
 	printf("******************************\n");
 	printf("Entre com umas das opcoes acima: ");

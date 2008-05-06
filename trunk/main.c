@@ -118,6 +118,11 @@ int main(int argc, char **argv){
 
       consultaObra = consulta(elem, arq, ind);
       ind = removePk(elem->pk, ind, arq, &availBase);
+      /*Remove todas as Sks */
+      secTitulo = removeSk(obra.titulo, secTitulo, elem->pk, TITULO, availTitulo);
+      secAutor = removeSk(obra.autor, secAutor, elem->pk, AUTOR, availAutor);
+      secTipo = removeSk(obra.tipo, secTipo, elem->pk, TIPO, availTipo);
+      secAno = removeSk(obra.ano, secAno, elem->pk, ANO, availAno);
 
       break;
 

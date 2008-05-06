@@ -45,8 +45,6 @@ TObra * leObra (TIndice *ind, TObra *obra) {
 
 		/* atualizacao do indice */	
 		ind->vetor[ind->tamanho-1] = *chave;
-		/*Ordenando o vetor*/
-		ordenaIndice(ind);
 	}
 	
 	return obra;
@@ -93,7 +91,7 @@ void insereObra(FILE *arq, TIndice *ind) {
 	preencher(obra.valor, sizeof(obra.valor));
 
 	/*grava os dados no arquivo texto*/
-	gravaObra(obra, arq);
+	/*gravaObra(obra, arq);*/
 
 	/* verifica se o indice precisa de mais espaco. */
 	(ind->tamanho)++;

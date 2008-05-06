@@ -58,11 +58,6 @@ typedef struct _vetorsk{
   int tamDisco;
 } IndSec;
 
-/**
- * Este inteiro será usado para representar a cabeca de uma avail
- * list, que sera um alista invertida de posicoes livres no disco.
- */
-typedef int availList;
 
 /**
  * Constroi um indice secundario.  Se existe o arquivo de indice, ele

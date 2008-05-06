@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
+
 /* Definicoes de tamanhos de campos e do tamanho do registro */
 #define TAM_TITULO 200
 #define TAM_TIPO 100
@@ -81,6 +82,12 @@ typedef struct struct_vet {
   int alocado;
 } TIndice;
 
+/**
+ * Este inteiro será usado para representar a cabeca de uma avail
+ * list, que sera um alista invertida de posicoes livres no disco.
+ */
+typedef int availList;
+
 /*** Funcoes de manipulacao da base de dados ***/
 
 /* 
@@ -95,17 +102,19 @@ void fechaCatalogo(FILE *);
 
 /* 
  * Grava uma obra na base de dados. Os parametros sao a obra e o
- * ponteiro pro arquivo da base.
+ * ponteiro pro arquivo da base e a avail list da base.
+ * Retorna o nrr da obra inserida.
  */
-void gravaObra(TObra, FILE *);
+int gravaObra(TObra, FILE *, availList *);
 
 
 /*** Funcoes de manipulacao do indice ***/
 /* Carrega o indice do arquivo para a memoria. Cria o indice caso o
  * arquivo nao exista. Recebe como parametro o apontador pra base de
- * dados 
+ * dados e a availlist da base pois caso ela seja vazia, apontamos
+ * ela para o final do arquivo, para facilitar a insercao.
  */
-TIndice * carregaIndice(FILE *, TIndice *);
+TIndice * carregaIndice(FILE *, TIndice *, availList *);
 
 /* Realiza a ordenacao do indice passado como parametro. */
 void ordenaIndice(TIndice *);

@@ -121,6 +121,13 @@ int main(int argc, char **argv){
 	case 4:/*Busca por ano*/
 	  break;
 						
+  case 5:/*Busca por PK*/
+    leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
+    preencher(elem->pk, sizeof(elem->pk));
+    elem->nrr = -1;
+
+    consulta(elem, arq, ind, &consultaObra);
+    break; 
 	case 0:/*Menu anterior*/
 	  break;
 						

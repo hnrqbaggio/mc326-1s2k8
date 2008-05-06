@@ -103,7 +103,8 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
   secundario->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
   secundario->alocado = VETOR_MIN;
   secundario->tamanho = 0;
-
+  secundario->tamDisco = 0;
+  
   switch (tipoCampo){
   case 0: /* Campo a ser lido eh o titulo. */
     tam = TAM_TITULO;

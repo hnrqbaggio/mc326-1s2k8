@@ -97,7 +97,7 @@ int main(int argc, char **argv){
       /*Grava a obra inserida na base de dados*/
       end = gravaObra(obra2, arq, &availBase);
       /*Atualizo o nrr na pk*/
-      ind->vetor[ind->tamanho].nrr = end;
+      ind->vetor[ind->tamanho-1].nrr = end;
       /*Ordeno o indice*/
       ordenaIndice(ind);
       break;

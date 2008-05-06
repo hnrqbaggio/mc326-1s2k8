@@ -26,7 +26,8 @@ int geraMenuBusca() {
 	printf("*   2 - Buscar pelo tipo        *\n");
 	printf("*   3 - Buscar pelo autor       *\n");
 	printf("*   4 - Buscar pelo ano         *\n");
-	printf("*   0 - Voltar ao menu anterior *\n");
+  printf("*   5 - Buscar pela PK da obra  *\n");
+  printf("*   0 - Voltar ao menu anterior *\n");
 	printf("******************************\n");
 	printf("Entre com umas das opcoes acima: ");
 	scanf("%d", &ent);

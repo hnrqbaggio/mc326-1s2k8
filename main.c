@@ -19,7 +19,7 @@
 
 int main(int argc, char **argv){
 
-  int ent, option;
+  int ent, option, end;
   TObra obra, obra2, consultaObra;
   char temp[TAM_TITULO];
  
@@ -37,10 +37,10 @@ int main(int argc, char **argv){
   IndSec *secTitulo, *secAutor, *secTipo, *secAno;
   availList availTitulo, availTipo, availAno, availAutor;
 
-  /*Abre a base e o indice primario*/
-  arq = abreCatalogo(ARQ_BASE);
-  ind = carregaIndice(arq, ind);
+  /*Abre a availList da base, a base e o indice primario*/
   availBase = openAvail(ARQ_AVAIL_BASE);
+  arq = abreCatalogo(ARQ_BASE);
+  ind = carregaIndice(arq, ind, &availBase);
 
   /*Abre os indices secundarios*/
   secTitulo =  geraSk(ind, arq, &availTitulo, TITULO);
@@ -76,6 +76,30 @@ int main(int argc, char **argv){
       strcpy(obra2.titulo, obra.titulo);
       secTitulo = insereSk(secTitulo, fsk, obra2.titulo, obra.titulo, &availTitulo);
       fclose(fsk);
+      /*tipo*/
+      fsk = fopen(ARQ_IS_TIPO,"r+");
+      strcpy(obra2.tipo, obra.tipo);
+      secTipo = insereSk(secTipo, fsk, obra2.titulo, obra.tipo, &availTipo);
+      fclose(fsk);
+      /*autor*/
+      fsk = fopen(ARQ_IS_AUTOR,"r+");
+      strcpy(obra2.autor, obra.autor);
+      secAutor = insereSk(secAutor, fsk, obra2.titulo, obra.autor, &availAutor);
+      fclose(fsk);
+      /*ano*/
+      fsk = fopen(ARQ_IS_ANO,"r+");
+      strcpy(obra2.ano, obra.ano);
+      secAno = insereSk(secAno, fsk, obra2.titulo, obra.ano, &availAno);
+      fclose(fsk);
+      /*Copia os parametros que faltam para gravar*/
+      strcpy(obra2.valor, obra.valor);
+      strcpy(obra2.imagem, obra.imagem);
+      /*Grava a obra inserida na base de dados*/
+      end = gravaObra(obra2, arq, &availBase);
+      /*Atualizo o nrr na pk*/
+      ind->vetor[ind->tamanho].nrr = end;
+      /*Ordeno o indice*/
+      ordenaIndice(ind);
       break;
 
     case 2:

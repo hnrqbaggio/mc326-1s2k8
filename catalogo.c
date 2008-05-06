@@ -17,19 +17,44 @@ void fechaCatalogo(FILE *arq) {
 }
 
 /* Esta funcao grava os dados da obra no arquivo .dat ela recebe como
- * parametros a struct TObra e o arquivo de saida. */
-void gravaObra(TObra obra, FILE *arq){
-  fprintf(arq, "%s", obra.titulo);
-  fprintf(arq, "%s", obra.tipo);
-  fprintf(arq, "%s", obra.autor);
-  fprintf(arq, "%s", obra.ano);
-  fprintf(arq, "%s", obra.valor);
-  fprintf(arq, "%s", obra.imagem);
+ * parametros a struct TObra e o arquivo de saida e a avail da base de dados.
+ * Retorna o endereco da obra inserida.
+*/
+int gravaObra(TObra obra, FILE *arq, availList *avail){
+  
+  int end, prox = 0;
+  
+  /*Pega o valor da avail, e percorre a base com fseek para inserir na posicao.*/
+  fseek(arq, (*avail*(int)TAM_REG), SEEK_SET);
+  /*Se for o final do arquivo, atualizo a avail com +1*/
+  if(fscanf(arq, FORMATO_INT, &prox) == EOF) {
+    end = *avail;
+    *avail = *avail + 1;
+    fprintf(arq, "%s", obra.titulo);
+    fprintf(arq, "%s", obra.tipo);
+    fprintf(arq, "%s", obra.autor);
+    fprintf(arq, "%s", obra.ano);
+    fprintf(arq, "%s", obra.valor);
+    fprintf(arq, "%s", obra.imagem);
+    return end;
+  } else { /*Caso nao e final da base */
+    end = *avail;
+    *avail = prox;
+    /*Volta para sobrescrever o antigo next da avail*/
+    fseek(arq, -TAM_NUMERO, SEEK_CUR);
+    fprintf(arq, "%s", obra.titulo);
+    fprintf(arq, "%s", obra.tipo);
+    fprintf(arq, "%s", obra.autor);
+    fprintf(arq, "%s", obra.ano);
+    fprintf(arq, "%s", obra.valor);
+    fprintf(arq, "%s", obra.imagem);
+    return end;
+  }
 }
 
 /*** Funcoes de manipulacao do indice primario. ***/
 /* funcao que carrega o indice do arquivo ou monta-o a partir da base */
-TIndice * carregaIndice(FILE *base, TIndice *indice) {
+TIndice * carregaIndice(FILE *base, TIndice *indice, availList *avail) {
   FILE *arq_ind; /* arquivo onde estao os indices, caso exista */
   int offset;
   int *tam;      /* apontador pro numero de elementos do vetor de
@@ -68,7 +93,10 @@ TIndice * carregaIndice(FILE *base, TIndice *indice) {
     /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
     qsort(indice->vetor, *tam, sizeof(ElementoIndice), compare);
   }
-
+  /*Caso a availList da base seja vazia, aponta ela para o final do arquivo*/
+  if(*avail == -1) {
+    *avail = indice->tamanho;
+  }
   return indice;
 }
 

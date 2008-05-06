@@ -16,6 +16,6 @@ TIndice * removePk(char *, TIndice *, FILE *, availList *);
 
 /* Funcao q remove uma entrada de um indice secundario.
 * Parametros: uma string com a SK, um ponteiro pro indice secundario, outro pro arquivo de indice, e um pra avail list. */
-IndSec * removeSk(char *, IndSec *, FILE *, availList *);
+IndSec * removeSk(char *, IndSec *, char *, const int, availList *);
 
 #endif

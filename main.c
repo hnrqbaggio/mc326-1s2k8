@@ -148,25 +148,27 @@ int main(int argc, char **argv){
       preencher(elem->pk, sizeof(elem->pk));
       elem->nrr = -1;
 
-      consulta(elem, arq, ind, &consultaObra);
-      ind = removePk(elem->pk, ind, arq, &availBase);
+      /*Faz a pesquisa da pk e mostra no html*/
+      if(consulta(elem, arq, ind, &consultaObra) == 1) {
+        /*Somente se consulta retornou verdadeiro*/
+        ind = removePk(elem->pk, ind, arq, &availBase);
 
-      /*Remove todas as Sks */
-      strcpy(temp, consultaObra.titulo);
-      secTitulo = removeSk(temp, secTitulo, elem->pk, TITULO, &availTitulo);
+        /*Remove todas as Sks */
+        strcpy(temp, consultaObra.titulo);
+        secTitulo = removeSk(temp, secTitulo, elem->pk, TITULO, &availTitulo);
 
-      strcpy(temp, consultaObra.tipo);
-      secTipo = removeSk(temp, secTipo, elem->pk, TIPO, &availTipo);
+        strcpy(temp, consultaObra.tipo);
+        secTipo = removeSk(temp, secTipo, elem->pk, TIPO, &availTipo);
 
-      strcpy(temp, consultaObra.autor);
-      secAutor = removeSk(temp, secAutor, elem->pk, AUTOR, &availAutor);
+        strcpy(temp, consultaObra.autor);
+        secAutor = removeSk(temp, secAutor, elem->pk, AUTOR, &availAutor);
 
-      strcpy(temp, consultaObra.ano);
-      secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
-
+        strcpy(temp, consultaObra.ano);
+        secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
+      }
       break;
 
-    case 0:
+    case 0:/*Sair do programa*/
       /*fecha todos os arquivos abertos e libera memoria para sair do programa*/
       fechaCatalogo(arq);
       gravaIndice(ind);
@@ -186,7 +188,7 @@ int main(int argc, char **argv){
 
       free(elem);
       break;
-			
+	
     default:
       printf("\n*** Opcao invalida *** \n");
       break;	

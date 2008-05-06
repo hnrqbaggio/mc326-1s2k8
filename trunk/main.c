@@ -20,7 +20,8 @@
 int main(int argc, char **argv){
 
   int ent, option;
-  TObra obra, obra2, *consultaObra;
+  TObra obra, obra2, consultaObra;
+  char temp[TAM_TITULO];
  
   /* Ponteiro pra base de dados. */
   FILE *arq;
@@ -116,13 +117,21 @@ int main(int argc, char **argv){
       preencher(elem->pk, sizeof(elem->pk));
       elem->nrr = -1;
 
-      consultaObra = consulta(elem, arq, ind);
+      consulta(elem, arq, ind, &consultaObra);
       ind = removePk(elem->pk, ind, arq, &availBase);
+
       /*Remove todas as Sks */
-      secTitulo = removeSk(obra.titulo, secTitulo, elem->pk, TITULO, availTitulo);
-      secAutor = removeSk(obra.autor, secAutor, elem->pk, AUTOR, availAutor);
-      secTipo = removeSk(obra.tipo, secTipo, elem->pk, TIPO, availTipo);
-      secAno = removeSk(obra.ano, secAno, elem->pk, ANO, availAno);
+      strcpy(temp, consultaObra.titulo);
+      secTitulo = removeSk(temp, secTitulo, elem->pk, TITULO, &availTitulo);
+
+      strcpy(temp, consultaObra.tipo);
+      secTipo = removeSk(temp, secTipo, elem->pk, TIPO, &availTipo);
+
+      strcpy(temp, consultaObra.autor);
+      secAutor = removeSk(temp, secAutor, elem->pk, AUTOR, &availAutor);
+
+      strcpy(temp, consultaObra.ano);
+      secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
 
       break;
 

@@ -126,9 +126,10 @@ void gravaIndice(TIndice *);
  * Realiza uma consulta na base usando a chave primaria. Seus
  * parametros sao o elemento do indice, o ponteiro para a base de
  * dados, e um ponteiro para a estrutura que contem o vetor do
- * indice. Os resultados sao passados pra funcao que gera o HTML. 
+ * indice. Os resultados sao passados pra funcao que gera o HTML.
+ * Retorna 0 caso ao encontre a obra e 1 caso encontre. 
  */
-void consulta(ElementoIndice *, FILE *, TIndice *, TObra *);
+int consulta(ElementoIndice *, FILE *, TIndice *, TObra *);
 
 /* 
  * Lista todos os registros da base de dados. Ela percorre o vetor do

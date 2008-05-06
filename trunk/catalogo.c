@@ -126,9 +126,10 @@ void gravaIndice(TIndice *indice) {
 
 /* Consulta de uma obra na base. 
    Chave já vem preenchido. */
-void consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
+int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
   ElementoIndice *temp;
-
+  int retorno;
+  
   temp = (ElementoIndice *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(ElementoIndice), compare);
 
   if (temp) { /* registro encontrado */
@@ -136,7 +137,7 @@ void consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
     FILE *saida;
 
     saida = fopen(ARQ_HTML, "w");
-		
+    retorno = 1;/*Encontrou PK. Consulta retorna 1*/
     fseek(base, TAM_REG * (temp->nrr), SEEK_SET);
 
     /* leitura do registro */
@@ -165,13 +166,14 @@ void consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
 
   /* return reg; */
 		
-  } else {
+  } else {/*Registro nao encontrado*/
+    retorno = 0;
     printf("\n-----------------------\n");
     printf("Registo não encontrado.\n");
     printf("-----------------------\n");
   }
 
-  return;
+  return retorno;
 }
 
 /* 

@@ -20,7 +20,7 @@
 int main(int argc, char **argv){
 
   int ent, option;
-  TObra obra, obra2;
+  TObra obra, obra2, *consultaObra;
  
   /* Ponteiro pra base de dados. */
   FILE *arq;
@@ -116,7 +116,7 @@ int main(int argc, char **argv){
       preencher(elem->pk, sizeof(elem->pk));
       elem->nrr = -1;
 
-      consulta(elem, arq, ind);
+      consultaObra = consulta(elem, arq, ind);
       ind = removePk(elem->pk, ind, arq, &availBase);
 
       break;

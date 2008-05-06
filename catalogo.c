@@ -98,13 +98,13 @@ void gravaIndice(TIndice *indice) {
 
 /* Consulta de uma obra na base. 
    Chave já vem preenchido. */
-void consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
+TObra * consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
   ElementoIndice *temp;
 
   temp = (ElementoIndice *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(ElementoIndice), compare);
 
   if (temp) { /* registro encontrado */
-    TObra reg;
+    TObra * reg = (TObra *) malloc(sizeof(TObra));
     FILE *saida;
 
     saida = fopen(ARQ_HTML, "w");
@@ -112,15 +112,15 @@ void consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
     fseek(base, TAM_REG * (temp->nrr), SEEK_SET);
 
     /* leitura do registro */
-    fgets(reg.titulo, TAM_TITULO + 1, base);
-    fgets(reg.tipo, TAM_TIPO + 1, base);
-    fgets(reg.autor, TAM_AUTOR + 1, base); 
-    fgets(reg.ano, TAM_ANO + 1, base);
-    fgets(reg.valor, TAM_VALOR + 1, base);
-    fgets(reg.imagem, TAM_IMAGEM + 1, base);
+    fgets(reg->titulo, TAM_TITULO + 1, base);
+    fgets(reg->tipo, TAM_TIPO + 1, base);
+    fgets(reg->autor, TAM_AUTOR + 1, base); 
+    fgets(reg->ano, TAM_ANO + 1, base);
+    fgets(reg->valor, TAM_VALOR + 1, base);
+    fgets(reg->imagem, TAM_IMAGEM + 1, base);
 
     /* passagem do resultado pra função que gera a saida em html */
-    saida = geraHtml(reg, saida, ALL);
+    saida = geraHtml(*reg, saida, ALL);
 
     if (saida) {
       printf("\n--------------------------------------------------\n");
@@ -134,12 +134,16 @@ void consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
     }
 		
     fclose(saida);
+
+  return reg;
 		
   } else {
     printf("\n-----------------------\n");
     printf("Registo não encontrado.\n");
     printf("-----------------------\n");
   }
+
+  return NULL;
 }
 
 /* 

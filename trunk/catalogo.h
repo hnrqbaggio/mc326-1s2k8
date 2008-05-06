@@ -119,7 +119,7 @@ void gravaIndice(TIndice *);
  * dados, e um ponteiro para a estrutura que contem o vetor do
  * indice. Os resultados sao passados pra funcao que gera o HTML. 
  */
-TObra * consulta(ElementoIndice *, FILE *, TIndice *);
+void consulta(ElementoIndice *, FILE *, TIndice *, TObra *);
 
 /* 
  * Lista todos os registros da base de dados. Ela percorre o vetor do

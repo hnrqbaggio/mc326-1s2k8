@@ -98,13 +98,13 @@ void gravaIndice(TIndice *indice) {
 
 /* Consulta de uma obra na base. 
    Chave já vem preenchido. */
-TObra * consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
+void consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
   ElementoIndice *temp;
 
   temp = (ElementoIndice *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(ElementoIndice), compare);
 
   if (temp) { /* registro encontrado */
-    TObra * reg = (TObra *) malloc(sizeof(TObra));
+    /* TObra * reg = (TObra *) malloc(sizeof(TObra)); */
     FILE *saida;
 
     saida = fopen(ARQ_HTML, "w");
@@ -135,7 +135,7 @@ TObra * consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
 		
     fclose(saida);
 
-  return reg;
+  /* return reg; */
 		
   } else {
     printf("\n-----------------------\n");
@@ -143,7 +143,7 @@ TObra * consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
     printf("-----------------------\n");
   }
 
-  return NULL;
+  return;
 }
 
 /* 

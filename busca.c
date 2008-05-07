@@ -30,4 +30,19 @@ TIndice * intersection(TIndice ** lista){}
 
 void buscaSk(char *chave, TIndice *ind, IndSec *indSecun, FILE *arq) {
   
+  Sk *result;
+  
+  /*Busco chave no indice secundario*/
+  result = (Sk*) bsearch(chave, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+  
+  if (result) { /*Encontrou chave*/
+
+    /*codigo aki*/
+    
+    
+  } else {/*Nenhum registro encontrado*/
+    printf("************************************\n\n");
+    printf("Nenhum registro foi encontrado.     \n\n");
+    printf("************************************\n\n");
+  }
 }

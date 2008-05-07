@@ -137,6 +137,9 @@ int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
     FILE *saida;
 
     saida = fopen(ARQ_HTML, "w");
+    /*Inicio do HTML*/
+    headHtml(saida);
+    
     retorno = 1;/*Encontrou PK. Consulta retorna 1*/
     fseek(base, TAM_REG * (temp->nrr), SEEK_SET);
 
@@ -149,7 +152,7 @@ int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
     fgets(reg->imagem, TAM_IMAGEM + 1, base);
 
     /* passagem do resultado pra função que gera a saida em html */
-    saida = geraHtml(*reg, saida, ALL);
+    preencheHtml(saida, *reg);
 
     if (saida) {
       printf("\n--------------------------------------------------\n");
@@ -161,7 +164,9 @@ int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
       printf("Erro ao gerar saida!\n");
       printf("--------------------\n");
     }
-		
+		/*Fim do HTML*/
+    endHtml(saida);
+    
     fclose(saida);
 
   /* return reg; */
@@ -188,6 +193,9 @@ void listaBase(FILE *base, TIndice *indice) {
 
   saida = fopen(ARQ_HTML, "w");
 
+  /*Inicio do HTML*/
+  headHtml(saida);
+  
   temp = indice->vetor;	
   for (i = 0; i < indice->tamanho; i++) {
     fseek(base, TAM_REG*(temp[i].nrr), SEEK_SET);
@@ -200,80 +208,16 @@ void listaBase(FILE *base, TIndice *indice) {
     fgets(reg.valor, TAM_VALOR+1, base);
     fgets(reg.imagem, TAM_IMAGEM+1, base);
 
-    if(i == 0) { /* primeiro registro */
-      saida = geraHtml(reg, saida, HEAD); /* insere cabecalho do html e o registro */
-    } else if (i == indice->tamanho - 1) {
-      saida = geraHtml(reg, saida, END);  /* insere o registro e finaliza o html */
-    } else {
-      saida = geraHtml(reg, saida, MEIO); /* apenas insere mais um registro */
-    }
+    preencheHtml(saida, reg);
   }
+  /*Final do HTML*/
+  endHtml(saida);
+  
   printf("\n--------------------------------------------------\n");
   printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
   printf("--------------------------------------------------\n")	;
 
   fclose(saida);
-}
-
-/* Gera um HTML com os resultados de uma consulta ou listagem. */
-FILE * geraHtml(TObra valores, FILE *b, const int tipo) {
-  char aux[TAM_IMAGEM + 2];
-  int j,i = 0;
-  int ponto = 0;
-
-  /* Inicio do arquivo HTML. Insere o cabecalho da tabela. */
-  if (tipo == HEAD || tipo == ALL)
-  {
-    fprintf(b, "%s", "<html><head><title>Consulta do catalogo de obras de arte</title></head>");
-    fprintf(b, "%s","<body><table border=\"1\" width=\"800\" font= 'Arial'><tr><th colspan ='3' align=\"center\"><font size='6' color='red'><b>Consulta do catalogo de obras de arte</b></th></tr>");
-  }
-
-  fprintf(b, "%s", "<tr height=\"8\"></tr>");
-  fprintf(b, "%s","<tr><td nowrap width=\"200\"><b>TITULO DA OBRA</b></td><td nowrap width=\"400\">");
-  fprintf(b, "%s", valores.titulo);	
-  fprintf(b, "%s","</td><td nowrap width=\"200\" align=\"center\"><b>IMAGEM</b></td></tr>");
-  fprintf(b, "%s","<tr><td><b>TIPO DA OBRA</b></td><td>");
-  fprintf(b, "%s", valores.tipo);
-  fprintf(b, "%s","</td><td rowspan=\"4\" align=\"center\">");	
-
-  /* 
-   * Este loop insere o ponto no nome do arquivo da imagem. Ele
-   * verifica se ateh as tres ultimas posicoes do vetor ha somente
-   * digitos numericos e insere o ponto assim que essa condicao
-   * torna-se falsa. 
-   */
-
-  for(i = 0, j = 0; i < TAM_IMAGEM; i++, j++)
-  {
-    aux[j] = valores.imagem[i];
-    if ( (valores.imagem[i] < '0' || valores.imagem[i] > '9') && ponto == 0)
-    {
-      aux[j] = '.';
-      --i;
-      ponto = 1;
-    }
-  }
-  aux[j] = '\0';
-
-  fprintf(b, "%s", "<a href=\"img/");
-  fprintf(b, "%s", aux);
-  fprintf(b, "%s", "\"><img src=\"img/");
-  fprintf(b, "%s", aux);
-  fprintf(b, "%s","\" \"width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a></td></tr>");
-  fprintf(b, "%s","<tr><td><b>AUTOR</b></td><td>");
-  fprintf(b, "%s", valores.autor);
-  fprintf(b, "%s","</td></tr><tr><td><b>ANO</b></td><td>");
-  fprintf(b, "%s", valores.ano);
-  fprintf(b, "%s","</td></tr><tr><td><b>VALOR</b></td><td>");
-  fprintf(b, "%s", valores.valor);
-  fprintf(b, "%s", "</td><tr>");
-
-  /* Final do arquivo HTML. Fecha as tags ainda abertas. */
-  if (tipo == END || tipo == ALL)
-  {
-    fprintf(b, "%s", "</table></body></html>");
-  } 
-  return b;
 }
 
 /* Funcao de comparacao */
@@ -312,4 +256,70 @@ TIndice * realocaIndice(TIndice *ind) {
   }
 
   return ind;
+}
+
+/*Gera cabecalho do HTML*/
+FILE * headHtml(FILE *b) {
+  /* Inicio do arquivo HTML. Insere o cabecalho da tabela. */
+  fprintf(b, "%s", "<html><head><title>Consulta do catalogo de obras de arte</title></head>");
+  fprintf(b, "%s","<body><table border=\"1\" width=\"800\" font= 'Arial'><tr><th colspan ='3' align=\"center\"><font size='6' color='red'><b>Consulta do catalogo de obras de arte</b></th></tr>");
+
+  return b;
+}
+
+/*Gera o final do HTML*/
+FILE * endHtml(FILE *b) {
+  
+  fprintf(b, "%s", "</table></body></html>");
+  return b;
+}
+/*Preenche o HTML*/
+FILE * preencheHtml(FILE *b, TObra valores) {
+  
+  char aux[TAM_IMAGEM + 2];
+  int j,i = 0;
+  int ponto = 0;
+  
+  /*Preenchimento da tabela*/
+  fprintf(b, "%s", "<tr height=\"8\"></tr>");
+  fprintf(b, "%s","<tr><td nowrap width=\"200\"><b>TITULO DA OBRA</b></td><td nowrap width=\"400\">");
+  fprintf(b, "%s", valores.titulo);	
+  fprintf(b, "%s","</td><td nowrap width=\"200\" align=\"center\"><b>IMAGEM</b></td></tr>");
+  fprintf(b, "%s","<tr><td><b>TIPO DA OBRA</b></td><td>");
+  fprintf(b, "%s", valores.tipo);
+  fprintf(b, "%s","</td><td rowspan=\"4\" align=\"center\">");	
+
+  /* 
+  * Este loop insere o ponto no nome do arquivo da imagem. Ele
+  * verifica se ateh as tres ultimas posicoes do vetor ha somente
+  * digitos numericos e insere o ponto assim que essa condicao
+  * torna-se falsa. 
+  */
+
+  for(i = 0, j = 0; i < TAM_IMAGEM; i++, j++)
+  {
+    aux[j] = valores.imagem[i];
+    if ( (valores.imagem[i] < '0' || valores.imagem[i] > '9') && ponto == 0)
+    {
+      aux[j] = '.';
+      --i;
+      ponto = 1;
+    }
+  }
+  aux[j] = '\0';
+
+  fprintf(b, "%s", "<a href=\"img/");
+  fprintf(b, "%s", aux);
+  fprintf(b, "%s", "\"><img src=\"img/");
+  fprintf(b, "%s", aux);
+  fprintf(b, "%s","\" \"width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a></td></tr>");
+  fprintf(b, "%s","<tr><td><b>AUTOR</b></td><td>");
+  fprintf(b, "%s", valores.autor);
+  fprintf(b, "%s","</td></tr><tr><td><b>ANO</b></td><td>");
+  fprintf(b, "%s", valores.ano);
+  fprintf(b, "%s","</td></tr><tr><td><b>VALOR</b></td><td>");
+  fprintf(b, "%s", valores.valor);
+  fprintf(b, "%s", "</td><tr>");
+  
+  return b;
 }

@@ -6,7 +6,6 @@
 #include <string.h>
 #include <ctype.h>
 
-
 /* Definicoes de tamanhos de campos e do tamanho do registro */
 #define TAM_TITULO 200
 #define TAM_TIPO 100
@@ -139,14 +138,6 @@ int consulta(ElementoIndice *, FILE *, TIndice *, TObra *);
  */
 void listaBase(FILE *, TIndice *);
 
-/* 
- * Gera o arquivo html com os resultados da consulta ou listagem. Seus
- * parametros sao a obra que resultou da busca, o ponteiro para o
- * arquivo HTML e uma constante que indica se deve-se inserir alguns
- * elementos do codigo HTML, como as tags de inicio e fim do codigo.
- */
-FILE * geraHtml(TObra, FILE *, const int);
-
 /*** Funcoes auxiliares. ***/
 /* 
  * Funcao de comparacao para as funcoes qsort e bsearch da stdlib.h.
@@ -169,5 +160,22 @@ int compare(const void *a, const void *b);
  * seja necessario. 
  */
 TIndice * realocaIndice(TIndice *ind);
+
+/** 
+ * Preenche as tabelas do HTML fornecido como parametro com a obra tambem fornecida
+ * e retorna o arquivo HTML.
+ */
+FILE * preencheHtml(FILE *,TObra);
+
+/**
+ * Gera cabecalho do arquivo HTML.
+ */
+FILE * headHtml(FILE *);
+
+/**
+ * Gera o final do HTML.
+ */
+FILE * endHtml(FILE *);
+
 
 #endif

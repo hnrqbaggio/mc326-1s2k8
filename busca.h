@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "catalogo.h"
 #include "sk.h"
+#include "html.h"
 
 /**
  * Esta biblioteca implementa as funcionalidades de busca na base de

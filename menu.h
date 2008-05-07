@@ -15,3 +15,11 @@ int geraMenu ();
   * O retorno é a opcao escolhinda
 */
 int geraMenuBusca ();
+
+/**
+  * Funcao que exibe notificacao de obra inserida e
+  * verifica se o usuario deseja inserir novamente uma obra.
+  * O retorno é 1 ou 0, de acordo se o usuario quer ou nao
+  * inserir uma nova obra.
+*/
+int geraNotificaInsere ();

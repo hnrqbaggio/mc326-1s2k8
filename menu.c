@@ -34,3 +34,15 @@ int geraMenuBusca() {
 	
 	return ent;
 }
+
+int geraNotificaInsere() {
+  char ent2;
+	
+  printf("\n\n******************************\n\n");
+  printf("  Obra inserida com exito.        \n\n");
+  printf("******************************\n");
+  printf("Deseja inserir uma nova obra? [s/n]:\n");
+  scanf("%c", &ent2);
+
+  return ((ent2 == 'n') ? 0 : 1);
+}

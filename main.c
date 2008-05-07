@@ -118,7 +118,7 @@ int main(int argc, char **argv){
         case 1:/*Busca pelo titulo*/
           printf("Digite uma palavara:\n");
           scanf("%s", temp);
-          buscaSk(temp, ind, secTitulo, arq);
+          buscaSk(temp, ind, secTitulo, arq, TITULO);
           break;
 
         case 2:/*Busca pelo tipo*/

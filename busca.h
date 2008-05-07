@@ -16,9 +16,10 @@
  * busca os nrr das PKs encontradas no indice primario e gera um arquivo html
  * com os dados das obras encontradas.
  * Recebe como parametros a palavra a ser buscada, o indice primario,
- * o indice secundario onde sera realizada a busca e a base de dados.
+ * o indice secundario onde sera realizada a busca, a base de dados e um inteiro
+ * que define o tipo do campo.
 */
-void buscaSk(char *, TIndice *, IndSec *, FILE *);
+void buscaSk(char *, TIndice *, IndSec *, FILE *, const int);
 /*TIndice * buscaMultipla(IndSec *, char *);*/
 /*TIndice * intersection(TIndice **);*/
 

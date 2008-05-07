@@ -6,7 +6,7 @@ FILE * abreCatalogo(char *nome) {
   FILE *arq;
   arq = fopen(nome, "r+");
 
-  if (!arq) exit(0); /* erro na abertura do arquivo. */
+  if (!arq) arq = fopen(nome, "w+"); /* cria o arquivo! */
 
   return arq;
 }

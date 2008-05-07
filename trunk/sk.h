@@ -38,7 +38,7 @@
  * eh o tamanho da string.
 */
 typedef struct _sk{
-  char key[TAM_TITULO];
+  char key[TAM_TITULO+1];
   int next;
   int lenght;
 } Sk;

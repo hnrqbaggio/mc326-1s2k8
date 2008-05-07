@@ -68,73 +68,78 @@ int main(int argc, char **argv){
 		
     switch (ent) {
     case 1:/*Inserir nova obra*/
-      /*leitura da obra a ser inserida e gravacao no indice primario*/
-      obra = *(leObra(ind, &obra));
-      /*Insercao nos indices secundarios*/
-      /*titulo*/
-      fsk = fopen(ARQ_IS_TITULO,"r+");
-      strcpy(obra2.titulo, obra.titulo);
-      secTitulo = insereSk(secTitulo, fsk, obra2.titulo, obra.titulo, &availTitulo);
-      fclose(fsk);
-      /*tipo*/
-      fsk = fopen(ARQ_IS_TIPO,"r+");
-      strcpy(obra2.tipo, obra.tipo);
-      secTipo = insereSk(secTipo, fsk, obra2.titulo, obra.tipo, &availTipo);
-      fclose(fsk);
-      /*autor*/
-      fsk = fopen(ARQ_IS_AUTOR,"r+");
-      strcpy(obra2.autor, obra.autor);
-      secAutor = insereSk(secAutor, fsk, obra2.titulo, obra.autor, &availAutor);
-      fclose(fsk);
-      /*ano*/
-      fsk = fopen(ARQ_IS_ANO,"r+");
-      strcpy(obra2.ano, obra.ano);
-      secAno = insereSk(secAno, fsk, obra2.titulo, obra.ano, &availAno);
-      fclose(fsk);
-      /*Copia os parametros que faltam para gravar*/
-      strcpy(obra2.valor, obra.valor);
-      strcpy(obra2.imagem, obra.imagem);
-      /*Grava a obra inserida na base de dados*/
-      end = gravaObra(obra2, arq, &availBase);
-      /*Atualizo o nrr na pk*/
-      ind->vetor[ind->tamanho-1].nrr = end;
+      /*Looping de insercao*/
+      do {
+        /*leitura da obra a ser inserida e gravacao no indice primario*/
+        obra = *(leObra(ind, &obra));
+        /*Insercao nos indices secundarios*/
+        /*titulo*/
+        fsk = fopen(ARQ_IS_TITULO,"r+");
+        strcpy(obra2.titulo, obra.titulo);
+        secTitulo = insereSk(secTitulo, fsk, obra2.titulo, obra.titulo, &availTitulo);
+        fclose(fsk);
+        /*tipo*/
+        fsk = fopen(ARQ_IS_TIPO,"r+");
+        strcpy(obra2.tipo, obra.tipo);
+        secTipo = insereSk(secTipo, fsk, obra2.titulo, obra.tipo, &availTipo);
+        fclose(fsk);
+        /*autor*/
+        fsk = fopen(ARQ_IS_AUTOR,"r+");
+        strcpy(obra2.autor, obra.autor);
+        secAutor = insereSk(secAutor, fsk, obra2.titulo, obra.autor, &availAutor);
+        fclose(fsk);
+        /*ano*/
+        fsk = fopen(ARQ_IS_ANO,"r+");
+        strcpy(obra2.ano, obra.ano);
+        secAno = insereSk(secAno, fsk, obra2.titulo, obra.ano, &availAno);
+        fclose(fsk);
+        /*Copia os parametros que faltam para gravar*/
+        strcpy(obra2.valor, obra.valor);
+        strcpy(obra2.imagem, obra.imagem);
+        /*Grava a obra inserida na base de dados*/
+        end = gravaObra(obra2, arq, &availBase);
+        /*Atualizo o nrr na pk*/
+        ind->vetor[ind->tamanho-1].nrr = end;
+        /*NOtificacao de insere*/
+        option = geraNotificaInsere();
+      } while (option == 1);
       /*Ordeno o indice*/
       ordenaIndice(ind);
       break;
 
     case 2:
       do {
-	/*Imprime o menu de busca*/
-	option = geraMenuBusca();
-				
-	switch (option) {
-	  /*Aqui o codigo de busca multipla*/
-	case 1:/*Busca pelo titulo*/
-	  break;
-						
-	case 2:/*Busca pelo tipo*/
-	  break;
-						
-	case 3:/*Busca pelo autor*/
-	  break;
-						
-	case 4:/*Busca por ano*/
-	  break;
-						
-  case 5:/*Busca por PK*/
-    leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
-    preencher(elem->pk, sizeof(elem->pk));
-    elem->nrr = -1;
+        /*Imprime o menu de busca*/
+        option = geraMenuBusca();
 
-    consulta(elem, arq, ind, &consultaObra);
-    break; 
-	case 0:/*Menu anterior*/
-	  break;
-						
-	default:
-	  printf("\n*** Opcao invalida *** \n");
-	  break;
-	}
+        switch (option) {
+          /*Aqui o codigo de busca multipla*/
+        case 1:/*Busca pelo titulo*/
+          break;
+
+        case 2:/*Busca pelo tipo*/
+          break;
+
+        case 3:/*Busca pelo autor*/
+          break;
+
+        case 4:/*Busca por ano*/
+          break;
+
+        case 5:/*Busca por PK*/
+          leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
+          preencher(elem->pk, sizeof(elem->pk));
+          elem->nrr = -1;
+
+          consulta(elem, arq, ind, &consultaObra);
+          break; 
+        case 0:/*Menu anterior*/
+          break;
+
+        default:
+          printf("\n*** Opcao invalida *** \n");
+          break;
+        }
       } while (option != 0);
       break;
 

@@ -122,12 +122,21 @@ int main(int argc, char **argv){
           break;
 
         case 2:/*Busca pelo tipo*/
+          printf("Digite uma palavara:\n");
+          scanf("%s", temp);
+          buscaSk(temp, ind, secTipo, arq, TIPO);
           break;
 
         case 3:/*Busca pelo autor*/
+          printf("Digite uma palavara:\n");
+          scanf("%s", temp);
+          buscaSk(temp, ind, secAutor, arq, AUTOR);
           break;
 
         case 4:/*Busca por ano*/
+          printf("Digite uma palavara:\n");
+          scanf("%s", temp);
+          buscaSk(temp, ind, secAno, arq, ANO);
           break;
 
         case 5:/*Busca por PK*/

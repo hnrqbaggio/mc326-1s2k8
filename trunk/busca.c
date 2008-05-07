@@ -35,7 +35,8 @@ void buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const 
   result = (Sk*) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(temp), compareSk);
   
   if (result) { /*Encontrou chave*/
-
+    /*Cabecalho do HTML*/
+    headHtml(fhtml);
     temp2.nrr = result->next;
 
     while (temp2.nrr != -1) {
@@ -59,15 +60,11 @@ void buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const 
       fgets(reg.valor, TAM_VALOR + 1, base);
       fgets(reg.imagem, TAM_IMAGEM + 1, base);
 
-      if (temp2.nrr  == result->next)      /* Primeiro registro. */
-	geraHtml(reg, fhtml, HEAD);
-      else if (temp2.nrr == -1)           /* Ultimo registro. */
-	geraHtml(reg, fhtml, END);
-      else
-	geraHtml(reg, fhtml, MEIO);
-
+      /*Insere no arquivo HTML*/
+    	preencheHtml(fhtml, reg);
     }
-    
+    /*Finaliza as tags abertas do HTML*/
+    endHtml(fhtml);
     
   } else {/*Nenhum registro encontrado*/
     printf("************************************\n\n");

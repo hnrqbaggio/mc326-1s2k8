@@ -1,4 +1,4 @@
-tp3: main.c leitura.o catalogo.o menu.o sk.o busca.o remove.o avail.o
+tp3: main.c leitura.o catalogo.o menu.o sk.o busca.o remove.o avail.o 
 	gcc -ggdb -ansi -pedantic -Wall main.c leitura.o sk.o catalogo.o menu.o busca.o remove.o avail.o -o tp3
 
 leitura.o: leitura.h leitura.c

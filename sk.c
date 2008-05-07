@@ -46,6 +46,8 @@ IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
     }
     break;
   }
+
+  fclose(fsk);
   return NULL;
 }
 
@@ -57,42 +59,44 @@ IndSec * carregaSk(FILE *arqSk, availList *avail){
   /*Declaracao de variaveis*/
   IndSec *indSk;
   int tamSk = 0;
-	Sk * sk = (Sk *) malloc(sizeof(Sk));
+  Sk *sk = (Sk *) malloc(sizeof(Sk));
 
   /*Inicializando o vetor de SKs*/
-	indSk = (IndSec *)malloc(sizeof(IndSec)); 
-	indSk->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
-	indSk->alocado = VETOR_MIN;
-	indSk->tamanho = 0;
+  indSk = (IndSec *)malloc(sizeof(IndSec)); 
+  indSk->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
+  indSk->alocado = VETOR_MIN;
+  indSk->tamanho = 0;
 	
   /*Leitura do tamanho do SK que fica no disco*/
-	fscanf(arqSk, FORMATO_INT, &(indSk->tamDisco));
+  fscanf(arqSk, FORMATO_INT, &(indSk->tamDisco));
 
   /*Posiciona o ponteiro do arquivo para o inicio da parte que deve ficar na RAM*/
-	fseek(arqSk, indSk->tamDisco * (TAM_TITULO + TAM_NUMERO), SEEK_CUR);
+  fseek(arqSk, indSk->tamDisco * (TAM_TITULO + TAM_NUMERO), SEEK_CUR);
 
   /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
   while (fscanf(arqSk, FORMATO_INT, &(sk->lenght)) != EOF){
     fgets(sk->key, 1 + sk->lenght, arqSk);
     fscanf(arqSk, FORMATO_INT, &(sk->next));
 		
-		/*Gravo no vetor de Sk e atualizo o tamanho deste*/
-		strcpy(indSk->vetor[tamSk].key, sk->key);
-		indSk->vetor[tamSk].next = sk->next;
-		indSk->vetor[tamSk].lenght = sk->lenght;
-		tamSk++;
-		indSk->tamanho = tamSk;
-		/*Verifica se precisa ser realocado memoria*/
-		indSk = realocaIndSec(indSk);	
+    /*Gravo no vetor de Sk e atualizo o tamanho deste*/
+    strcpy(indSk->vetor[tamSk].key, sk->key);
+    indSk->vetor[tamSk].next = sk->next;
+    indSk->vetor[tamSk].lenght = sk->lenght;
+    tamSk++;
+    indSk->tamanho = tamSk;
+    /*Verifica se precisa ser realocado memoria*/
+    indSk = realocaIndSec(indSk);	
   }
-	return indSk;
+
+  free(sk);
+  return indSk;
 }
 
 IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo) {
 
   int i, tam;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */
-  char  campo[201];
+  char  campo[TAM_TITULO+1];
   IndSec * secundario = (IndSec *)malloc(sizeof(IndSec)); /* O indice secundario */
   FILE *fsk;
 
@@ -229,19 +233,21 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
 
   /*Ordena o vetor de SKs*/
   qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+
+  free(sk);
 	
   return indSecun;
 }
 
 void gravaIndSk(IndSec *sec, const int tipoCampo) {
 
-	FILE *fsk;
-	int i = 0, tam;
-	/*Tamanho da PK gravada no disco*/
-	tam = TAM_TITULO + TAM_NUMERO;
+  FILE *fsk;
+  int i = 0, tam;
+  /*Tamanho da PK gravada no disco*/
+  tam = TAM_TITULO + TAM_NUMERO;
 	
-	/*Define o tipo de campo e abre o arquivo correspondente*/
-	switch (tipoCampo){
+  /*Define o tipo de campo e abre o arquivo correspondente*/
+  switch (tipoCampo){
   case 0: /* Campo a ser lido eh o titulo. */
     fsk = fopen(ARQ_IS_TITULO,"r+");
     break;
@@ -254,17 +260,17 @@ void gravaIndSk(IndSec *sec, const int tipoCampo) {
   case 3: /* Campo Ano */
     fsk = fopen(ARQ_IS_ANO,"r+");
     break;
-	}
+  }
 
-	/*Gravo o tamanho da parte que esta no disco*/
-	fprintf(fsk, FORMATO_INT, sec->tamDisco);
+  /*Gravo o tamanho da parte que esta no disco*/
+  fprintf(fsk, FORMATO_INT, sec->tamDisco);
 
-	/*Pulo para o fim do arquivo e gravo as SKs*/
-	fseek(fsk, sec->tamDisco * tam, SEEK_CUR);
-	for (i = 0; i < sec->tamanho; i++) {
+  /*Pulo para o fim do arquivo e gravo as SKs*/
+  fseek(fsk, sec->tamDisco * tam, SEEK_CUR);
+  for (i = 0; i < sec->tamanho; i++) {
     fprintf(fsk, FORMATO_INT, sec->vetor[i].lenght);  /* grava o tamanho da sk */
     fprintf(fsk, "%s", sec->vetor[i].key); /* grava a key */
-		fprintf(fsk, FORMATO_INT, sec->vetor[i].next);/* grava o proximo elemento na lista invertida */
+    fprintf(fsk, FORMATO_INT, sec->vetor[i].next);/* grava o proximo elemento na lista invertida */
   }
 
   /* Libera memoria da estrutura E dos seus campos. */
@@ -272,7 +278,7 @@ void gravaIndSk(IndSec *sec, const int tipoCampo) {
   free(sec);
   fclose(fsk);
 	
-	return;
+  return;
 }
 
 
@@ -289,24 +295,24 @@ IndSec * realocaIndSec(IndSec *sec) {
 
 /* Funcao de comparacao utilizada pela bsearch. */
 int compareSk(const void *a, const void *b) {
-  char *str1, *str2;
+
+  Sk *a2 = (Sk *)a;
+  Sk *b2 = (Sk *)b;
   int i, x, y;
 
-  /* Calculo do tamanho das strings. */
-  x = (*(Sk *)a).lenght;
-  y = (*(Sk *)b).lenght;
 
-  str1 = (*(Sk *)a).key;
-  str2 = (*(Sk *)b).key;
+  /* Calculo do tamanho das strings. */
+  x = a2->lenght;
+  y = b2->lenght;
 
   /* Copia os valores dos parametros, convertendo pra maiuscula */
-  for (i = 0; i <= x; i++) str1[i] = toupper(str1[i]);
-  str1[i] = '\0';
+  for (i = 0; i <= x; i++) a2->key[i] = toupper(a2->key[i]);
+  a2->key[i] = '\0';
 
-  for (i = 0; i <= y; i++) str2[i] = toupper(str2[i]);
-  str2[i] = '\0';
+  for (i = 0; i <= y; i++) b2->key[i] = toupper(b2->key[i]);
+  b2->key[i] = '\0';
  
-  return strcmp(str1, str2);
+  return strcmp(a2->key, b2->key);
 
 }
 

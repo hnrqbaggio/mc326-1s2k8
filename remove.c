@@ -77,7 +77,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
   temp.next = -1;
   temp.lenght = strlen(token) + 2 * sizeof(int);
 
-  result = (Sk *) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+  result = (Sk *) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(temp), compareSk);
 
   if (result) {
     /* Deslocamento para escrever no arquivo.  
@@ -123,7 +123,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 	qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
 	
       }
-
+      fclose(fsk);
       return indSecun;
     }
 
@@ -155,6 +155,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 	fprintf(fsk, FORMATO_INT, prox);
 
 	/* Remocao concluida e tudo atualizado. */
+	fclose(fsk);
 	return indSecun;
 
       } else {
@@ -172,6 +173,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
   /* Se chegamos a esse ponto, nao foi possivel remover. Deixamos o indice como estava. */
   fprintf(stderr, "\n\nNada foi removido!\n\n");
 
+  fclose(fsk);
   return indSecun;
 }
 

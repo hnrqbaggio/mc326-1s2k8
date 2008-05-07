@@ -9,46 +9,46 @@ carrega parte de estrutura pra memoria e deixa a outra no disco.
 
 IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo){
 
-  /*IndSec *indSk;*/
+  IndSec *indSk;
   FILE *fsk;
 
   switch (tipoCampo){
   case 0: /* Campo a ser lido eh o titulo. */
     fsk = fopen(ARQ_IS_TITULO,"r");
     if (fsk == NULL){
-      return criaSk(indPrim, base, avail, tipoCampo);
+      indSk = criaSk(indPrim, base, avail, tipoCampo);
     } else {
-      return carregaSk(fsk, avail);
+      indSk = carregaSk(fsk, avail);
     }
     break;
   case 1: /* Campo Tipo */
     fsk = fopen(ARQ_IS_TIPO,"r");
     if (fsk == NULL){
-      return criaSk(indPrim, base, avail, tipoCampo);
+      indSk = criaSk(indPrim, base, avail, tipoCampo);
     } else {
-      return carregaSk(fsk, avail);
+      indSk = carregaSk(fsk, avail);
     }
     break;
   case 2: /* Campo Autor */
     fsk = fopen(ARQ_IS_AUTOR,"r");
     if (fsk == NULL){
-      return criaSk(indPrim, base, avail, tipoCampo);
+      indSk =  criaSk(indPrim, base, avail, tipoCampo);
     } else {
-      return carregaSk(fsk, avail);
+      indSk = carregaSk(fsk, avail);
     }
     break;
   case 3: /* Campo Ano */
     fsk = fopen(ARQ_IS_ANO,"r");
     if (fsk == NULL){
-      return criaSk(indPrim, base, avail, tipoCampo);
+      indSk = criaSk(indPrim, base, avail, tipoCampo);
     } else {
-      return carregaSk(fsk, avail);
+      indSk = carregaSk(fsk, avail);
     }
     break;
   }
 
-  fclose(fsk);
-  return NULL;
+  if (fsk) fclose(fsk);
+  return indSk;
 }
 
 

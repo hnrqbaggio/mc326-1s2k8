@@ -1,5 +1,5 @@
 #include "busca.h"
-
+/*
 TIndice * buscaMultipla(IndSec *indSecun, char *string) {
   /* int tam = 10; */
 
@@ -18,12 +18,16 @@ TIndice * buscaMultipla(IndSec *indSecun, char *string) {
 
 /*     /\* Como eh uma busca tipo AND, se alguma das palavras nao estiver */
 /*        no indice, a busca eh desnecessaria, pois nao encontrara */
-/*        nada. *\/ */
+/*        nada. / */
 /*     if (!result[i]) { */
 /*       printf("\nNenhum elemento encontrado.\n") */
 /*       return NULL; */
-/*     } */
+/*     } 
 }
 
-
 TIndice * intersection(TIndice ** lista){}
+*/
+
+void buscaSk(char *chave, TIndice *ind, IndSec *indSecun, FILE *arq) {
+  
+}

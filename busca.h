@@ -10,7 +10,16 @@
  * dados.
  */
 
-TIndice * buscaMultipla(IndSec *, char *);
-TIndice * intersection(TIndice **);
+/**
+ * Funcao que busca palavra passada por parametro nos indices secundarios.
+ * Ela busca as PKs correspondentes a SK da palavra nos indices secundarios,
+ * busca os nrr das PKs encontradas no indice primario e gera um arquivo html
+ * com os dados das obras encontradas.
+ * Recebe como parametros a palavra a ser buscada, o indice primario,
+ * o indice secundario onde sera realizada a busca e a base de dados.
+*/
+void buscaSk(char *, TIndice *, IndSec *, FILE *);
+/*TIndice * buscaMultipla(IndSec *, char *);*/
+/*TIndice * intersection(TIndice **);*/
 
 #endif

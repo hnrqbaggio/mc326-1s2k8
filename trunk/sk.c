@@ -13,7 +13,7 @@ IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
   FILE *fsk;
 
   switch (tipoCampo){
-  case 0: /* Campo a ser lido eh o titulo. */
+  case TITULO: /* Campo a ser lido eh o titulo. */
     fsk = fopen(ARQ_IS_TITULO,"r");
     if (fsk == NULL){
       indSk = criaSk(indPrim, base, avail, tipoCampo);
@@ -21,7 +21,7 @@ IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
       indSk = carregaSk(fsk, avail);
     }
     break;
-  case 1: /* Campo Tipo */
+  case TIPO: /* Campo Tipo */
     fsk = fopen(ARQ_IS_TIPO,"r");
     if (fsk == NULL){
       indSk = criaSk(indPrim, base, avail, tipoCampo);
@@ -29,7 +29,7 @@ IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
       indSk = carregaSk(fsk, avail);
     }
     break;
-  case 2: /* Campo Autor */
+  case AUTOR: /* Campo Autor */
     fsk = fopen(ARQ_IS_AUTOR,"r");
     if (fsk == NULL){
       indSk =  criaSk(indPrim, base, avail, tipoCampo);
@@ -37,7 +37,7 @@ IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
       indSk = carregaSk(fsk, avail);
     }
     break;
-  case 3: /* Campo Ano */
+  case ANO: /* Campo Ano */
     fsk = fopen(ARQ_IS_ANO,"r");
     if (fsk == NULL){
       indSk = criaSk(indPrim, base, avail, tipoCampo);
@@ -110,22 +110,22 @@ IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCa
   secundario->tamDisco = 0;
   
   switch (tipoCampo){
-  case 0: /* Campo a ser lido eh o titulo. */
+  case TITULO: /* Campo a ser lido eh o titulo. */
     tam = TAM_TITULO;
     offset_ext = 0;
     fsk = fopen(ARQ_IS_TITULO,"w");
     break;
-  case 1: /* Campo Tipo */
+  case TIPO: /* Campo Tipo */
     tam = TAM_TIPO;
     offset_ext = TAM_TITULO;
     fsk = fopen(ARQ_IS_TIPO,"w");
     break;
-  case 2: /* Campo Autor */
+  case AUTOR: /* Campo Autor */
     tam = TAM_AUTOR;
     offset_ext = TAM_TITULO + TAM_TIPO;
     fsk = fopen(ARQ_IS_AUTOR,"w");
     break;
-  case 3: /* Campo Ano */
+  case ANO: /* Campo Ano */
     tam = TAM_ANO;
     offset_ext = TAM_TITULO + TAM_TIPO + TAM_AUTOR;
     fsk = fopen(ARQ_IS_ANO,"w");
@@ -248,16 +248,16 @@ void gravaIndSk(IndSec *sec, const int tipoCampo) {
 	
   /*Define o tipo de campo e abre o arquivo correspondente*/
   switch (tipoCampo){
-  case 0: /* Campo a ser lido eh o titulo. */
+  case TITULO: /* Campo a ser lido eh o titulo. */
     fsk = fopen(ARQ_IS_TITULO,"r+");
     break;
-  case 1: /* Campo Tipo */
+  case TIPO: /* Campo Tipo */
     fsk = fopen(ARQ_IS_TIPO,"r+");
     break;
-  case 2: /* Campo Autor */
+  case AUTOR: /* Campo Autor */
     fsk = fopen(ARQ_IS_AUTOR,"r+");
     break;
-  case 3: /* Campo Ano */
+  case ANO: /* Campo Ano */
     fsk = fopen(ARQ_IS_ANO,"r+");
     break;
   }

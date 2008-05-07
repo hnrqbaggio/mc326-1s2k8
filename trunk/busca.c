@@ -11,16 +11,16 @@ void buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const 
   int offset;
 
   switch(tipoCampo){
-  case 0: /* Campo a ser lido eh o titulo. */
+  case TITULO: /* Campo a ser lido eh o titulo. */
     fsk = fopen(ARQ_IS_TITULO,"r");
     break;
-  case 1: /* Campo Tipo */
+  case TIPO: /* Campo Tipo */
     fsk = fopen(ARQ_IS_TIPO,"r");
     break;
-  case 2: /* Campo Autor */
+  case AUTOR: /* Campo Autor */
     fsk = fopen(ARQ_IS_AUTOR,"r");
     break;
-  case 3: /* Campo Ano */
+  case ANO: /* Campo Ano */
     fsk = fopen(ARQ_IS_ANO,"r");
     break;
   }

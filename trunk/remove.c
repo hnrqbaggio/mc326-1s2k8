@@ -47,24 +47,24 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 
   FILE *fsk;
   Sk temp, *result;
-  char *token;
+  char *token, pk2[TAM_TITULO+1];
   int offset, prox, fim, atual, ant, tmp;
   /* Variaveis auxiliares para se trabalhar com a lista invertida. */
 
   switch (tipoCampo){
-  case 0: /* Campo a ser lido eh o titulo. */
+  case TITULO: /* Campo a ser lido eh o titulo. */
     fsk = fopen(ARQ_IS_TITULO,"r+");
     
     break;
-  case 1: /* Campo Tipo */
+  case TIPO: /* Campo Tipo */
     fsk = fopen(ARQ_IS_TIPO,"r+");
     
     break;
-  case 2: /* Campo Autor */
+  case AUTOR: /* Campo Autor */
     fsk = fopen(ARQ_IS_AUTOR,"r+");
     
     break;
-  case 3: /* Campo Ano */
+  case ANO: /* Campo Ano */
     fsk = fopen(ARQ_IS_ANO,"r+");
     
     break;
@@ -76,7 +76,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 
     strcpy(temp.key, token);
     temp.next = -1;
-    temp.lenght = strlen(token) + 2 * sizeof(int);
+    temp.lenght = strlen(token);
 
     result = (Sk *) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(temp), compareSk);
 
@@ -92,10 +92,10 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 	 posicoes no arquivo. */
 
       fseek(fsk, offset, SEEK_SET);
-      fgets(token, TAM_TITULO, fsk);
+      fgets(pk2, TAM_TITULO+1, fsk);
       fscanf(fsk, FORMATO_INT, &prox);
 
-      if (strcmp(pk, token)) { /* o primeiro elemento da lista sera removido. */
+      if (!strcmp(pk, pk2)) { /* o primeiro elemento da lista sera removido. */
 
 	tmp = *avail;
 	*avail = result->next;
@@ -135,9 +135,9 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 	  offset = prox * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
 	  fseek(fsk, offset, SEEK_SET);
 
-	  fgets(token, TAM_TITULO, fsk);
+	  fgets(pk2, TAM_TITULO+1, fsk);
 
-	  if (strcmp(pk, chave)) {
+	  if (!strcmp(pk, pk2)) {
       
 	    atual = prox;
 	    fscanf(fsk, FORMATO_INT, &prox);

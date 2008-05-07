@@ -16,6 +16,7 @@
 #include "menu.h"
 #include "remove.h"
 #include "avail.h"
+#include "busca.h"
 
 int main(int argc, char **argv){
 
@@ -113,8 +114,11 @@ int main(int argc, char **argv){
         option = geraMenuBusca();
 
         switch (option) {
-          /*Aqui o codigo de busca multipla*/
+        /*Somente uma palavra por vez, por enquanto*/
         case 1:/*Busca pelo titulo*/
+          printf("Digite uma palavara:\n");
+          scanf("%s", temp);
+          buscaSk(temp, ind, secTitulo, arq);
           break;
 
         case 2:/*Busca pelo tipo*/

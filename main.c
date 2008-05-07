@@ -116,25 +116,25 @@ int main(int argc, char **argv){
         switch (option) {
         /*Somente uma palavra por vez, por enquanto*/
         case 1:/*Busca pelo titulo*/
-          printf("Digite uma palavara:\n");
+          printf("Digite uma palavra:\n");
           scanf("%s", temp);
           buscaSk(temp, ind, secTitulo, arq, TITULO);
           break;
 
         case 2:/*Busca pelo tipo*/
-          printf("Digite uma palavara:\n");
+          printf("Digite uma palavra:\n");
           scanf("%s", temp);
           buscaSk(temp, ind, secTipo, arq, TIPO);
           break;
 
         case 3:/*Busca pelo autor*/
-          printf("Digite uma palavara:\n");
+          printf("Digite uma palavra:\n");
           scanf("%s", temp);
           buscaSk(temp, ind, secAutor, arq, AUTOR);
           break;
 
         case 4:/*Busca por ano*/
-          printf("Digite uma palavara:\n");
+          printf("Digite uma palavra:\n");
           scanf("%s", temp);
           buscaSk(temp, ind, secAno, arq, ANO);
           break;

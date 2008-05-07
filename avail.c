@@ -1,5 +1,6 @@
 #include "avail.h"
 
+
 int openAvail(const char *nomeArqAvail){
   int leitura;
   FILE *fav;

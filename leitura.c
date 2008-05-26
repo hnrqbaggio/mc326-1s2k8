@@ -1,56 +1,6 @@
 #include "catalogo.h"
 #include "leitura.h"
 
-/*Funcao de leitura da obra de arte a ser inserida*/
-TObra * leObra (TIndice *ind, TObra *obra) {
-	
-  ElementoIndice *chave = (ElementoIndice *) malloc(sizeof(ElementoIndice));
-  ElementoIndice *result = NULL;
-	
-  printf("\nEntre com os dados de uma obra.\n");
-
-  /*Leitura dos dados da obra*/
-  /*Le os campos quem contem texto*/
-  leTexto(obra->titulo, sizeof(obra->titulo), "Nome da Obra (ate 200 caracteres): ");
-  preencher(obra->titulo, sizeof(obra->titulo));
-
-  /*Verifica se ja existe a obra no catalogo*/
-  strcpy(chave->pk, obra->titulo);
-  chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
-  result = (ElementoIndice *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(ElementoIndice), compare);
-	
-  if (result) { /* registro ja existente */
-    printf("Obra ja catalogada. Insercao nao concluida.\n");
-
-  } else { 
-    leTexto(obra->tipo, sizeof(obra->tipo), "Tipo (ate 100 caracteres): ");
-    leTexto(obra->autor, sizeof(obra->autor), "Autor (ate 125 caracteres): ");
-
-    /*Campos com numeros*/
-    leNumeros(obra->ano, sizeof(obra->ano), "Ano de Publicacao (ate 4 digitos): ");
-    leNumeros(obra->valor, sizeof(obra->valor), "Valor (ate 12 digitos): ");
-
-    /*Campo Imagem*/
-    leImagem(obra->imagem, sizeof(obra->imagem),"Identificador da Imagem (6 digitos + extensao): " );
-
-    /*preenchendo com espacos e movendo o '\0' pro fim de cada campo*/ 
-    preencher(obra->tipo, sizeof(obra->tipo));
-    preencher(obra->autor, sizeof(obra->autor));
-    preencher(obra->ano, sizeof(obra->ano));
-    preencher(obra->valor, sizeof(obra->valor));
-		
-    /* verifica se o indice precisa de mais espaco. */
-    (ind->tamanho)++;
-    ind = realocaIndice(ind);
-
-    /* atualizacao do indice */	
-    ind->vetor[ind->tamanho-1] = *chave;
-  }
-	
-  free(chave);
-  return obra;
-}
-
 /*Funcao para inserir uma nova obra no catalogo*/
 void insereObra(FILE *arq, TIndice *ind) {
   char option;
@@ -80,7 +30,7 @@ void insereObra(FILE *arq, TIndice *ind) {
 
 	/*Campos com numeros*/
 	leNumeros(obra.ano, sizeof(obra.ano), "Ano de Publicacao (ate 4 digitos): ");
- 	leNumeros(obra.valor, sizeof(obra.valor), "Valor (ate 12 digitos): ");
+	leNumeros(obra.valor, sizeof(obra.valor), "Valor (ate 12 digitos): ");
 
 	/*Campo Imagem*/
 	leImagem(obra.imagem, sizeof(obra.imagem),"Identificador da Imagem (6 digitos + extensao): " );
@@ -92,7 +42,7 @@ void insereObra(FILE *arq, TIndice *ind) {
 	preencher(obra.valor, sizeof(obra.valor));
 
 	/*grava os dados no arquivo texto*/
-	/*gravaObra(obra, arq);*/
+	gravaObra(obra, arq);
 
 	/* verifica se o indice precisa de mais espaco. */
 	(ind->tamanho)++;
@@ -115,8 +65,7 @@ void insereObra(FILE *arq, TIndice *ind) {
 /* Funcao para a leitura dos campos de texto */
 void leTexto(char *campo, int tamanho, char *msg){
   int valido = 1;
-  int i;
-  char c;
+  char temp[TAM_TITULO+4]; /* vetor para pegar a entrada e tamanho titulo + 4 como margem de erro pra leitura */
 
   do {
     LimpaBuffer();
@@ -124,27 +73,19 @@ void leTexto(char *campo, int tamanho, char *msg){
 
     valido = 1;
     printf(msg);
-    c = getchar();/*pega a primeira string*/
+    fgets(temp, sizeof(temp), stdin);
 
-    while (c ==' ') c=getchar();/*analisa se tem espacos desnecessarios*/
-    campo[0]=c;/*caso nao tenha espacos no comeco ele ja coloca no vetor*/
-    
-    /*le string por sting*/
-    for (i=1;i<tamanho;i++){
-      c=getchar();
+    temp[strlen(temp)-1] = '\0'; /* fgets pega '\n' */
 
-      if (c=='\n') break;/*para quando acha um \n*/
-      campo[i]=c; /*escreve no vetor*/
+    if (strlen(temp) >= tamanho) valido = 0; /* entrada mto grande */
 
-      /*se ele le dois espaços juntos ele só faz valer um*/
-      if ((campo[i-1]==' ') && (campo[i]==' ')) i--;
-
-    }
-
-    campo[i]='\0';/*coloca um \0 no final do vetor*/
+    /* verifica se esta vazia ou se comeca com espaco. */
+    if (temp[0] == '\0' || temp[0] == ' ' ) valido = 0;
 
   } while (!valido);
-    LimpaBuffer();
+
+  strcpy(campo, temp);
+
 }
 
 /* Funcao para a leitura dos campos que recebem numeros */

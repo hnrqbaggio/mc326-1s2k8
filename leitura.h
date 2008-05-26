@@ -1,6 +1,3 @@
-#ifndef _LEITURA_H
-#define _LEITURA_H
-
 #include <stdio.h>
 #include <stdio_ext.h>
 #include <string.h>
@@ -18,14 +15,6 @@
  * Nota: A funcao __fpurge pode ser incompativel com Windows (Testado no LMS).
  */
 #define LimpaBuffer() (__fpurge(stdin))
-
-/*** Funcoes de leitura das entradas do usuario ***/
-/* 
- * Funcao responsavel pela leitura e tratamento da entrada do usuario.
- * Recebe o indice primario para verificar se a obra ja existe e atualizar este.
- * Retorna a obra a ser inserida na base.
- */
-TObra * leObra(TIndice *, TObra *);
 
 /*** Funcoes de leitura das entradas do usuario ***/
 /* 
@@ -65,5 +54,3 @@ void leImagem(char *, int, char *);
  * tamanho dos campos fixos quando forem salvos na base.
  */
 void preencher(char *, int);
-
-#endif

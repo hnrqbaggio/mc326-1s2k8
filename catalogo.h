@@ -1,6 +1,3 @@
-#ifndef _CATALOGO_H
-#define _CATALOGO_H
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,11 +12,10 @@
 #define TAM_IMAGEM 9
 #define TAM_REG (TAM_TITULO+TAM_TIPO+TAM_AUTOR+TAM_ANO+TAM_VALOR+TAM_IMAGEM)
 
-/* Defines para os nomes dos arquivos.*/
-#define ARQ_BASE ("/tmp/base00.dat")       /* Base de dados */
-#define ARQ_HTML ("/tmp/base24.html")      /* Html para saida dos resultados de busca */
-#define ARQ_PK ("primario.pi")         /* Arquivo que contem os registros do indice primario */
-#define ARQ_AVAIL_BASE ("base24.av")  /* Avail list da base de dados */
+/* Defines para os nomes dos arquivos utilizados no programa.*/
+#define NOME_BASE ("base24.dat")   /* Base de dados */
+#define NOME_HTML ("base24.html")  /* Html para saida dos resultados de busca */
+#define NOME_INDICE ("indice.dat") /* Arquivo que contem os registros do indice primario */
 
 /* 
  * Constante para fazer reallocs mais eficientes.  a primeira alocacao
@@ -27,18 +23,14 @@
  */
 #define VETOR_MIN 20
 
-/* Define para a mascara usada para ler e gravar inteiros. */
-#define FORMATO_INT ("%08d")
-#define TAM_NUMERO 8
-
-/* Constantes usadas como parametros na funcao geraHtml */
+/*Constantes usadas como parametros na funcao geraHtml */
 #define ALL 0  /* Adiciona tanto o cabecalho quanto o fim do
 		* html. usado quando eh uma consulta de um registro
 		* especifico. */
 #define HEAD 1 /* Deve ser inserido um cabecalho no html */
 #define END 2  /* Deve fechar as tags do html: </table></body></html> */
 #define MEIO 3 /* Diferencia os registros que nao sao nem inicio nem
-		* fim da listagem, logo, devem apenas ser inseridos */
+		  fim da listagem, logo, devem apenas ser inseridos */
 
 /* 
  * TAD que usaremos para representar uma obra.
@@ -81,12 +73,6 @@ typedef struct struct_vet {
   int alocado;
 } TIndice;
 
-/**
- * Este inteiro será usado para representar a cabeca de uma avail
- * list, que sera um alista invertida de posicoes livres no disco.
- */
-typedef int availList;
-
 /*** Funcoes de manipulacao da base de dados ***/
 
 /* 
@@ -101,19 +87,17 @@ void fechaCatalogo(FILE *);
 
 /* 
  * Grava uma obra na base de dados. Os parametros sao a obra e o
- * ponteiro pro arquivo da base e a avail list da base.
- * Retorna o nrr da obra inserida.
+ * ponteiro pro arquivo da base.
  */
-int gravaObra(TObra, FILE *, availList *);
+void gravaObra(TObra, FILE *);
 
 
 /*** Funcoes de manipulacao do indice ***/
 /* Carrega o indice do arquivo para a memoria. Cria o indice caso o
  * arquivo nao exista. Recebe como parametro o apontador pra base de
- * dados e a availlist da base pois caso ela seja vazia, apontamos
- * ela para o final do arquivo, para facilitar a insercao.
+ * dados 
  */
-TIndice * carregaIndice(FILE *, TIndice *, availList *);
+TIndice * carregaIndice(FILE *, TIndice *);
 
 /* Realiza a ordenacao do indice passado como parametro. */
 void ordenaIndice(TIndice *);
@@ -125,10 +109,9 @@ void gravaIndice(TIndice *);
  * Realiza uma consulta na base usando a chave primaria. Seus
  * parametros sao o elemento do indice, o ponteiro para a base de
  * dados, e um ponteiro para a estrutura que contem o vetor do
- * indice. Os resultados sao passados pra funcao que gera o HTML.
- * Retorna 0 caso ao encontre a obra e 1 caso encontre. 
+ * indice. Os resultados sao passados pra funcao que gera o HTML. 
  */
-int consulta(ElementoIndice *, FILE *, TIndice *, TObra *);
+void consulta(ElementoIndice *, FILE *, TIndice *);
 
 /* 
  * Lista todos os registros da base de dados. Ela percorre o vetor do
@@ -137,6 +120,14 @@ int consulta(ElementoIndice *, FILE *, TIndice *, TObra *);
  * sao passados pra funcao que gera o HTML.
  */
 void listaBase(FILE *, TIndice *);
+
+/* 
+ * Gera o arquivo html com os resultados da consulta ou listagem. Seus
+ * parametros sao a obra que resultou da busca, o ponteiro para o
+ * arquivo HTML e uma constante que indica se deve-se inserir alguns
+ * elementos do codigo HTML, como as tags de inicio e fim do codigo.
+ */
+FILE * geraHtml(TObra, FILE *, const int);
 
 /*** Funcoes auxiliares. ***/
 /* 
@@ -160,22 +151,3 @@ int compare(const void *a, const void *b);
  * seja necessario. 
  */
 TIndice * realocaIndice(TIndice *ind);
-
-/** 
- * Preenche as tabelas do HTML fornecido como parametro com a obra tambem fornecida
- * e retorna o arquivo HTML.
- */
-FILE * preencheHtml(FILE *,TObra);
-
-/**
- * Gera cabecalho do arquivo HTML.
- */
-FILE * headHtml(FILE *);
-
-/**
- * Gera o final do HTML.
- */
-FILE * endHtml(FILE *);
-
-
-#endif

@@ -46,3 +46,16 @@ int geraNotificaInsere() {
 
   return ((ent2 == 'n') ? 0 : 1);
 }
+
+int geraNotificaErroInsere() {
+  char ent2;
+
+  printf("\n\n******************************\n\n");
+  printf("Obra ja catalogada. \n");
+  printf("Insercao nao concluida.\n");
+  printf("******************************\n");
+  printf("Deseja inserir uma nova obra? [s/n]:\n");
+  scanf("%c", &ent2);
+
+  return ((ent2 == 'n') ? 0 : 1);
+}

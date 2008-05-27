@@ -20,7 +20,7 @@
 
 int main(int argc, char **argv){
 
-  int ent, option, end;
+  int ent, option, end, resultado;
   TObra obra, obra2, consultaObra;
   char temp[TAM_TITULO];
  
@@ -72,37 +72,41 @@ int main(int argc, char **argv){
       /*Looping de insercao*/
       do {
         /*leitura da obra a ser inserida e gravacao no indice primario*/
-        obra = *(leObra(ind, &obra));
-        /*Insercao nos indices secundarios*/
-        /*titulo*/
-        fsk = fopen(ARQ_IS_TITULO,"r+");
-        strcpy(obra2.titulo, obra.titulo);
-        secTitulo = insereSk(secTitulo, fsk, obra2.titulo, obra.titulo, &availTitulo);
-        fclose(fsk);
-        /*tipo*/
-        fsk = fopen(ARQ_IS_TIPO,"r+");
-        strcpy(obra2.tipo, obra.tipo);
-        secTipo = insereSk(secTipo, fsk, obra2.titulo, obra.tipo, &availTipo);
-        fclose(fsk);
-        /*autor*/
-        fsk = fopen(ARQ_IS_AUTOR,"r+");
-        strcpy(obra2.autor, obra.autor);
-        secAutor = insereSk(secAutor, fsk, obra2.titulo, obra.autor, &availAutor);
-        fclose(fsk);
-        /*ano*/
-        fsk = fopen(ARQ_IS_ANO,"r+");
-        strcpy(obra2.ano, obra.ano);
-        secAno = insereSk(secAno, fsk, obra2.titulo, obra.ano, &availAno);
-        fclose(fsk);
-        /*Copia os parametros que faltam para gravar*/
-        strcpy(obra2.valor, obra.valor);
-        strcpy(obra2.imagem, obra.imagem);
-        /*Grava a obra inserida na base de dados*/
-        end = gravaObra(obra2, arq, &availBase);
-        /*Atualizo o nrr na pk*/
-        ind->vetor[ind->tamanho-1].nrr = end;
-        /*NOtificacao de insere*/
-        option = geraNotificaInsere();
+        if(leObra(ind, &obra)) {/*Insercao feita com sucesso na PK*/
+          /*Insercao nos indices secundarios*/
+          /*titulo*/
+          fsk = fopen(ARQ_IS_TITULO,"r+");
+          strcpy(obra2.titulo, obra.titulo);
+          secTitulo = insereSk(secTitulo, fsk, obra2.titulo, obra.titulo, &availTitulo);
+          fclose(fsk);
+          /*tipo*/
+          fsk = fopen(ARQ_IS_TIPO,"r+");
+          strcpy(obra2.tipo, obra.tipo);
+          secTipo = insereSk(secTipo, fsk, obra2.titulo, obra.tipo, &availTipo);
+          fclose(fsk);
+          /*autor*/
+          fsk = fopen(ARQ_IS_AUTOR,"r+");
+          strcpy(obra2.autor, obra.autor);
+          secAutor = insereSk(secAutor, fsk, obra2.titulo, obra.autor, &availAutor);
+          fclose(fsk);
+          /*ano*/
+          fsk = fopen(ARQ_IS_ANO,"r+");
+          strcpy(obra2.ano, obra.ano);
+          secAno = insereSk(secAno, fsk, obra2.titulo, obra.ano, &availAno);
+          fclose(fsk);
+          /*Copia os parametros que faltam para gravar*/
+          strcpy(obra2.valor, obra.valor);
+          strcpy(obra2.imagem, obra.imagem);
+          /*Grava a obra inserida na base de dados*/
+          end = gravaObra(obra2, arq, &availBase);
+          /*Atualizo o nrr na pk*/
+          ind->vetor[ind->tamanho-1].nrr = end;
+          /*Notificacao de insere*/
+          option = geraNotificaInsere();
+        
+        } else {/*Obra ja existente no catalogo*/
+          option = geraNotificaErroInsere();
+        }
       } while (option == 1);
       /*Ordeno o indice*/
       ordenaIndice(ind);
@@ -153,36 +157,82 @@ int main(int argc, char **argv){
           printf("\n*** Opcao invalida *** \n");
           break;
         }
+        
       } while (option != 0);
       break;
 
     case 3:
       /*Mostra a base inteira em ordem ASCII, no html*/
       listaBase(arq, ind);
-      break;
 
     case 4: /* Remocao */
-      leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
-      preencher(elem->pk, sizeof(elem->pk));
-      elem->nrr = -1;
+      /******BUSCA**********/
+      option = geraMenuBusca();
+      switch (option) {
+        /*Somente uma palavra por vez, por enquanto*/
+      case 1:/*Busca pelo titulo*/
+        printf("Digite uma palavra:\n");
+        scanf("%s", temp);
+        resultado = buscaSk(temp, ind, secTitulo, arq, TITULO);
+        break;
 
-      /*Faz a pesquisa da pk e mostra no html*/
-      if(consulta(elem, arq, ind, &consultaObra) == 1) {
-        /*Somente se consulta retornou verdadeiro*/
-        ind = removePk(elem->pk, ind, arq, &availBase);
+      case 2:/*Busca pelo tipo*/
+        printf("Digite uma palavra:\n");
+        scanf("%s", temp);
+        resultado = buscaSk(temp, ind, secTipo, arq, TIPO);
+        break;
 
-        /*Remove todas as Sks */
-        strcpy(temp, consultaObra.titulo);
-        secTitulo = removeSk(temp, secTitulo, elem->pk, TITULO, &availTitulo);
+      case 3:/*Busca pelo autor*/
+        printf("Digite uma palavra:\n");
+        scanf("%s", temp);
+        resultado = buscaSk(temp, ind, secAutor, arq, AUTOR);
+        break;
 
-        strcpy(temp, consultaObra.tipo);
-        secTipo = removeSk(temp, secTipo, elem->pk, TIPO, &availTipo);
+      case 4:/*Busca por ano*/
+        printf("Digite uma palavra:\n");
+        scanf("%s", temp);
+        resultado = buscaSk(temp, ind, secAno, arq, ANO);
+        break;
 
-        strcpy(temp, consultaObra.autor);
-        secAutor = removeSk(temp, secAutor, elem->pk, AUTOR, &availAutor);
+      case 5:/*Busca por PK*/
+        leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
+        preencher(elem->pk, sizeof(elem->pk));
+        elem->nrr = -1;
+        resultado = consulta(elem, arq, ind, &consultaObra);
+        break; 
 
-        strcpy(temp, consultaObra.ano);
-        secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
+      case 0:
+        resultado = 0;
+        break;
+
+      default:
+        printf("\n*** Opcao invalida *** \n");
+        resultado = 0;
+        break;
+      }
+      if(resultado) {/*Se a busca retornou algo*/
+        leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da obra a ser removida: ");
+        preencher(elem->pk, sizeof(elem->pk));
+        elem->nrr = -1;
+  
+        /*Faz a pesquisa da pk e mostra no html*/
+        if(consulta(elem, arq, ind, &consultaObra) == 1) {
+          /*Somente se consulta retornou verdadeiro*/
+          ind = removePk(elem->pk, ind, arq, &availBase);
+  
+          /*Remove todas as Sks */
+          strcpy(temp, consultaObra.titulo);
+          secTitulo = removeSk(temp, secTitulo, elem->pk, TITULO, &availTitulo);
+  
+          strcpy(temp, consultaObra.tipo);
+          secTipo = removeSk(temp, secTipo, elem->pk, TIPO, &availTipo);
+  
+          strcpy(temp, consultaObra.autor);
+          secAutor = removeSk(temp, secAutor, elem->pk, AUTOR, &availAutor);
+  
+          strcpy(temp, consultaObra.ano);
+          secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
+        }
       }
       break;
 

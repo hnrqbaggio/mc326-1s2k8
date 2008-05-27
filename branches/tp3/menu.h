@@ -23,3 +23,12 @@ int geraMenuBusca ();
   * inserir uma nova obra.
 */
 int geraNotificaInsere ();
+
+/**
+ * Funcao que exibe notificacao de obra nao inserida pois
+ * ja esta catalogada e informa a opcao de insercao.
+ * O retorno é 1 ou 0, de acordo se o usuario quer ou nao
+ * inserir uma nova obra.
+ */
+int geraNotificaErroInsere ();
+

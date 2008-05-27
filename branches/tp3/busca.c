@@ -1,6 +1,6 @@
 #include "busca.h"
 
-void buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const int tipoCampo) {
+int buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const int tipoCampo) {
   
   Sk temp, *result;
   ElementoIndice temp2, *result2;
@@ -65,13 +65,20 @@ void buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const 
     }
     /*Finaliza as tags abertas do HTML*/
     endHtml(fhtml);
+    printf("\n--------------------------------------------------\n");
+    printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
+    printf("--------------------------------------------------\n");
+    fclose(fsk);
+    fclose(fhtml);
+    return 1;
     
   } else {/*Nenhum registro encontrado*/
     printf("************************************\n\n");
     printf("Nenhum registro foi encontrado.     \n\n");
     printf("************************************\n\n");
+    fclose(fsk);
+    fclose(fhtml);
+    return 0;
   }
 
-  fclose(fsk);
-  fclose(fhtml);
 }

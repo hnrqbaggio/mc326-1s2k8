@@ -19,6 +19,6 @@
  * o indice secundario onde sera realizada a busca, a base de dados e um inteiro
  * que define o tipo do campo.
 */
-void buscaSk(char *, TIndice *, IndSec *, FILE *, const int);
+int buscaSk(char *, TIndice *, IndSec *, FILE *, const int);
 
 #endif

@@ -2,7 +2,7 @@
 #include "leitura.h"
 
 /*Funcao de leitura da obra de arte a ser inserida*/
-TObra * leObra (TIndice *ind, TObra *obra) {
+int leObra (TIndice *ind, TObra *obra) {
 	
   ElementoIndice *chave = (ElementoIndice *) malloc(sizeof(ElementoIndice));
   ElementoIndice *result = NULL;
@@ -19,8 +19,8 @@ TObra * leObra (TIndice *ind, TObra *obra) {
   chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
   result = (ElementoIndice *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(ElementoIndice), compare);
 	
-  if (result) { /* registro ja existente */
-    printf("Obra ja catalogada. Insercao nao concluida.\n");
+  if (result) { /* Registro ja existente. Retorna falso */
+    return 0;
 
   } else { 
     leTexto(obra->tipo, sizeof(obra->tipo), "Tipo (ate 100 caracteres): ");
@@ -46,9 +46,9 @@ TObra * leObra (TIndice *ind, TObra *obra) {
     /* atualizacao do indice */	
     ind->vetor[ind->tamanho-1] = *chave;
   }
-	
+	/*Insercao realizada com exito na pk*/
   free(chave);
-  return obra;
+  return 1;
 }
 
 /*Funcao para inserir uma nova obra no catalogo*/

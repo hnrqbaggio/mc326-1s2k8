@@ -174,4 +174,3 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
   return indSecun;
 }
 
-

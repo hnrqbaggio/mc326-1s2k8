@@ -23,9 +23,9 @@
 /* 
  * Funcao responsavel pela leitura e tratamento da entrada do usuario.
  * Recebe o indice primario para verificar se a obra ja existe e atualizar este.
- * Retorna a obra a ser inserida na base.
+ * Retorna um inteiro: se a insercao foi feita com sucesso (1) ou  nao (0)
  */
-TObra * leObra(TIndice *, TObra *);
+int leObra(TIndice *, TObra *);
 
 /*** Funcoes de leitura das entradas do usuario ***/
 /* 

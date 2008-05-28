@@ -59,10 +59,10 @@ typedef struct obra {
  * relativo de registro, correspondente a posicao deste no arquivo da
  * base.
  */
-typedef struct struct_ind {
+typedef struct _pk {
   char pk[TAM_TITULO + 1];
   int nrr;
-} ElementoIndice;
+} Pk;
 
 /* TAD que representara o indice */
 /* 
@@ -76,10 +76,10 @@ typedef struct struct_ind {
  * usado para controlar quando realocar espaco para o vetor. 
  */
 typedef struct struct_vet {
-  ElementoIndice * vetor;
+  Pk * vetor;
   int tamanho;
   int alocado;
-} TIndice;
+} IndicePrim;
 
 /**
  * Este inteiro será usado para representar a cabeca de uma avail
@@ -113,13 +113,13 @@ int gravaObra(TObra, FILE *, availList *);
  * dados e a availlist da base pois caso ela seja vazia, apontamos
  * ela para o final do arquivo, para facilitar a insercao.
  */
-TIndice * carregaIndice(FILE *, TIndice *, availList *);
+IndicePrim * carregaPk(FILE *, IndicePrim *, availList *);
 
 /* Realiza a ordenacao do indice passado como parametro. */
-void ordenaIndice(TIndice *);
+void ordenaIndice(IndicePrim *);
 
 /* Grava o indice da memoria para o arquivo. */
-void gravaIndice(TIndice *);
+void gravaPk(IndicePrim *);
 
 /* 
  * Realiza uma consulta na base usando a chave primaria. Seus
@@ -128,7 +128,7 @@ void gravaIndice(TIndice *);
  * indice. Os resultados sao passados pra funcao que gera o HTML.
  * Retorna 0 caso ao encontre a obra e 1 caso encontre. 
  */
-int consulta(ElementoIndice *, FILE *, TIndice *, TObra *);
+int consulta(Pk *, FILE *, IndicePrim *, TObra *);
 
 /* 
  * Lista todos os registros da base de dados. Ela percorre o vetor do
@@ -136,7 +136,7 @@ int consulta(ElementoIndice *, FILE *, TIndice *, TObra *);
  * dados no primeiro parametro, que eh a base de dados. Os resultados
  * sao passados pra funcao que gera o HTML.
  */
-void listaBase(FILE *, TIndice *);
+void listaBase(FILE *, IndicePrim *);
 
 /*** Funcoes auxiliares. ***/
 /* 
@@ -148,7 +148,7 @@ void listaBase(FILE *, TIndice *);
  * com a qsort.  
 
  * Os parametros da funcao recebem um cast para
- * ElementoIndice * e tem seus campos pk copiadaos para strings
+ * Pk * e tem seus campos pk copiadaos para strings
  * auxiliares, as quais sao comparadas usando strcmp.
  */
 int compare(const void *a, const void *b);
@@ -159,7 +159,7 @@ int compare(const void *a, const void *b);
  * sufuciente para o espaco alocado para o vetor e reservar mais caso
  * seja necessario. 
  */
-TIndice * realocaIndice(TIndice *ind);
+IndicePrim * realocaIndPrim(IndicePrim *ind);
 
 /** 
  * Preenche as tabelas do HTML fornecido como parametro com a obra tambem fornecida

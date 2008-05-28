@@ -2,10 +2,10 @@
 #include "leitura.h"
 
 /*Funcao de leitura da obra de arte a ser inserida*/
-TObra * leObra (TIndice *ind, TObra *obra) {
+TObra * leObra (IndicePrim *ind, TObra *obra) {
 	
-  ElementoIndice *chave = (ElementoIndice *) malloc(sizeof(ElementoIndice));
-  ElementoIndice *result = NULL;
+  Pk *chave = (Pk *) malloc(sizeof(Pk));
+  Pk *result = NULL;
 	
   printf("\nEntre com os dados de uma obra.\n");
 
@@ -17,7 +17,7 @@ TObra * leObra (TIndice *ind, TObra *obra) {
   /*Verifica se ja existe a obra no catalogo*/
   strcpy(chave->pk, obra->titulo);
   chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
-  result = (ElementoIndice *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(ElementoIndice), compare);
+  result = (Pk *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(Pk), compare);
 	
   if (result) { /* registro ja existente */
     printf("Obra ja catalogada. Insercao nao concluida.\n");
@@ -41,7 +41,7 @@ TObra * leObra (TIndice *ind, TObra *obra) {
 		
     /* verifica se o indice precisa de mais espaco. */
     (ind->tamanho)++;
-    ind = realocaIndice(ind);
+    ind = realocaIndPrim(ind);
 
     /* atualizacao do indice */	
     ind->vetor[ind->tamanho-1] = *chave;
@@ -52,11 +52,11 @@ TObra * leObra (TIndice *ind, TObra *obra) {
 }
 
 /*Funcao para inserir uma nova obra no catalogo*/
-void insereObra(FILE *arq, TIndice *ind) {
+void insereObra(FILE *arq, IndicePrim *ind) {
   char option;
   TObra obra;
-  ElementoIndice *chave = (ElementoIndice *) malloc(sizeof(ElementoIndice));
-  ElementoIndice *result = NULL;
+  Pk *chave = (Pk *) malloc(sizeof(Pk));
+  Pk *result = NULL;
  
   printf("\nEntre com os dados de uma obra.\n");
 
@@ -69,7 +69,7 @@ void insereObra(FILE *arq, TIndice *ind) {
 
       strcpy(chave->pk, obra.titulo);
       chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
-      result = (ElementoIndice *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(ElementoIndice), compare);
+      result = (Pk *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(Pk), compare);
     
       if (result) { /* registro ja existente */
 	printf("Obra ja catalogada. Insercao nao concluida.\n");
@@ -96,7 +96,7 @@ void insereObra(FILE *arq, TIndice *ind) {
 
 	/* verifica se o indice precisa de mais espaco. */
 	(ind->tamanho)++;
-	ind = realocaIndice(ind);
+	ind = realocaIndPrim(ind);
 
 	/* atualizacao do indice */	
 	ind->vetor[ind->tamanho-1] = *chave; /* estruturas de mesmo tipo: atribuicao permitida.  */;

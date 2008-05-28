@@ -1,13 +1,13 @@
 #include "remove.h"
 
-TIndice * removePk(char *chave, TIndice *indPrim, FILE *base, availList *avail) {
-  ElementoIndice temp, *result;
+IndicePrim * removePk(char *chave, IndicePrim *indPrim, FILE *base, availList *avail) {
+  Pk temp, *result;
   int offset, fim;
 
   strcpy(temp.pk, chave);
   temp.nrr = -1; /* Soh pra manter inicializado. */
 
-  result = (ElementoIndice *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(ElementoIndice), compare);
+  result = (Pk *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(Pk), compare);
 
   /* Apesar da chave ser valida, eh bom evitar um segfault por uso indevido da funcao. */
   if (result) {

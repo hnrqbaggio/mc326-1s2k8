@@ -1,9 +1,9 @@
 #include "busca.h"
 
-void buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const int tipoCampo) {
+void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base, const int tipoCampo) {
   
   Sk temp, *result;
-  ElementoIndice temp2, *result2;
+  Pk temp2, *result2;
 
   FILE *fhtml, *fsk;
   TObra reg;
@@ -47,7 +47,7 @@ void buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const 
       fgets(temp2.pk, TAM_TITULO+1, fsk);
       fscanf(fsk, FORMATO_INT, &(temp2.nrr));
 
-      result2 = (ElementoIndice *) bsearch(&temp2, indPrim->vetor, indPrim->tamanho, sizeof(temp2), compare);
+      result2 = (Pk *) bsearch(&temp2, indPrim->vetor, indPrim->tamanho, sizeof(temp2), compare);
 
       offset = TAM_REG * result2->nrr;
       fseek(base, offset, SEEK_SET);

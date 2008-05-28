@@ -30,8 +30,8 @@ int main(int argc, char **argv){
   FILE *fsk;
 
   /* Variavais de indice primario e sua avail list da base de dados. */
-  TIndice *ind;
-  ElementoIndice *elem;
+  IndicePrim *ind;
+  Pk *elem;
   availList availBase = FIM_DE_LISTA;
 
   /* Variaveis de indice secundario e respectivas avail lists. */
@@ -41,7 +41,7 @@ int main(int argc, char **argv){
   /*Abre a availList da base, a base e o indice primario*/
   availBase = openAvail(ARQ_AVAIL_BASE);
   arq = abreCatalogo(ARQ_BASE);
-  ind = carregaIndice(arq, ind, &availBase);
+  ind = carregaPk(arq, ind, &availBase);
 
   /*Abre os indices secundarios*/
   secTitulo =  geraSk(ind, arq, &availTitulo, TITULO);
@@ -55,7 +55,7 @@ int main(int argc, char **argv){
   availAutor = openAvail(ARQ_AVAIL_AUTOR);
   availAno = openAvail(ARQ_AVAIL_ANO);
 
-  elem = (ElementoIndice *) malloc(sizeof(ElementoIndice));
+  elem = (Pk *) malloc(sizeof(Pk));
 
   /*Entrada do programa*/
   printf("|------------------------------------|\n");
@@ -189,7 +189,7 @@ int main(int argc, char **argv){
     case 0:/*Sair do programa*/
       /*fecha todos os arquivos abertos e libera memoria para sair do programa*/
       fechaCatalogo(arq);
-      gravaIndice(ind);
+      gravaPk(ind);
 
       /* Grava os indices nos arquivos. */
       gravaIndSk(secTitulo, TITULO);

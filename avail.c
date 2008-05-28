@@ -23,4 +23,7 @@ void gravaAvail(availList avail, const char *nomeArq) {
   fav = fopen(nomeArq, "w"); /* Sobrescreve o arq antigo. */
   fprintf(fav, FORMATO_INT, avail);
   fclose(fav);
+  
+	int x = openAvail
+  
 }

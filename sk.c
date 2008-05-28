@@ -7,7 +7,7 @@ carrega parte de estrutura pra memoria e deixa a outra no disco.
  Caso nao exista o indice, ele ira constri-lo a partir da base de
  dados.*/
 
-IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo){
+IndSec * geraSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tipoCampo){
 
   IndSec *indSk;
   FILE *fsk;
@@ -92,7 +92,7 @@ IndSec * carregaSk(FILE *arqSk, availList *avail){
   return indSk;
 }
 
-IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo) {
+IndSec * criaSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tipoCampo) {
 
   int i, tam;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */

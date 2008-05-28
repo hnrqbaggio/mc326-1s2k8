@@ -72,7 +72,7 @@ typedef struct _vetorsk{
  *
  * Retorno: um ponteiro pra um vetor de sks.
  */
-IndSec * geraSk(TIndice *, FILE *, availList*, const int);
+IndSec * geraSk(IndicePrim *, FILE *, availList*, const int);
 
 /**
  * Carrega um indice secundario a partir do arquivo em disco.
@@ -96,7 +96,7 @@ IndSec * carregaSk(FILE *, availList* );
  *
  * Retorna o ponteiro para a estrutura que representa o vetor de SKs.
  */
-IndSec * criaSk(TIndice *, FILE *, availList *, const int);
+IndSec * criaSk(IndicePrim *, FILE *, availList *, const int);
 
 /**
  * Insere uma SK no vetor que contem o indice secundario pra um

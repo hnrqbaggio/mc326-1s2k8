@@ -54,15 +54,15 @@ int gravaObra(TObra obra, FILE *arq, availList *avail){
 
 /*** Funcoes de manipulacao do indice primario. ***/
 /* funcao que carrega o indice do arquivo ou monta-o a partir da base */
-TIndice * carregaIndice(FILE *base, TIndice *indice, availList *avail) {
+IndicePrim * carregaPk(FILE *base, IndicePrim *indice, availList *avail) {
   FILE *arq_ind; /* arquivo onde estao os indices, caso exista */
   int offset;
   int *tam;      /* apontador pro numero de elementos do vetor de
 		    indice. Pra facilitar a leitura do codigo. */
 
   arq_ind = fopen(ARQ_PK, "r");
-  indice = (TIndice *) malloc(sizeof(TIndice));
-  indice->vetor = (ElementoIndice *) malloc(sizeof(ElementoIndice) * VETOR_MIN);
+  indice = (IndicePrim *) malloc(sizeof(IndicePrim));
+  indice->vetor = (Pk *) malloc(sizeof(Pk) * VETOR_MIN);
   indice->alocado = VETOR_MIN;
   indice->tamanho = 0;
 
@@ -72,7 +72,7 @@ TIndice * carregaIndice(FILE *base, TIndice *indice, availList *avail) {
 
     while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arq_ind)) {
       (*tam)++;
-      indice = realocaIndice(indice);
+      indice = realocaIndPrim(indice);
       fscanf(arq_ind, "%d", &(indice->vetor[*tam-1].nrr)); /* le o nrr do registro */
     }
 
@@ -81,7 +81,7 @@ TIndice * carregaIndice(FILE *base, TIndice *indice, availList *avail) {
  
     while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, base)){
       (*tam)++;
-      indice = realocaIndice(indice);
+      indice = realocaIndPrim(indice);
       indice->vetor[*tam-1].nrr = *tam - 1;
 
       /* Posiciona o cursor do arquivo no campo Titulo do proximo registro. */
@@ -91,7 +91,7 @@ TIndice * carregaIndice(FILE *base, TIndice *indice, availList *avail) {
     }
 
     /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
-    qsort(indice->vetor, *tam, sizeof(ElementoIndice), compare);
+    qsort(indice->vetor, *tam, sizeof(Pk), compare);
   }
   /*Caso a availList da base seja vazia, aponta ela para o final do arquivo*/
   if(*avail == -1) {
@@ -101,12 +101,12 @@ TIndice * carregaIndice(FILE *base, TIndice *indice, availList *avail) {
 }
 
 /*  Realiza a ordenacao do indice usando qsort. */
-void ordenaIndice(TIndice *indice) {
-  qsort(indice->vetor, indice->tamanho, sizeof(ElementoIndice), compare);
+void ordenaIndice(IndicePrim *indice) {
+  qsort(indice->vetor, indice->tamanho, sizeof(Pk), compare);
 }
 
 /* Gravacao do indice, ordenado por pk, no arquivo */
-void gravaIndice(TIndice *indice) {
+void gravaPk(IndicePrim *indice) {
   FILE *ind;
   int i;
 
@@ -126,11 +126,11 @@ void gravaIndice(TIndice *indice) {
 
 /* Consulta de uma obra na base. 
    Chave já vem preenchido. */
-int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
-  ElementoIndice *temp;
+int consulta(Pk *chave, FILE *base, IndicePrim *indice, TObra *reg) {
+  Pk *temp;
   int retorno;
   
-  temp = (ElementoIndice *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(ElementoIndice), compare);
+  temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
 
   if (temp) { /* registro encontrado */
     /* TObra * reg = (TObra *) malloc(sizeof(TObra)); */
@@ -185,11 +185,11 @@ int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
  * Realiza a listagem as obras na base, e envia os resultados pra um
  * arquivo em html. 
  */
-void listaBase(FILE *base, TIndice *indice) {
+void listaBase(FILE *base, IndicePrim *indice) {
   int i;
   TObra reg;
   FILE *saida;
-  ElementoIndice *temp;
+  Pk *temp;
 
   saida = fopen(ARQ_HTML, "w");
 
@@ -232,8 +232,8 @@ int compare(const void *a, const void *b) {
   char *str1, *str2;
   int i;
 
-  str1 = (*(ElementoIndice *)a).pk;
-  str2 = (*(ElementoIndice *)b).pk;
+  str1 = (*(Pk *)a).pk;
+  str2 = (*(Pk *)b).pk;
 
   /* Copia os valores dos parametros, convertendo pra maiuscula */
   for (i = 0; i <= TAM_TITULO; i++) {
@@ -248,11 +248,11 @@ int compare(const void *a, const void *b) {
 }
 
 /* Realoca espaco para o vetor caso seja necessario. */
-TIndice * realocaIndice(TIndice *ind) {
+IndicePrim * realocaIndPrim(IndicePrim *ind) {
 
   if (ind->tamanho == ind->alocado) {
     ind->alocado *= 2;
-    ind->vetor = (ElementoIndice *) realloc(ind->vetor, sizeof(ElementoIndice) * ind->alocado);
+    ind->vetor = (Pk *) realloc(ind->vetor, sizeof(Pk) * ind->alocado);
   }
 
   return ind;

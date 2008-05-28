@@ -25,7 +25,7 @@
  * Recebe o indice primario para verificar se a obra ja existe e atualizar este.
  * Retorna a obra a ser inserida na base.
  */
-TObra * leObra(TIndice *, TObra *);
+TObra * leObra(IndicePrim *, TObra *);
 
 /*** Funcoes de leitura das entradas do usuario ***/
 /* 
@@ -34,7 +34,7 @@ TObra * leObra(TIndice *, TObra *);
  * entradas invalidas. Ao final de uma entrada do usuario, ele grava
  * os dados na base e atualiza o vetor de busca na memoria.
  */
-void insereObra(FILE *, TIndice *);
+void insereObra(FILE *, IndicePrim *);
 
 /* 
  * Esta funcao realiza a leitura dos campos do tipo texto: Titulo,

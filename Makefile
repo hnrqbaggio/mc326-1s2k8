@@ -21,6 +21,9 @@ remove.o: remove.h remove.c
 
 avail.o: avail.h avail.c
 	gcc -ggdb -ansi -pedantic -Wall -c avail.c
+	
+hash.o: hash.h hash.c
+	gcc -ggdb -ansi -pedantic -Wall -c hash.c
 
 clean:
 	rm -f *.o *~ tp3

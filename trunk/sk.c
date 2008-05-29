@@ -11,40 +11,51 @@ IndSec * geraSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tip
 
   IndSec *indSk;
   FILE *fsk;
+  char *nome;
 
   switch (tipoCampo){
   case TITULO: /* Campo a ser lido eh o titulo. */
-    fsk = fopen(ARQ_IS_TITULO,"r");
-    if (fsk == NULL){
-      indSk = criaSk(indPrim, base, avail, tipoCampo);
-    } else {
-      indSk = carregaSk(fsk, avail);
-    }
-    break;
-  case TIPO: /* Campo Tipo */
-    fsk = fopen(ARQ_IS_TIPO,"r");
-    if (fsk == NULL){
-      indSk = criaSk(indPrim, base, avail, tipoCampo);
-    } else {
-      indSk = carregaSk(fsk, avail);
-    }
-    break;
-  case AUTOR: /* Campo Autor */
-    fsk = fopen(ARQ_IS_AUTOR,"r");
-    if (fsk == NULL){
-      indSk =  criaSk(indPrim, base, avail, tipoCampo);
-    } else {
-      indSk = carregaSk(fsk, avail);
-    }
-    break;
-  case ANO: /* Campo Ano */
-    fsk = fopen(ARQ_IS_ANO,"r");
-    if (fsk == NULL){
-      indSk = criaSk(indPrim, base, avail, tipoCampo);
-    } else {
-      indSk = carregaSk(fsk, avail);
-    }
-    break;
+		sprintf(nome, "%s%d%s", ARQ_IS_TITULO, 0, EXTENSAO_SK);
+		fsk = fopen(nome,"r");
+		
+		if (fsk == NULL){
+      	indSk = criaSk(indPrim, base, avail, tipoCampo);
+    	} else {
+      	indSk = carregaSk(fsk); 
+    	}
+    	break;
+    
+  	case TIPO: /* Campo Tipo */
+		sprintf(nome, "%s%d%s", ARQ_IS_TITULO, 0, EXTENSAO_SK);
+		fsk = fopen(nome,"r");
+	
+    	if (fsk == NULL){
+      	indSk = criaSk(indPrim, base, avail, tipoCampo);
+    	} else {
+      	indSk = carregaSk(fsk); 
+    	}
+    	break;
+    	
+  	case AUTOR: /* Campo Autor */
+		sprintf(nome, "%s%d%s", ARQ_IS_TITULO, 0, EXTENSAO_SK);
+		fsk = fopen(nome,"r");
+		
+    	if (fsk == NULL){
+			indSk = criaSk(indPrim, base, avail, tipoCampo);
+    	} else {
+			indSk = carregaSk(fsk); 
+    	}
+		break;
+  	case ANO: /* Campo Ano */
+		sprintf(nome, "%s%d%s", ARQ_IS_TITULO, 0, EXTENSAO_SK);
+		fsk = fopen(nome,"r");
+	
+    	if (fsk == NULL){
+    	  indSk = criaSk(indPrim, base, avail, tipoCampo);
+   	} else {
+			indSk = carregaSk(fsk); 
+    	}
+    	break;
   }
 
   if (fsk) fclose(fsk);
@@ -277,7 +288,7 @@ void gravaIndSk(IndSec *sec, const int tipoCampo) {
 }
 
 
-IndSec * carregaIndice(IndSec *indSecun, char *chave, int *atual, const int tipoCampo) {
+IndSec * carregaIndSec(IndSec *indSecun, char *chave, int *atual, const int tipoCampo) {
   int valorHash; 
   char *nome, campo;
   FILE *ind;

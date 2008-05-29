@@ -8,10 +8,13 @@
 #include "catalogo.h"
 
 /* Nomes dos arquivos de indices secundarios. */
-#define ARQ_IS_TITULO ("titulo.si")
-#define ARQ_IS_TIPO ("tipo.si")
-#define ARQ_IS_AUTOR ("autor.si")
-#define ARQ_IS_ANO ("ano.si")
+#define ARQ_IS_TITULO ("titulo")
+#define ARQ_IS_TIPO ("tipo")
+#define ARQ_IS_AUTOR ("autor")
+#define ARQ_IS_ANO ("ano")
+
+#define EXTENSAO_PK (".chp")
+#define EXTENSAO_SK (".chs")
 
 /* Nomes dos arquivos de avail list. */
 #define ARQ_AVAIL_TITULO ("titulo.av")

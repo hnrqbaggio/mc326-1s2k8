@@ -55,7 +55,7 @@ IndSec * geraSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tip
 /* Funcao que,caso exista o arquivo de SKs, carrega a parte que deve
   ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no
   disco */
-IndSec * carregaSk(FILE *arqSk, availList *avail){
+IndSec * carregaSk(FILE *arqSk){
   /*Declaracao de variaveis*/
   IndSec *indSk;
   int tamSk = 0;
@@ -66,12 +66,6 @@ IndSec * carregaSk(FILE *arqSk, availList *avail){
   indSk->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
   indSk->alocado = VETOR_MIN;
   indSk->tamanho = 0;
-	
-  /*Leitura do tamanho do SK que fica no disco*/
-  fscanf(arqSk, FORMATO_INT, &(indSk->tamDisco));
-
-  /*Posiciona o ponteiro do arquivo para o inicio da parte que deve ficar na RAM*/
-  fseek(arqSk, indSk->tamDisco * (TAM_TITULO + TAM_NUMERO), SEEK_CUR);
 
   /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
   while (fscanf(arqSk, FORMATO_INT, &(sk->lenght)) != EOF){
@@ -84,6 +78,7 @@ IndSec * carregaSk(FILE *arqSk, availList *avail){
     indSk->vetor[tamSk].lenght = sk->lenght;
     tamSk++;
     indSk->tamanho = tamSk;
+
     /*Verifica se precisa ser realocado memoria*/
     indSk = realocaIndSec(indSk);	
   }
@@ -280,6 +275,48 @@ void gravaIndSk(IndSec *sec, const int tipoCampo) {
 	
   return;
 }
+
+
+IndSec * carregaIndice(IndSec *indSecun, char *chave, int *atual, const int tipoCampo) {
+  int valorHash; 
+  char *nome, campo;
+  FILE *ind;
+
+  valorHash = hashFunction(chave);
+
+  if (valorHash == atual) return indSecun;
+
+  gravaIndSk(indSecun, tipoCampo, atual); /* O par tipoCampo e atual
+					     determinam unicamente o
+					     arquivo onde salvar. */
+  free(IndSecun);
+
+  switch (tipoIndice) {
+  case TITULO: /* Campo a ser lido eh o titulo. */
+    strcpy(campo, ARQ_IS_TITULO); 
+    break;
+  case TIPO: /* Campo Tipo */
+    strcpy(campo, ARQ_IS_TIPO);
+    break;
+  case AUTOR: /* Campo Autor */
+     strcpy(campo, ARQ_IS_AUTOR)
+    break;
+  case ANO: /* Campo Ano */
+    strcpy(campo, ARQ_IS_ANO);
+    break;
+  }
+
+  sprintf(nome, "%d%s", valorHash, campo);
+  *atual = valorHash;
+  ind = fopen(nome, "r+");
+
+  IndSecun = NULL;
+  indSecun = carregaSk(ind);
+
+  return indSecun;
+}
+
+
 
 
 /* Realoca espaco para o vetor caso seja necessario. */

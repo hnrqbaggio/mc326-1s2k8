@@ -80,6 +80,7 @@ int main(int argc, char **argv){
         strcpy(obra2.titulo, obra.titulo);
         
         /*titulo*/
+
         sprintf(nome, "%s%s", ARQ_IS_TITULO, EXTENSAO_PK);
         fsk = fopen(nome,"r+");
         secTitulo = carregaIndice(secTitulo, obra.titulo, atualTitulo, TITULO);

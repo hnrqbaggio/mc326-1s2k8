@@ -83,28 +83,28 @@ int main(int argc, char **argv){
 
         sprintf(nome, "%s%s", ARQ_IS_TITULO, EXTENSAO_PK);
         fsk = fopen(nome,"r+");
-        secTitulo = carregaIndice(secTitulo, obra.titulo, atualTitulo, TITULO);
+
         secTitulo = insereSk(secTitulo, fsk, obra2.titulo, obra.titulo, &availTitulo);
         fclose(fsk);
         
         /* tipo */
         sprintf(nome, "%s%s", ARQ_IS_TIPO, EXTENSAO_PK);
         fsk = fopen(nome,"r+");
-        secTipo = carregaIndice(secTitulo, obra.tipo, atualTipo, TIPO);
+
         secTipo = insereSk(secTipo, fsk, obra2.titulo, obra.tipo, &availTipo);
         fclose(fsk);
         
         /* autor */
         sprintf(nome, "%s%s", ARQ_IS_AUTOR, EXTENSAO_PK);
         fsk = fopen(nome,"r+");
-        secAutor = carregaIndice(secAutor, obra.autor, atualAutor, AUTOR);
+
         secAutor = insereSk(secAutor, fsk, obra2.titulo, obra.autor, &availAutor);
         fclose(fsk);
         
         /* ano */
         sprintf(nome, "%s%s", ARQ_IS_ANO, EXTENSAO_PK);
         fsk = fopen(nome,"r+");
-        secAno = carregaIndice(secAno, obra.ano, atualAno, ANO);
+
         secAno = insereSk(secAno, fsk, obra2.titulo, obra.ano, &availAno);
         fclose(fsk);
         
@@ -137,28 +137,28 @@ int main(int argc, char **argv){
         case 1:/*Busca pelo titulo*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
-          secTitulo = carregaIndice(secTitulo, temp, atualTitulo, TITULO);
+          secTitulo = carregaIndiSec(secTitulo, temp, atualTitulo, TITULO);
           buscaSk(temp, ind, secTitulo, arq, TITULO);
           break;
 
         case 2:/*Busca pelo tipo*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
-          secTipo = carregaIndice(secTitulo, temp, atualTipo, TIPO);
+          secTipo = carregaIndSec(secTitulo, temp, atualTipo, TIPO);
           buscaSk(temp, ind, secTipo, arq, TIPO);
           break;
 
         case 3:/*Busca pelo autor*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
-          secAutor = carregaIndice(secAutor, temp, atualAutor, AUTOR);
+          secAutor = carregaIndSec(secAutor, temp, atualAutor, AUTOR);
           buscaSk(temp, ind, secAutor, arq, AUTOR);
           break;
 
         case 4:/*Busca por ano*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
-          secAno = carregaIndice(secAno, temp, atualAno, ANO);
+          secAno = carregaIndSec(secAno, temp, atualAno, ANO);
           buscaSk(temp, ind, secAno, arq, ANO);
           break;
 

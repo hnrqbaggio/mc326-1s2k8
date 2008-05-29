@@ -149,14 +149,14 @@ IndSec * criaSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tip
     fgets(campo, tam + 1, base); /* Le o campo do registro */
 
     /* Insere a SK relativa ao token, sendo q neste caso a avail list eh vazia. */
-    secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, avail);
+    secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, avail, atualHash, tipoCampo);
  
   }
   fclose(fsk);
   return secundario;
 }
 
-IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail) {
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail, int *atualHash, const int tipoCampo) {
   Sk * sk = (Sk *) malloc(sizeof(Sk)), *sk2;
   Sk * result;
   char * token;
@@ -166,6 +166,9 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
   token = strtok(campo, " ");
 
   while (token) { /* Realiza a insercao para cada novo token existente na string. */
+
+	/* Realiza o Hash do token. */
+	indSecun = carregaIndice(indSecun, token, atualHash, tipoCampo);
 
     /* Inicializo os valores num elemento que usarei como chave da
        busca binaria no indice. */

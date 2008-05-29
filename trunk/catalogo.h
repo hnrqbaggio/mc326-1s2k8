@@ -111,9 +111,10 @@ int gravaObra(TObra, FILE *, availList *);
 /* Carrega o indice do arquivo para a memoria. Cria o indice caso o
  * arquivo nao exista. Recebe como parametro o apontador pra base de
  * dados e a availlist da base pois caso ela seja vazia, apontamos
- * ela para o final do arquivo, para facilitar a insercao.
+ * ela para o final do arquivo, para facilitar a insercao. Recebe tambem
+ * um apontador de indice primario e o indice atual que esta aberto.
  */
-IndicePrim * carregaPk(FILE *, IndicePrim *, availList *);
+IndicePrim * carregaPk(FILE *, IndicePrim *, availList *, int *);
 
 /* Realiza a ordenacao do indice passado como parametro. */
 void ordenaIndice(IndicePrim *);

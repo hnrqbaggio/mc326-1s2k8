@@ -54,13 +54,18 @@ int gravaObra(TObra obra, FILE *arq, availList *avail){
 
 /*** Funcoes de manipulacao do indice primario. ***/
 /* funcao que carrega o indice do arquivo ou monta-o a partir da base */
-IndicePrim * carregaPk(FILE *base, IndicePrim *indice, availList *avail) {
+IndicePrim * carregaPk(FILE *base, IndicePrim *indice, availList *avail, int *atual) {
   FILE *arq_ind; /* arquivo onde estao os indices, caso exista */
+  char *pkAux;
   int offset;
   int *tam;      /* apontador pro numero de elementos do vetor de
 		    indice. Pra facilitar a leitura do codigo. */
 
-  arq_ind = fopen(ARQ_PK, "r");
+  /*Abro o indicePk-hash = 0*/
+  sprintf(nome, "%s%d%s", ARQ_PK, 0, EXTENSAO_PK);
+  arq_ind = fopen(nome, "r");
+  
+  /*Inicializando indice*/
   indice = (IndicePrim *) malloc(sizeof(IndicePrim));
   indice->vetor = (Pk *) malloc(sizeof(Pk) * VETOR_MIN);
   indice->alocado = VETOR_MIN;
@@ -75,11 +80,33 @@ IndicePrim * carregaPk(FILE *base, IndicePrim *indice, availList *avail) {
       indice = realocaIndPrim(indice);
       fscanf(arq_ind, "%d", &(indice->vetor[*tam-1].nrr)); /* le o nrr do registro */
     }
-
     fclose(arq_ind);
+    
   } else { /* vai ter que gerar a partir da base */
- 
-    while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, base)){
+    
+    while(fgets(pkAux, TAM_TITULO+1, base)){
+      /*Calculo o hash*/
+      valorHash = hashFunction(pkAux);
+      
+      /*Se nao e primeiro a ser criado e o indice nao esta aberto*/
+      if (valorHash != atual && atual != -1) {
+        
+        /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
+        qsort(indice->vetor, *tam, sizeof(Pk), compare);
+        /*Gravo o indPK aberto e atualizo o tamanho para 0*/
+        gravaPk(ind);
+        indice->tamanho = 0;
+      }
+      /*Caso nao e o indice aberto*/
+      if (valorHash != atual) {
+
+        /*Abro o indicePk-hash*/
+        sprintf(nome, "%s%d%s", ARQ_PK, valorHash, EXTENSAO_PK);
+        arq_ind = fopen(nome, "r");
+        atual = valorHash;
+      }
+
+      strcpy(indice->vetor[(*tam)].pk, pkAux);
       (*tam)++;
       indice = realocaIndPrim(indice);
       indice->vetor[*tam-1].nrr = *tam - 1;

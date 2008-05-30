@@ -43,7 +43,7 @@ int main(int argc, char **argv){
   /*Abre a availList da base, a base e o indice primario*/
   availBase = openAvail(ARQ_AVAIL_BASE);
   arq = abreCatalogo(ARQ_BASE);
-  ind = carregaPk(arq, ind, &availBase);
+  ind = iniciaPk(arq, ind, &availBase, &atualPk);
 
   /*Abre os indices secundarios*/
   secTitulo =  geraSk(ind, arq, &availTitulo, TITULO);

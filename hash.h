@@ -8,7 +8,7 @@ int hashFunction(char * chave) {
 	int h = 0, i;
 	
 	for (i = 0; i < strlen(chave); ) {
-		h += (chave[i] * (++i)) % H
+		h += (chave[i] * (++i)) % H;
 	}
 	
 	return h % H;

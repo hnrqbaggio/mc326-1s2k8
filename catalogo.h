@@ -114,7 +114,13 @@ int gravaObra(TObra, FILE *, availList *);
  * ela para o final do arquivo, para facilitar a insercao. Recebe tambem
  * um apontador de indice primario e o indice atual que esta aberto.
  */
-IndicePrim * carregaPk(FILE *, IndicePrim *, availList *, int *);
+IndicePrim * iniciaPk(FILE *, IndicePrim *, availList *, int *);
+
+/**
+  * Abre o arquivo de indice primario correspondente ao valor de hash 
+  * e carrega pra RAM. Fecha o arquivo e retorna o indice primario.
+*/
+IndicePrim * abrePk(IndicePrim *, int );
 
 /* Realiza a ordenacao do indice passado como parametro. */
 void ordenaIndice(IndicePrim *);

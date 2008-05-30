@@ -2,10 +2,11 @@
 #include "leitura.h"
 
 /*Funcao de leitura da obra de arte a ser inserida*/
-TObra * leObra (IndicePrim *ind, TObra *obra) {
+TObra * leObra (IndicePrim *ind, TObra *obra, int *atual) {
 	
   Pk *chave = (Pk *) malloc(sizeof(Pk));
   Pk *result = NULL;
+  int valorHash;
 	
   printf("\nEntre com os dados de uma obra.\n");
 
@@ -15,10 +16,25 @@ TObra * leObra (IndicePrim *ind, TObra *obra) {
   preencher(obra->titulo, sizeof(obra->titulo));
 
   /*Verifica se ja existe a obra no catalogo*/
+  
   strcpy(chave->pk, obra->titulo);
+  /*Hash da pk a ser inserida*/
+  valorHash = hashFunction(chave->pk);
+  
+  /*Se o indice aberto nao e o mesmo da pk a ser inserida*/
+  if(valorHash != *atual) {
+    /*Gravo o indPK aberto e atualizo o tamanho para 0*/
+    gravaPk(ind);
+    ind->tamanho = 0;
+  
+    /*abro pk correspondente ao valor do hash*/
+    ind = abrePk(ind, valorHash);
+    *atual = valorHash;
+  }
+  /*Busco no indice que ja esta aberto*/ 
   chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
   result = (Pk *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(Pk), compare);
-	
+    
   if (result) { /* registro ja existente */
     printf("Obra ja catalogada. Insercao nao concluida.\n");
 

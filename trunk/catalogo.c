@@ -54,10 +54,10 @@ int gravaObra(TObra obra, FILE *arq, availList *avail){
 
 /*** Funcoes de manipulacao do indice primario. ***/
 /* funcao que carrega o indice do arquivo ou monta-o a partir da base */
-IndicePrim * carregaPk(FILE *base, IndicePrim *indice, availList *avail, int *atual) {
+IndicePrim * iniciaPk(FILE *base, IndicePrim *indice, availList *avail, int *atual) {
   FILE *arq_ind; /* arquivo onde estao os indices, caso exista */
-  char *pkAux;
-  int offset;
+  char *pkAux, *nome;
+  int offset, valorHash;
   int *tam;      /* apontador pro numero de elementos do vetor de
 		    indice. Pra facilitar a leitura do codigo. */
 
@@ -89,21 +89,21 @@ IndicePrim * carregaPk(FILE *base, IndicePrim *indice, availList *avail, int *at
       valorHash = hashFunction(pkAux);
       
       /*Se nao e primeiro a ser criado e o indice nao esta aberto*/
-      if (valorHash != atual && atual != -1) {
+      if (valorHash != *atual && *atual != -1) {
         
         /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
         qsort(indice->vetor, *tam, sizeof(Pk), compare);
         /*Gravo o indPK aberto e atualizo o tamanho para 0*/
-        gravaPk(ind);
+        gravaPk(indice);
         indice->tamanho = 0;
       }
       /*Caso nao e o indice aberto*/
-      if (valorHash != atual) {
+      if (valorHash != *atual) {
 
         /*Abro o indicePk-hash*/
         sprintf(nome, "%s%d%s", ARQ_PK, valorHash, EXTENSAO_PK);
         arq_ind = fopen(nome, "r");
-        atual = valorHash;
+        *atual = valorHash;
       }
 
       strcpy(indice->vetor[(*tam)].pk, pkAux);
@@ -350,3 +350,27 @@ FILE * preencheHtml(FILE *b, TObra valores) {
   
   return b;
 }
+
+/*Abre o arquivo correspondente ao valor de hash e carrega pro indice primario*/
+IndicePrim * abrePk(IndicePrim *indice, int valorHash) {
+  
+  char *nome;
+  int *tam = &(indice->tamanho);
+  FILE *arqInd;
+  
+  /*Abro o indicePk-hash*/
+  sprintf(nome, "%s%d%s", ARQ_PK, valorHash, EXTENSAO_PK);
+  arqInd = fopen(nome, "r");
+  
+  /*Salvo no indice primario*/
+  while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arqInd)) {
+    (*tam)++;
+    indice = realocaIndPrim(indice);
+    fscanf(arqInd, "%d", &(indice->vetor[*tam-1].nrr)); /* le o nrr do registro */
+  }
+  fclose(arqInd);
+  
+  return indice;
+  
+}
+

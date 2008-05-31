@@ -1,6 +1,6 @@
 #include "busca.h"
 
-void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base, const int tipoCampo) {
+void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
   
   Sk temp, *result;
   Pk temp2, *result2;

@@ -30,3 +30,6 @@ clean:
 
 del:
 	rm -f *.si *.pi *.av
+	
+all:
+	${MAKE} tp3

@@ -111,12 +111,9 @@ int gravaObra(TObra, FILE *, availList *);
 
 /*** Funcoes de manipulacao do indice ***/
 /* Carrega o indice do arquivo para a memoria. Cria o indice caso o
- * arquivo nao exista. Recebe como parametro o apontador pra base de
- * dados e a availlist da base pois caso ela seja vazia, apontamos
- * ela para o final do arquivo, para facilitar a insercao. Recebe tambem
- * um apontador de indice primario e o indice atual que esta aberto.
+ * arquivo nao exista. 
  */
-IndicePrim * iniciaPk(FILE *, IndicePrim *, availList *, int *);
+IndicePrim * iniciaPk(IndicePrim *, availList *);
 
 /**
   * Abre o arquivo de indice primario correspondente ao valor de hash 
@@ -131,13 +128,9 @@ void ordenaIndice(IndicePrim *);
 void gravaPk(IndicePrim *);
 
 /* 
- * Realiza uma consulta na base usando a chave primaria. Seus
- * parametros sao o elemento do indice, o ponteiro para a base de
- * dados, e um ponteiro para a estrutura que contem o vetor do
- * indice. Os resultados sao passados pra funcao que gera o HTML.
- * Retorna 0 caso ao encontre a obra e 1 caso encontre. 
+ * Realiza uma consulta na base usando a chave primaria. 
  */
-int consulta(Pk *, FILE *, IndicePrim *, TObra *);
+TObra * consulta(Pk *, FILE *, IndicePrim *);
 
 /* 
  * Lista todos os registros da base de dados. Ela percorre o vetor do

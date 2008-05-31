@@ -65,19 +65,15 @@ typedef struct _vetorsk {
 
 
 /**
- * Constroi um indice secundario.  Se existe o arquivo de indice, ele
- * carrega parte de estrutura pra memoria e deixa a outra no disco.
- * Caso nao exista o indice, ele ira constri-lo a partir da base de
- * dados.
- *
- * Para isso, ela chama as funcoes auxiliares carregaSk e criaSk.
+ * Constroi todos os indices secundarios.  Tenta carregar o arquivo zero 
+ * de cada indice e se algum falhar, constroi todos a partir da base de dados.
  * 
- * Parametros: O indice primario, a base de dados e uma constante que
- * indica o tipo de campo cujo indice sera gerado.
+ * Parametros: O indice primario e a base de dados, 
+ * os quatro indices secundarios e suas avail lists
  *
  * Retorno: um ponteiro pra um vetor de sks.
  */
-IndSec * geraSk(IndicePrim *, FILE *, availList*, const int);
+void constroiSecundarios(IndicePrim *, FILE *, IndSec *, IndSec*, IndSec *, IndSec *, availList*, availList *, availList*, availList *);
 
 /**
  * Carrega um indice secundario a partir do arquivo em disco.
@@ -87,7 +83,7 @@ IndSec * geraSk(IndicePrim *, FILE *, availList*, const int);
  *
  * Parametro: o ponteiro pra o arquivo de indice.
  */
-IndSec * carregaSk(FILE *, availList* );
+IndSec * carregaSk(FILE *);
 
 /**
  * Cria o indice secundario a partir da base de dados, carregando as
@@ -107,25 +103,25 @@ IndSec * criaSk(IndicePrim *, FILE *, availList *, const int);
  * Insere uma SK no vetor que contem o indice secundario pra um
  * determinado campo, e atualiza a lista invertida no disco.
  *
- * Parametros: o vetor de SKs, um ponteiro pro arquivop de indice, uma
- * string com a chave primaria do registro, um string com o token e
- * uma referencia ao valor do noh cabeca da avail list do arquivo de
- * indice.
+ * Parametros: o vetor de SKs, um ponteiro pro arquivo de chaves primarias,
+ * uma string com a chave primaria do registro, um string com o valor do 
+ * campo relativo ao indice e uma referencia ao valor do noh cabeca da 
+ * avail list do arquivo de indice.
  *
  * Retorno: O vetor de SKs atualizado.
  */
-IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail);
+IndSec * insereSk(IndSec *, FILE *, char *pk, char *campo, availList *);
 
 /**
  * Grava o indice secundário da RAM para o arquivo no final deste, e 
  * grava também o tamanho do arquivo que sempre esta em disco.
  * Libera a memoria utilizada nesses e fecha o arquivo de SK.
  *
- * Parametros: o vetor de SKs e uma constante que define o tipo da SK
+ * Parametros: o vetor de SKs.
  *
  * Retorno: void 
 */
-void gravaIndSk(IndSec *, const int);
+void gravaIndSk(IndSec *);
 
 /**
  * Funcao usada para realocar espaco para o vetor da SK caso seja

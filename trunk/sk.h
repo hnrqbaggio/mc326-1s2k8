@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "catalogo.h"
+#include "hash.h"
 
 /* Nomes dos arquivos de indices secundarios. */
 #define ARQ_IS_TITULO ("titulo")
@@ -13,7 +14,6 @@
 #define ARQ_IS_AUTOR ("autor")
 #define ARQ_IS_ANO ("ano")
 
-#define EXTENSAO_PK (".chp")
 #define EXTENSAO_SK (".chs")
 
 /* Nomes dos arquivos de avail list. */
@@ -60,7 +60,7 @@ typedef struct _vetorsk {
   int alocado;
   int tamDisco;
   int valorHash;
-  const int tipoCampo;
+  int tipoCampo;
 } IndSec;
 
 

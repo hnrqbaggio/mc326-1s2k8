@@ -26,7 +26,7 @@
  * Tambem recebe o valor do hash do atual indice primario.
  * Retorna a obra a ser inserida na base.
  */
-TObra * leObra(IndicePrim *, TObra *, int *);
+TObra * leObra(IndicePrim *, TObra *);
 
 /*** Funcoes de leitura das entradas do usuario ***/
 /* 

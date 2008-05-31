@@ -54,11 +54,13 @@ typedef struct _sk{
  * desse indice, que sera usado na operacao de insercao e remocao de
  * chaves.
  */
-typedef struct _vetorsk{
+typedef struct _vetorsk {
   Sk *vetor;
   int tamanho;
   int alocado;
   int tamDisco;
+  int valorHash;
+  const int tipoCampo;
 } IndSec;
 
 

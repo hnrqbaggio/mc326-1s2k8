@@ -79,6 +79,8 @@ typedef struct struct_vet {
   Pk * vetor;
   int tamanho;
   int alocado;
+  int tamBase;
+  int valorHash;
 } IndicePrim;
 
 /**

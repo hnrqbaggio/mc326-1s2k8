@@ -113,7 +113,7 @@ int gravaObra(TObra, FILE *, availList *);
 /* Carrega o indice do arquivo para a memoria. Cria o indice caso o
  * arquivo nao exista. 
  */
-IndicePrim * iniciaPk(IndicePrim *, availList *);
+IndicePrim * iniciaPk(FILE *, IndicePrim *);
 
 /**
   * Abre o arquivo de indice primario correspondente ao valor de hash 
@@ -181,5 +181,9 @@ FILE * headHtml(FILE *);
  */
 FILE * endHtml(FILE *);
 
+/**
+ * Troca os indices primarios.
+ * O arquivo que sera aberto tem seu valor de hash armazenado no indice*/
+IndicePrim * trocaIndPrim(IndicePrim *);
 
 #endif

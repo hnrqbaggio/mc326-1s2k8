@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-
 /**
   * Funcao que gera menu principal para que usuario escolha a opcao desejada:
   * inserir, buscar, mostrar todas as obras, sair.

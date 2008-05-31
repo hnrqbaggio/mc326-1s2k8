@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "hash.h"
+#include "avail.h"
 
 /* Definicoes de tamanhos de campos e do tamanho do registro */
 #define TAM_TITULO 200

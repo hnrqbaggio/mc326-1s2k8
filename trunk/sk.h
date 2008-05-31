@@ -6,7 +6,6 @@
 #include <string.h>
 #include <ctype.h>
 #include "catalogo.h"
-#include "hash.h"
 
 /* Nomes dos arquivos de indices secundarios. */
 #define ARQ_IS_TITULO ("titulo")
@@ -73,7 +72,7 @@ typedef struct _vetorsk {
  *
  * Retorno: um ponteiro pra um vetor de sks.
  */
-void constroiSecundarios(IndicePrim *, FILE *, IndSec *, IndSec*, IndSec *, IndSec *, availList*, availList *, availList*, availList *);
+void constroiSecundarios(IndicePrim *, FILE *, IndSec *, IndSec *, IndSec *, IndSec *, availList *, availList *, availList *, availList *);
 
 IndSec * trocaIndSec(IndSec *, char *);
 

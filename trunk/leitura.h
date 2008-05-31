@@ -23,7 +23,6 @@
 /* 
  * Funcao responsavel pela leitura e tratamento da entrada do usuario.
  * Recebe o indice primario para verificar se a obra ja existe e atualizar este.
- * Tambem recebe o valor do hash do atual indice primario.
  * Retorna a obra a ser inserida na base.
  */
 TObra * leObra(IndicePrim *, TObra *);

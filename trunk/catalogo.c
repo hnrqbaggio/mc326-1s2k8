@@ -153,14 +153,29 @@ void gravaPk(IndicePrim *indice) {
 
 /* Consulta de uma obra na base. 
    Chave já vem preenchido. */
-int consulta(Pk *chave, FILE *base, IndicePrim *indice, TObra *reg) {
+int consulta(Pk *chave, FILE *base, IndicePrim *indice) {
   Pk *temp;
-  int retorno;
+  int retorno, valorHash;
+  
+  /*Verifico se hash da chave*/
+  valorHash = hashFunction(chave);
+  
+  /*Arquivo de indice e diferente ao do hash*/
+  if(valorHash != indice->valorHash) {
+  	
+  	/*Grava o indice primario aberto*/
+  	gravaPk(indice);
+    indice->tamanho = 0;
+    indice->valorHash = valorHash;
+    
+    /*Abre o novo indice primario*/
+    abrePk(indice);
+  }
   
   temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
 
   if (temp) { /* registro encontrado */
-    /* TObra * reg = (TObra *) malloc(sizeof(TObra)); */
+    TObra * reg = (TObra *) malloc(sizeof(TObra));
     FILE *saida;
 
     saida = fopen(ARQ_HTML, "w");
@@ -204,6 +219,7 @@ int consulta(Pk *chave, FILE *base, IndicePrim *indice, TObra *reg) {
     printf("Registo não encontrado.\n");
     printf("-----------------------\n");
   }
+  free(reg);
 
   return retorno;
 }
@@ -213,7 +229,7 @@ int consulta(Pk *chave, FILE *base, IndicePrim *indice, TObra *reg) {
  * arquivo em html. 
  */
 void listaBase(FILE *base, IndicePrim *indice) {
-  int i;
+  int i, j;
   TObra reg;
   FILE *saida;
   Pk *temp;
@@ -223,20 +239,32 @@ void listaBase(FILE *base, IndicePrim *indice) {
   /*Inicio do HTML*/
   headHtml(saida);
   
-  temp = indice->vetor;	
-  for (i = 0; i < indice->tamanho; i++) {
-    fseek(base, TAM_REG*(temp[i].nrr), SEEK_SET);
-
-    /* leitura do registro */
-    fgets(reg.titulo, TAM_TITULO+1, base);
-    fgets(reg.tipo, TAM_TIPO+1, base);
-    fgets(reg.autor, TAM_AUTOR+1, base);
-    fgets(reg.ano, TAM_ANO+1, base);
-    fgets(reg.valor, TAM_VALOR+1, base);
-    fgets(reg.imagem, TAM_IMAGEM+1, base);
-
-    preencheHtml(saida, reg);
-  }
+  /*Percorre todos os arquivos de indice primario*/
+	for(j=0; j<= H; j++) {
+  	
+		/*Gravo indice primario*/
+		gravaPk(indice);
+		indice->tamanho = 0;
+	  	indice->valorHash = j;
+	  	
+	  	abrePk(indice);		
+	  	
+	  	/*Percorre o indice*/
+	  	for (i = 0; i < indice->tamanho; i++) {
+			fseek(base, TAM_REG*(indice->vetor[i].nrr), SEEK_SET);
+		
+		   /* leitura do registro */
+		   fgets(reg.titulo, TAM_TITULO+1, base);
+		   fgets(reg.tipo, TAM_TIPO+1, base);
+		   fgets(reg.autor, TAM_AUTOR+1, base);
+		   fgets(reg.ano, TAM_ANO+1, base);
+		   fgets(reg.valor, TAM_VALOR+1, base);
+		   fgets(reg.imagem, TAM_IMAGEM+1, base);
+		
+		   preencheHtml(saida, reg);
+		}
+	}
+	
   /*Final do HTML*/
   endHtml(saida);
   
@@ -351,15 +379,15 @@ FILE * preencheHtml(FILE *b, TObra valores) {
   return b;
 }
 
-/*Abre o arquivo correspondente ao valor de hash e carrega pro indice primario*/
-IndicePrim * abrePk(IndicePrim *indice, int valorHash) {
+/*Abre o arquivo correspondente ao valor de hash ja atualizado no proprio indice*/
+IndicePrim * abrePk(IndicePrim *indice) {
   
   char *nome;
   int *tam = &(indice->tamanho);
   FILE *arqInd;
   
   /*Abro o indicePk-hash*/
-  sprintf(nome, "%s%d%s", ARQ_PK, valorHash, EXTENSAO_PK);
+  sprintf(nome, "%s%d%s", ARQ_PK, indice->valorHash, EXTENSAO_PK);
   arqInd = fopen(nome, "r");
   
   /*Salvo no indice primario*/

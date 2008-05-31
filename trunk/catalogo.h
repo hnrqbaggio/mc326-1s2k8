@@ -118,8 +118,9 @@ IndicePrim * iniciaPk(IndicePrim *, availList *);
 /**
   * Abre o arquivo de indice primario correspondente ao valor de hash 
   * e carrega pra RAM. Fecha o arquivo e retorna o indice primario.
+  * O valor de hash e passado na propria estrutura de indice primario.
 */
-IndicePrim * abrePk(IndicePrim *, int );
+IndicePrim * abrePk(IndicePrim *);
 
 /* Realiza a ordenacao do indice passado como parametro. */
 void ordenaIndice(IndicePrim *);
@@ -128,7 +129,8 @@ void ordenaIndice(IndicePrim *);
 void gravaPk(IndicePrim *);
 
 /* 
- * Realiza uma consulta na base usando a chave primaria. 
+ * Realiza uma consulta na base usando a chave primaria.
+ * Recebe a pk, o base de dados, o indice primario. 
  */
 TObra * consulta(Pk *, FILE *, IndicePrim *);
 

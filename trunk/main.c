@@ -21,7 +21,6 @@
 int main(int argc, char **argv){
 
   int ent, option, end;
-  int atualPk, atualTitulo, atualTipo, atualAutor, atualAno;/*Arquivos de hash na memoria*/
   TObra obra, obra2, consultaObra;
   char temp[TAM_TITULO];
   char *nome;
@@ -80,7 +79,6 @@ int main(int argc, char **argv){
         strcpy(obra2.titulo, obra.titulo);
         
         /*titulo*/
-
         sprintf(nome, "%s%s", ARQ_IS_TITULO, EXTENSAO_PK);
         fsk = fopen(nome,"r+");
 
@@ -167,7 +165,7 @@ int main(int argc, char **argv){
           preencher(elem->pk, sizeof(elem->pk));
           elem->nrr = -1;
 
-          consulta(elem, arq, ind, &consultaObra);
+          consulta(elem, arq, ind);
           break; 
         case 0:/*Menu anterior*/
           break;
@@ -190,7 +188,8 @@ int main(int argc, char **argv){
       elem->nrr = -1;
 
       /*Faz a pesquisa da pk e mostra no html*/
-      if(consulta(elem, arq, ind, &consultaObra) == 1) {
+      if(consulta(elem, arq, ind) == 1) {
+        
         /*Somente se consulta retornou verdadeiro*/
         ind = removePk(elem->pk, ind, arq, &availBase);
 

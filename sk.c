@@ -7,59 +7,13 @@ carrega parte de estrutura pra memoria e deixa a outra no disco.
  Caso nao exista o indice, ele ira constri-lo a partir da base de
  dados.*/
 
-IndSec * geraSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tipoCampo){
+void constroiSecundarios(IndicePrim *indPrim, FILE *base, 
+IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano, 
+availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno) {
 
-  IndSec *indSk;
-  FILE *fsk;
-  char *nome;
 
-  switch (tipoCampo){
-  case TITULO: /* Campo a ser lido eh o titulo. */
-		sprintf(nome, "%s%d%s", ARQ_IS_TITULO, 0, EXTENSAO_SK);
-		fsk = fopen(nome,"r");
-		
-		if (fsk == NULL){
-      	indSk = criaSk(indPrim, base, avail, tipoCampo);
-    	} else {
-      	indSk = carregaSk(fsk); 
-    	}
-    	break;
-    
-  	case TIPO: /* Campo Tipo */
-		sprintf(nome, "%s%d%s", ARQ_IS_TITULO, 0, EXTENSAO_SK);
-		fsk = fopen(nome,"r");
-	
-    	if (fsk == NULL){
-      	indSk = criaSk(indPrim, base, avail, tipoCampo);
-    	} else {
-      	indSk = carregaSk(fsk); 
-    	}
-    	break;
-    	
-  	case AUTOR: /* Campo Autor */
-		sprintf(nome, "%s%d%s", ARQ_IS_TITULO, 0, EXTENSAO_SK);
-		fsk = fopen(nome,"r");
-		
-    	if (fsk == NULL){
-			indSk = criaSk(indPrim, base, avail, tipoCampo);
-    	} else {
-			indSk = carregaSk(fsk); 
-    	}
-		break;
-  	case ANO: /* Campo Ano */
-		sprintf(nome, "%s%d%s", ARQ_IS_TITULO, 0, EXTENSAO_SK);
-		fsk = fopen(nome,"r");
-	
-    	if (fsk == NULL){
-    	  indSk = criaSk(indPrim, base, avail, tipoCampo);
-   	} else {
-			indSk = carregaSk(fsk); 
-    	}
-    	break;
-  }
 
   if (fsk) fclose(fsk);
-  return indSk;
 }
 
 
@@ -149,14 +103,14 @@ IndSec * criaSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tip
     fgets(campo, tam + 1, base); /* Le o campo do registro */
 
     /* Insere a SK relativa ao token, sendo q neste caso a avail list eh vazia. */
-    secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, avail, atualHash, tipoCampo);
+    secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, avail);
  
   }
   fclose(fsk);
   return secundario;
 }
 
-IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail, int *atualHash, const int tipoCampo) {
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail) {
   Sk * sk = (Sk *) malloc(sizeof(Sk)), *sk2;
   Sk * result;
   char * token;
@@ -248,7 +202,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
   return indSecun;
 }
 
-void gravaIndSk(IndSec *sec, const int tipoCampo) {
+void gravaIndSk(IndSec *sec) {
 
   FILE *fsk;
   int i = 0, tam;
@@ -300,7 +254,7 @@ IndSec * carregaIndSec(IndSec *indSecun, char *chave, int *atual, const int tipo
 
   if (valorHash == atual) return indSecun;
 
-  gravaIndSk(indSecun, tipoCampo, atual); /* O par tipoCampo e atual
+  gravaIndSk(indSecun); /* O par tipoCampo e atual
 					     determinam unicamente o
 					     arquivo onde salvar. */
   free(IndSecun);

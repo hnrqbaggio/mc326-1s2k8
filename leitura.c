@@ -7,8 +7,7 @@ TObra * leObra (IndicePrim *ind, TObra *obra) {
 	
   Pk *chave = (Pk *) malloc(sizeof(Pk));
   Pk *result = NULL;
-  int valorHash;
-	
+			
   printf("\nEntre com os dados de uma obra.\n");
 
   /*Leitura dos dados da obra*/
@@ -23,15 +22,17 @@ TObra * leObra (IndicePrim *ind, TObra *obra) {
   valorHash = hashFunction(chave->pk);
   
   /*Se o indice aberto nao e o mesmo da pk a ser inserida*/
-  if(valorHash != *atual) {
+  if(valorHash != ind->valorHash) {
     /*Gravo o indPK aberto e atualizo o tamanho para 0*/
     gravaPk(ind);
     ind->tamanho = 0;
   
+  	/*Atualizo o novo valor de hash*/
+  	*ind->valorHash = valorHash;
     /*abro pk correspondente ao valor do hash*/
-    ind = abrePk(ind, valorHash);
-    *atual = valorHash;
+    ind = abrePk(ind);
   }
+  
   /*Busco no indice que ja esta aberto*/ 
   chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
   result = (Pk *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(Pk), compare);

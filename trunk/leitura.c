@@ -1,5 +1,6 @@
 #include "catalogo.h"
 #include "leitura.h"
+#include "hash.h"
 
 /*Funcao de leitura da obra de arte a ser inserida*/
 TObra * leObra (IndicePrim *ind, TObra *obra, int *atual) {

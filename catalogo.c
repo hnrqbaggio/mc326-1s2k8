@@ -155,7 +155,7 @@ TObra * consulta(Pk *chave, FILE *base, IndicePrim *indice) {
   int retorno, valorHash;
   TObra * reg = (TObra *) malloc(sizeof(TObra));
   
-  valorHash = hashFunction(chave);
+  valorHash = hashFunction(chave->pk);
   
   /*Arquivo de indice e diferente ao do hash*/
   if(valorHash != indice->valorHash) {

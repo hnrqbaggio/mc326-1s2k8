@@ -14,14 +14,14 @@ availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno) {
 	int i;
 	char *nomeTitulo, *nomeTipo, *nomeAutor, *nomeAno;
 	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno; /* Arquivos de chaves secundarias. */
-	FILE *arqPkTitulo; *arqPkTipo; *arqPkAutor; *arqPkAno; /* Arquivos de chaves primarias. */
+	FILE *arqPkTitulo, *arqPkTipo, *arqPkAutor, *arqPkAno; /* Arquivos de chaves primarias. */
 	TObra obra;
 	
 	/* Tenta abrir os arquivos de indice de hash iguais a zero. */
-	sprintf(nomeTitulo, "%s%d%s", titulo->tipoCampo, 0, EXTENSAO_SK);
-	sprintf(nomeTipo,   "%s%d%s", tipo->tipoCampo,   0, EXTENSAO_SK);
-	sprintf(nomeAutor,  "%s%d%s", autor->tipoCampo,  0, EXTENSAO_SK);
-	sprintf(nomeAno,    "%s%d%s", ano->tipoCampo,    0, EXTENSAO_SK);
+	sprintf(nomeTitulo, "%d%d%s", titulo->tipoCampo, 0, EXTENSAO_SK);
+	sprintf(nomeTipo,   "%d%d%s", tipo->tipoCampo,   0, EXTENSAO_SK);
+	sprintf(nomeAutor,  "%d%d%s", autor->tipoCampo,  0, EXTENSAO_SK);
+	sprintf(nomeAno,    "%d%d%s", ano->tipoCampo,    0, EXTENSAO_SK);
 	
 	arqTitulo = fopen(nomeTitulo, "r");
 	arqTipo   = fopen(nomeTipo,   "r");
@@ -33,8 +33,8 @@ availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno) {
 		/* Carrega chaves do arquivo. */
 		titulo = carregaSk(arqTitulo);
 		tipo   = carregaSk(arqTipo);
-		autor  = carregaSk(autor);
-		ano    = carregaSk(ano);
+		autor  = carregaSk(arqAutor);
+		ano    = carregaSk(arqAno);
 		
 		/* Corrige as informções do indice que foram perdidas. */
 		titulo->tipoCampo = TITULO; titulo->valorHash = 0;
@@ -44,10 +44,10 @@ availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno) {
 		
 	} else { /* Vai precisar criar todos a partir da base de dados. */
 		
-		sprintf(nomePkTitulo, "%s%s", titulo->tipoCampo, EXTENSAO_PK);
-		sprintf(nomePkTipo,   "%s%s", tipo->tipoCampo,   EXTENSAO_PK);
-		sprintf(nomePkAutor,  "%s%s", autor->tipoCampo,  EXTENSAO_PK);
-		sprintf(nomePkAno,    "%s%s", ano->tipoCampo,    EXTENSAO_PK);
+		sprintf(nomeTitulo, "%d%s", titulo->tipoCampo, EXTENSAO_PK);
+		sprintf(nomeTipo,   "%d%s", tipo->tipoCampo,   EXTENSAO_PK);
+		sprintf(nomeAutor,  "%d%s", autor->tipoCampo,  EXTENSAO_PK);
+		sprintf(nomeAno,    "%d%s", ano->tipoCampo,    EXTENSAO_PK);
 		
 		arqPkTitulo = fopen(nomeTitulo, "w");
 		arqPkTipo   = fopen(nomeTipo,   "w");
@@ -272,7 +272,7 @@ void gravaIndSk(IndSec *sec) {
   tam = TAM_TITULO + TAM_NUMERO;
 	
   /*Define o tipo de campo e abre o arquivo correspondente*/
-  switch (tipoCampo){
+  switch (sec->tipoCampo){
   case TITULO: /* Campo a ser lido eh o titulo. */
     fsk = fopen(ARQ_IS_TITULO,"r+");
     break;
@@ -327,17 +327,17 @@ IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
     strcpy(campo, ARQ_IS_TIPO);
     break;
   case AUTOR: /* Campo Autor */
-    strcpy(campo, ARQ_IS_AUTOR)
+    strcpy(campo, ARQ_IS_AUTOR);
     break;
   case ANO: /* Campo Ano */
     strcpy(campo, ARQ_IS_ANO);
     break;
   }
 
-  sprintf(nome, "%s%d%s", campo, hashChave, ENTENSAO_SK);
+  sprintf(nome, "%s%d%s", campo, hashChave, EXTENSAO_SK);
   ind = fopen(nome, "r+");
 
-  free(IndSecun); /* Libero o espaco que nao sera mais usado. */
+  free(indSecun); /* Libero o espaco que nao sera mais usado. */
   indSecun = carregaSk(ind);
   indSecun->valorHash = hashChave;
   indSecun->tamDisco = tamanho;

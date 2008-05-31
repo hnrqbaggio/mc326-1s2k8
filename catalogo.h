@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "hash.h"
 
 /* Definicoes de tamanhos de campos e do tamanho do registro */
 #define TAM_TITULO 200
@@ -18,9 +19,9 @@
 /* Defines para os nomes dos arquivos.*/
 #define ARQ_BASE ("/tmp/base00.dat")       /* Base de dados */
 #define ARQ_HTML ("/tmp/base24.html")      /* Html para saida dos resultados de busca */
-#define ARQ_PK ("primario.pi")         /* Arquivo que contem os registros do indice primario */
-#define ARQ_AVAIL_BASE ("base24.av")  /* Avail list da base de dados */
-
+#define ARQ_PK ("primario")                /* Arquivo que contem os registros do indice primario */
+#define ARQ_AVAIL_BASE ("base24.av")       /* Avail list da base de dados */
+#define EXTENSAO_PK (".chp")
 /* 
  * Constante para fazer reallocs mais eficientes.  a primeira alocacao
  * sera feita com esse valor, e dobrando sempre que atingir o maximo 

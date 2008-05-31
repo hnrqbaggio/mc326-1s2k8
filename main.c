@@ -142,21 +142,21 @@ int main(int argc, char **argv){
         case 2:/*Busca pelo tipo*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
-          secTipo = carregaIndSec(secTitulo, temp, atualTipo, TIPO);
+          secTipo = trocaIndSec(secTitulo, temp, atualTipo, TIPO);
           buscaSk(temp, ind, secTipo, arq, TIPO);
           break;
 
         case 3:/*Busca pelo autor*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
-          secAutor = carregaIndSec(secAutor, temp, atualAutor, AUTOR);
+          secAutor = trocaIndSec(secAutor, temp, atualAutor, AUTOR);
           buscaSk(temp, ind, secAutor, arq, AUTOR);
           break;
 
         case 4:/*Busca por ano*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
-          secAno = carregaIndSec(secAno, temp, atualAno, ANO);
+          secAno = trocaIndSec(secAno, temp, atualAno, ANO);
           buscaSk(temp, ind, secAno, arq, ANO);
           break;
 

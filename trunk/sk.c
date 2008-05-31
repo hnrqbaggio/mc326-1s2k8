@@ -10,10 +10,71 @@ carrega parte de estrutura pra memoria e deixa a outra no disco.
 void constroiSecundarios(IndicePrim *indPrim, FILE *base, 
 IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano, 
 availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno) {
-
-
-
-  if (fsk) fclose(fsk);
+	
+	int i;
+	char *nomeTitulo, *nomeTipo, *nomeAutor, *nomeAno;
+	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno; /* Arquivos de chaves secundarias. */
+	FILE *arqPkTitulo; *arqPkTipo; *arqPkAutor; *arqPkAno; /* Arquivos de chaves primarias. */
+	TObra obra;
+	
+	/* Tenta abrir os arquivos de indice de hash iguais a zero. */
+	sprintf(nomeTitulo, "%s%d%s", titulo->tipoCampo, 0, EXTENSAO_SK);
+	sprintf(nomeTipo,   "%s%d%s", tipo->tipoCampo,   0, EXTENSAO_SK);
+	sprintf(nomeAutor,  "%s%d%s", autor->tipoCampo,  0, EXTENSAO_SK);
+	sprintf(nomeAno,    "%s%d%s", ano->tipoCampo,    0, EXTENSAO_SK);
+	
+	arqTitulo = fopen(nomeTitulo, "r");
+	arqTipo   = fopen(nomeTipo,   "r");
+	arqAutor  = fopen(nomeAutor,  "r");
+	arqAno    = fopen(nomeAno,    "r");
+	
+	if (arqTitulo && arqTipo && arqAutor && arqAno) { /* Se existem todos os arquivos. */
+		
+		/* Carrega chaves do arquivo. */
+		titulo = carregaSk(arqTitulo);
+		tipo   = carregaSk(arqTipo);
+		autor  = carregaSk(autor);
+		ano    = carregaSk(ano);
+		
+		/* Corrige as informções do indice que foram perdidas. */
+		titulo->tipoCampo = TITULO; titulo->valorHash = 0;
+		tipo->tipoCampo   = TIPO;   tipo->valorHash   = 0;
+		autor->tipoCampo  = AUTOR;  autor->valorHash  = 0;
+		ano->tipoCampo    = ANO;    ano->valorHash    = 0;		
+		
+	} else { /* Vai precisar criar todos a partir da base de dados. */
+		
+		sprintf(nomePkTitulo, "%s%s", titulo->tipoCampo, EXTENSAO_PK);
+		sprintf(nomePkTipo,   "%s%s", tipo->tipoCampo,   EXTENSAO_PK);
+		sprintf(nomePkAutor,  "%s%s", autor->tipoCampo,  EXTENSAO_PK);
+		sprintf(nomePkAno,    "%s%s", ano->tipoCampo,    EXTENSAO_PK);
+		
+		arqPkTitulo = fopen(nomeTitulo, "w");
+		arqPkTipo   = fopen(nomeTipo,   "w");
+		arqPkAutor  = fopen(nomeAutor,  "w");
+		arqPkAno    = fopen(nomeAno,    "w");
+		
+		for (i = 0; i < indPrim->tamanho; ++i) {
+			
+			/* Posiciona o cursos pra leitura da obra. */
+			fseek(base, indPrim->vetor->nrr * TAM_REG, SEEK_SET);
+			
+			/* Le o registro inteiro de uma vez. */
+			fgets(obra.titulo, TAM_TITULO + 1, base);
+			fgets(obra.tipo,   TAM_TIPO + 1,   base);
+			fgets(obra.autor,  TAM_AUTOR + 1,  base);
+			fgets(obra.ano,    TAM_ANO + 1,    base);
+			fgets(obra.valor,  TAM_VALOR + 1,  base);
+			fgets(obra.imagem, TAM_IMAGEM + 1, base);
+			
+			/* Para cada indice, faz a inserção das chaves. */
+			titulo = insereSk(titulo, arqPkTitulo, obra.titulo, obra.titulo, avTitulo);
+			tipo   = insereSk(tipo,   arqPkTipo,   obra.titulo, obra.tipo,   avTipo);
+			autor  = insereSk(autor,  arqPkAutor,  obra.titulo, obra.autor,  avAutor);
+			ano    = insereSk(ano,    arqPkAno,    obra.titulo, obra.ano,    avAno);
+			
+		}		
+	}
 }
 
 
@@ -111,6 +172,7 @@ IndSec * criaSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tip
 }
 
 IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail) {
+	
   Sk * sk = (Sk *) malloc(sizeof(Sk)), *sk2;
   Sk * result;
   char * token;
@@ -122,20 +184,20 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
   while (token) { /* Realiza a insercao para cada novo token existente na string. */
 
 	/* Realiza o Hash do token. */
-	indSecun = carregaIndice(indSecun, token, atualHash, tipoCampo);
+	indSecun = trocaIndSec(indSecun, token);
+	
+   /* Inicializa os valores num elemento que usarei como chave da
+      busca binaria no indice. */
+   strcpy(sk->key, token);
+   sk->next = -1;
+   sk->lenght = strlen(token);
 
-    /* Inicializo os valores num elemento que usarei como chave da
-       busca binaria no indice. */
-    strcpy(sk->key, token);
-    sk->next = -1;
-    sk->lenght = strlen(token);
+   result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
 
-    result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+   /* Mais um ponteiro pra regiao atual, pra poder liberar depois. */
+   sk2 = sk; 
 
-    /* Insercao da SK no indice na RAM */
-    sk2 = sk; 
-
-    if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
+   if (result) { /* Jah existe uma ocorrencia da SK, atualiza a lista invertida. */
  
       /*free(sk); Libera o espaco que naum sera mais usado. */      
       sk = result; /*Aponta para SK encontrada*/
@@ -245,21 +307,19 @@ void gravaIndSk(IndSec *sec) {
 }
 
 
-IndSec * carregaIndSec(IndSec *indSecun, char *chave, int *atual, const int tipoCampo) {
-  int valorHash; 
-  char *nome, campo;
+IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
+	
+  int hashChave, tamanho = indSecun->tamDisco; 
+  char *nome, *campo;
   FILE *ind;
 
-  valorHash = hashFunction(chave);
+  hashChave = hashFunction(chave);
 
-  if (valorHash == atual) return indSecun;
+  if (hashChave == indSecun->valorHash) return indSecun;
 
-  gravaIndSk(indSecun); /* O par tipoCampo e atual
-					     determinam unicamente o
-					     arquivo onde salvar. */
-  free(IndSecun);
+  gravaIndSk(indSecun); /* Tem que trocar de indice: salva o atual e carrega outro. */
 
-  switch (tipoIndice) {
+  switch (indSecun->tipoCampo) {
   case TITULO: /* Campo a ser lido eh o titulo. */
     strcpy(campo, ARQ_IS_TITULO); 
     break;
@@ -267,19 +327,20 @@ IndSec * carregaIndSec(IndSec *indSecun, char *chave, int *atual, const int tipo
     strcpy(campo, ARQ_IS_TIPO);
     break;
   case AUTOR: /* Campo Autor */
-     strcpy(campo, ARQ_IS_AUTOR)
+    strcpy(campo, ARQ_IS_AUTOR)
     break;
   case ANO: /* Campo Ano */
     strcpy(campo, ARQ_IS_ANO);
     break;
   }
 
-  sprintf(nome, "%d%s", valorHash, campo);
-  *atual = valorHash;
+  sprintf(nome, "%s%d%s", campo, hashChave, ENTENSAO_SK);
   ind = fopen(nome, "r+");
 
-  IndSecun = NULL;
+  free(IndSecun); /* Libero o espaco que nao sera mais usado. */
   indSecun = carregaSk(ind);
+  indSecun->valorHash = hashChave;
+  indSecun->tamDisco = tamanho;
 
   return indSecun;
 }

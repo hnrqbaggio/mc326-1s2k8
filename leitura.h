@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdio_ext.h>
 #include <string.h>
-
+#include "sk.h"
 /* 
  * Mensagem de erro enviada ao usuario caso uma entrada seja grande
  * demais para o campo da obra, ou esteja fora do padrao

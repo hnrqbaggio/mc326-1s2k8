@@ -1,5 +1,3 @@
-#include "catalogo.h"
-#include "leitura.h"
 #include "sk.h"
 
 /* Constroi um indice secundario.  Se existe o arquivo de indice, ele 

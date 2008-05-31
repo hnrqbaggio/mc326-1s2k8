@@ -10,7 +10,7 @@ void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
 
   int offset;
 
-  switch(tipoCampo){
+  switch(indSecun->tipoCampo){
   case TITULO: /* Campo a ser lido eh o titulo. */
     fsk = fopen(ARQ_IS_TITULO,"r");
     break;

@@ -29,9 +29,10 @@ TObra * leObra (IndicePrim *ind, TObra *obra) {
     ind->tamanho = 0;
   
   	/*Atualizo o novo valor de hash*/
-  	*ind->valorHash = valorHash;
-    /*abro pk correspondente ao valor do hash*/
-    ind = abrePk(ind);
+  	ind->valorHash = valorHash;
+  	
+   /*abro pk correspondente ao valor do hash*/
+   ind = abrePk(ind);
   }
   
   /*Busco no indice que ja esta aberto*/ 

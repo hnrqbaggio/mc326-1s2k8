@@ -75,6 +75,8 @@ typedef struct _vetorsk {
  */
 void constroiSecundarios(IndicePrim *, FILE *, IndSec *, IndSec*, IndSec *, IndSec *, availList*, availList *, availList*, availList *);
 
+IndSec * trocaIndSec(IndSec *, char *);
+
 /**
  * Carrega um indice secundario a partir do arquivo em disco.
  * Armazena a parte que ficara na RAM em um vetor de SKs e retorna o

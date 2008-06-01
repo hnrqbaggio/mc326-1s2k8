@@ -1,6 +1,6 @@
 #include "sk.h"
 
-IndSec * inicializaSecundario(int tipoCampo) {
+IndSec * inicializaSecundario(char *tipoCampo) {
 	
 	IndSec * indice = (IndSec *) malloc(sizeof(IndSec));
 	
@@ -9,7 +9,7 @@ IndSec * inicializaSecundario(int tipoCampo) {
 	indice->alocado = VETOR_MIN;
 	indice->tamDisco = 0;
 	indice->valorHash = 0;
-	indice->tipoCampo = tipoCampo;
+	strcpy(indice->tipoCampo, tipoCampo);
 	
 	return indice;
 }
@@ -23,16 +23,16 @@ IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano,
 availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno) {
 	
 	int i;
-	char nomeTitulo[TAM_NOME_ARQ], nomeTipo[TAM_NOME_ARQ], nomeAutor[TAM_NOME_ARQ], nomeAno[TAM_NOME_ARQ];
+	char nomeTitulo[TAM_NOME_ARQ+10], nomeTipo[TAM_NOME_ARQ+10], nomeAutor[TAM_NOME_ARQ+10], nomeAno[TAM_NOME_ARQ+10];
 	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno;         /* Arquivos de chaves secundarias. */
 	FILE *arqPkTitulo, *arqPkTipo, *arqPkAutor, *arqPkAno; /* Arquivos de chaves primarias. */
 	TObra obra;
 	
 	/* Tenta abrir os arquivos de indice de hash iguais a zero. */
-	sprintf(nomeTitulo, "%d%d%s", titulo->tipoCampo, titulo->valorHash, EXTENSAO_SK);
-	sprintf(nomeTipo,   "%d%d%s", tipo->tipoCampo,   tipo->valorHash,   EXTENSAO_SK);
-	sprintf(nomeAutor,  "%d%d%s", autor->tipoCampo,  autor->valorHash,  EXTENSAO_SK);
-	sprintf(nomeAno,    "%d%d%s", ano->tipoCampo,    ano->valorHash,    EXTENSAO_SK);
+	sprintf(nomeTitulo, "%s%d%s", titulo->tipoCampo, titulo->valorHash, EXTENSAO_SK);
+	sprintf(nomeTipo,   "%s%d%s", tipo->tipoCampo,   tipo->valorHash,   EXTENSAO_SK);
+	sprintf(nomeAutor,  "%s%d%s", autor->tipoCampo,  autor->valorHash,  EXTENSAO_SK);
+	sprintf(nomeAno,    "%s%d%s", ano->tipoCampo,    ano->valorHash,    EXTENSAO_SK);
 	
 	arqTitulo = fopen(nomeTitulo, "r");
 	arqTipo   = fopen(nomeTipo,   "r");
@@ -42,23 +42,28 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 	if (arqTitulo && arqTipo && arqAutor && arqAno) { /* Se existem todos os arquivos. */
 		
 		/* Carrega chaves do arquivo. */
-		titulo = carregaSk(arqTitulo);
-		tipo   = carregaSk(arqTipo);
-		autor  = carregaSk(arqAutor);
-		ano    = carregaSk(arqAno);
+		titulo = carregaSk(titulo, arqTitulo);
+		tipo   = carregaSk(tipo,   arqTipo);
+		autor  = carregaSk(autor,  arqAutor);
+		ano    = carregaSk(ano,    arqAno);
 		
-		/* Corrige as informções do indice que foram perdidas. */
-		titulo->tipoCampo = TITULO; titulo->valorHash = 0;
-		tipo->tipoCampo   = TIPO;   tipo->valorHash   = 0;
-		autor->tipoCampo  = AUTOR;  autor->valorHash  = 0;
-		ano->tipoCampo    = ANO;    ano->valorHash    = 0;		
+		/* Atualiza o valor hash dos indices. */
+		titulo->valorHash = 0;
+		tipo->valorHash   = 0;
+		autor->valorHash  = 0;
+		ano->valorHash    = 0;
+		
+		fclose(arqTitulo);
+		fclose(arqTipo);
+		fclose(arqAutor);
+		fclose(arqAno);
 		
 	} else { /* Vai precisar criar todos a partir da base de dados. */
 		
-		sprintf(nomeTitulo, "%d%s", titulo->tipoCampo, EXTENSAO_PK);
-		sprintf(nomeTipo,   "%d%s", tipo->tipoCampo,   EXTENSAO_PK);
-		sprintf(nomeAutor,  "%d%s", autor->tipoCampo,  EXTENSAO_PK);
-		sprintf(nomeAno,    "%d%s", ano->tipoCampo,    EXTENSAO_PK);
+		sprintf(nomeTitulo, "%s%s", titulo->tipoCampo, EXTENSAO_PK);
+		sprintf(nomeTipo,   "%s%s", tipo->tipoCampo,   EXTENSAO_PK);
+		sprintf(nomeAutor,  "%s%s", autor->tipoCampo,  EXTENSAO_PK);
+		sprintf(nomeAno,    "%s%s", ano->tipoCampo,    EXTENSAO_PK);
 		
 		arqPkTitulo = fopen(nomeTitulo, "w");
 		arqPkTipo   = fopen(nomeTipo,   "w");
@@ -84,26 +89,26 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 			autor  = insereSk(autor,  arqPkAutor,  obra.titulo, obra.autor,  avAutor);
 			ano    = insereSk(ano,    arqPkAno,    obra.titulo, obra.ano,    avAno);
 			
-		}		
+		}
+		
+		fclose(arqPkTitulo);
+		fclose(arqPkTipo);
+		fclose(arqPkAutor);
+		fclose(arqPkAno);
 	}
+	
 }
 
 
-/* Funcao que,caso exista o arquivo de SKs, carrega a parte que deve
-  ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no
-  disco */
-IndSec * carregaSk(FILE *arqSk){
+/* 
+ * Funcao que,caso exista o arquivo de SKs, carrega a parte que deve
+ * ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no disco 
+ */
+IndSec * carregaSk(IndSec *indSk, FILE *arqSk){
 
-  IndSec *indSk;
   int tamSk = 0;
   Sk *sk = (Sk *) malloc(sizeof(Sk));
 
-  /*Inicializando o vetor de SKs*/
-  indSk = (IndSec *)malloc(sizeof(IndSec)); 
-  indSk->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
-  indSk->alocado = VETOR_MIN;
-  indSk->tamanho = 0;
-	
 	/* Le o tamanho do arquivo que contem as chaves primarias do indice secundario. */
 	fscanf(arqSk, FORMATO_INT, &(indSk->tamDisco));
 	
@@ -132,7 +137,7 @@ IndSec * criaSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tip
   int i, tam;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */
   char  campo[TAM_TITULO+1];
-  IndSec * secundario = (IndSec *)malloc(sizeof(IndSec)); /* O indice secundario */
+  IndSec * secundario = (IndSec *) malloc(sizeof(IndSec)); /* O indice secundario */
   FILE *fsk;
 
   /* Como vamos criar o indice, a lista invertida eh vazia. */
@@ -282,12 +287,12 @@ void gravaIndSk(IndSec *sec) {
 
   FILE *fsk;
   int i = 0, tam;
-  char nomeArq[TAM_NOME_ARQ];
+  char nomeArq[TAM_NOME_ARQ+10];
   
   /*Tamanho da PK gravada no disco*/
   tam = TAM_TITULO + TAM_NUMERO; 
   
-  sprintf(nomeArq, "%d%d%s", sec->tipoCampo, sec->valorHash, EXTENSAO_SK);
+  sprintf(nomeArq, "%s%d%s", sec->tipoCampo, sec->valorHash, EXTENSAO_SK);
   fsk = fopen(nomeArq,"w");
   
   /* Gravo o tamanho do arquivo de chaves primarias. */
@@ -307,43 +312,30 @@ void gravaIndSk(IndSec *sec) {
 
 IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
 	
-  int hashChave, tamanho = indSecun->tamDisco; 
-  char nome[TAM_NOME_ARQ+10], campo[TAM_NOME_ARQ];
-  FILE *ind;
+  	int hashChave;
+  	char nome[TAM_NOME_ARQ+10];
+  	FILE *ind;
 
-  hashChave = hashFunction(chave);
+  	hashChave = hashFunction(chave);
 
-  if (hashChave == indSecun->valorHash) return indSecun;
+  	if (hashChave == indSecun->valorHash) return indSecun;
 
-  gravaIndSk(indSecun); /* Tem que trocar de indice: salva o atual e carrega outro. */
-
-  switch (indSecun->tipoCampo) {
-  case TITULO: /* Campo a ser lido eh o titulo. */
-    strcpy(campo, ARQ_IS_TITULO); 
-    break;
-  case TIPO: /* Campo Tipo */
-    strcpy(campo, ARQ_IS_TIPO);
-    break;
-  case AUTOR: /* Campo Autor */
-    strcpy(campo, ARQ_IS_AUTOR);
-    break;
-  case ANO: /* Campo Ano */
-    strcpy(campo, ARQ_IS_ANO);
-    break;
-  }
-
-  	sprintf(nome, "%s%d%s", campo, hashChave, EXTENSAO_SK);
+  	gravaIndSk(indSecun); /* Tem que trocar de indice: salva o atual e carrega outro. */
+	
+  	sprintf(nome, "%s%d%s", indSecun->tipoCampo, hashChave, EXTENSAO_SK);
   	ind = fopen(nome, "r");
 
 	if (ind) {
-  		free(indSecun); /* Libero o espaco que nao sera mais usado. */
-  		indSecun = carregaSk(ind);
+  		indSecun = carregaSk(indSecun, ind);
+	
   		fclose(ind);
+  		
 	} else {
 		indSecun->tamanho = 0; /* Se o arquivo não existe, o indice eh vazio. */
 	}
-  	indSecun->valorHash = hashChave; /* Corrijo as informacoes que foram perdidas. */
-  	indSecun->tamDisco = tamanho;
+
+	/* Atualiza o valor hash do indice. */
+  	indSecun->valorHash = hashChave; 
 
   	return indSecun;
 }

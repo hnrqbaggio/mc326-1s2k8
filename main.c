@@ -43,10 +43,10 @@ int main(int argc, char **argv){
   ind = iniciaPk(arq, ind);
   
   /* Atribui valores convenientes os campos dos indices e aloca espaco pros mesmos. */
-  secTitulo = inicializaSecundario(TITULO);
-  secTipo   = inicializaSecundario(TIPO);
-  secAutor  = inicializaSecundario(AUTOR);
-  secAno    = inicializaSecundario(ANO);
+  secTitulo = inicializaSecundario(ARQ_IS_TITULO);
+  secTipo   = inicializaSecundario(ARQ_IS_TIPO);
+  secAutor  = inicializaSecundario(ARQ_IS_AUTOR);
+  secAno    = inicializaSecundario(ARQ_IS_ANO);
    
   /* Carrega as avail lists dos arquivos. */
   availTitulo = openAvail(ARQ_AVAIL_TITULO);
@@ -81,28 +81,28 @@ int main(int argc, char **argv){
         strcpy(obra2.titulo, obra.titulo);
         
         /*titulo*/
-        sprintf(nome, "%s%s", ARQ_IS_TITULO, EXTENSAO_PK);
+        sprintf(nome, "%s%s", secTitulo->tipoCampo, EXTENSAO_PK);
         bigfile = fopen(nome,"r+");
 
         secTitulo = insereSk(secTitulo, bigfile, obra2.titulo, obra.titulo, &availTitulo);
         fclose(bigfile);
         
         /* tipo */
-        sprintf(nome, "%s%s", ARQ_IS_TIPO, EXTENSAO_PK);
+        sprintf(nome, "%s%s", secTipo->tipoCampo, EXTENSAO_PK);
         bigfile = fopen(nome,"r+");
 
         secTipo = insereSk(secTipo, bigfile, obra2.titulo, obra.tipo, &availTipo);
         fclose(bigfile);
         
         /* autor */
-        sprintf(nome, "%s%s", ARQ_IS_AUTOR, EXTENSAO_PK);
+        sprintf(nome, "%s%s", secAutor->tipoCampo, EXTENSAO_PK);
         bigfile = fopen(nome,"r+");
 
         secAutor = insereSk(secAutor, bigfile, obra2.titulo, obra.autor, &availAutor);
         fclose(bigfile);
         
         /* ano */
-        sprintf(nome, "%s%s", ARQ_IS_ANO, EXTENSAO_PK);
+        sprintf(nome, "%s%s", secAno->tipoCampo, EXTENSAO_PK);
         bigfile = fopen(nome,"r+");
 
         secAno = insereSk(secAno, bigfile, obra2.titulo, obra.ano, &availAno);

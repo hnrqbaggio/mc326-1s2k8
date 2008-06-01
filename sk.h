@@ -8,7 +8,7 @@
 #include "tipos.h"
 #include "hash.h"
 
-IndSec * inicializaSecundario(int);
+IndSec * inicializaSecundario(char *);
 
 /**
  * Constroi todos os indices secundarios.  Tenta carregar o arquivo zero 
@@ -31,7 +31,7 @@ IndSec * trocaIndSec(IndSec *, char *);
  *
  * Parametro: o ponteiro pra o arquivo de indice.
  */
-IndSec * carregaSk(FILE *);
+IndSec * carregaSk(IndSec *, FILE *);
 
 /**
  * Cria o indice secundario a partir da base de dados, carregando as

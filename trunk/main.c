@@ -41,6 +41,12 @@ int main(int argc, char **argv){
   availBase = openAvail(ARQ_AVAIL_BASE);
   arq = abreCatalogo(ARQ_BASE);
   ind = iniciaPk(arq, ind);
+  
+  /* Atribui valores convenientes os campos dos indices e aloca espaco pros mesmos. */
+  secTitulo = inicializaSecundario(TITULO);
+  secTipo   = inicializaSecundario(TIPO);
+  secAutor  = inicializaSecundario(AUTOR);
+  secAno    = inicializaSecundario(ANO);
    
   /* Carrega as avail lists dos arquivos. */
   availTitulo = openAvail(ARQ_AVAIL_TITULO);

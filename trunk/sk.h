@@ -6,6 +6,9 @@
 #include <string.h>
 #include <ctype.h>
 #include "tipos.h"
+#include "hash.h"
+
+IndSec * inicializaSecundario(int);
 
 /**
  * Constroi todos os indices secundarios.  Tenta carregar o arquivo zero 

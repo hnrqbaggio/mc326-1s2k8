@@ -18,7 +18,7 @@
 int main(int argc, char **argv){
 
   int ent, option, end;
-  TObra obra, obra2, consultaObra;
+  TObra obra, obra2, *consultaObra;
   char temp[TAM_TITULO];
   char *nome;
  
@@ -190,22 +190,25 @@ int main(int argc, char **argv){
       elem->nrr = -1;
 
       /*Faz a pesquisa da pk e mostra no html*/
-      if(consulta(elem, arq, ind)) {
+      consultaObra = consulta(elem, arq, ind);
+     
+      /*Se encontrou obra de arte*/
+      if(consultaObra != NULL) {
         
-        /*Somente se consulta retornou verdadeiro*/
+        /*Remove do indice primario e da base de dados*/
         ind = removePk(elem->pk, ind, arq, &availBase);
 
         /*Remove todas as Sks */
-        strcpy(temp, consultaObra.titulo);
+        strcpy(temp, consultaObra->titulo);
         secTitulo = removeSk(temp, secTitulo, elem->pk, TITULO, &availTitulo);
 
-        strcpy(temp, consultaObra.tipo);
+        strcpy(temp, consultaObra->tipo);
         secTipo = removeSk(temp, secTipo, elem->pk, TIPO, &availTipo);
 
-        strcpy(temp, consultaObra.autor);
+        strcpy(temp, consultaObra->autor);
         secAutor = removeSk(temp, secAutor, elem->pk, AUTOR, &availAutor);
 
-        strcpy(temp, consultaObra.ano);
+        strcpy(temp, consultaObra->ano);
         secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
       }
       break;

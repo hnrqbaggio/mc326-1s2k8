@@ -102,7 +102,7 @@ FILE * endHtml(FILE *);
 
 /**
  * Troca os indices primarios.
- * O arquivo que sera aberto tem seu valor de hash armazenado no indice*/
-IndicePrim * trocaIndPrim(IndicePrim *);
+ * Recebe o indice prmario e a chave a ser calculada o hash*/
+IndicePrim * trocaIndPrim(IndicePrim *, char *);
 
 #endif

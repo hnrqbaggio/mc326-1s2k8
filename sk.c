@@ -94,7 +94,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
   ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no
   disco */
 IndSec * carregaSk(FILE *arqSk){
-  /*Declaracao de variaveis*/
+
   IndSec *indSk;
   int tamSk = 0;
   Sk *sk = (Sk *) malloc(sizeof(Sk));
@@ -104,7 +104,10 @@ IndSec * carregaSk(FILE *arqSk){
   indSk->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
   indSk->alocado = VETOR_MIN;
   indSk->tamanho = 0;
-
+	
+	/* Le o tamanho do arquivo que contem as chaves primarias do indice secundario. */
+	fscanf(arqSk, FORMATO_INT, &(indSk->tamDisco));
+	
   /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
   while (fscanf(arqSk, FORMATO_INT, &(sk->lenght)) != EOF){
     fgets(sk->key, 1 + sk->lenght, arqSk);
@@ -280,41 +283,25 @@ void gravaIndSk(IndSec *sec) {
 
   FILE *fsk;
   int i = 0, tam;
+  char nomeArq[TAM_NOME_ARQ];
+  
   /*Tamanho da PK gravada no disco*/
-  tam = TAM_TITULO + TAM_NUMERO;
-	
-  /*Define o tipo de campo e abre o arquivo correspondente*/
-  switch (sec->tipoCampo){
-  case TITULO: /* Campo a ser lido eh o titulo. */
-    fsk = fopen(ARQ_IS_TITULO,"r+");
-    break;
-  case TIPO: /* Campo Tipo */
-    fsk = fopen(ARQ_IS_TIPO,"r+");
-    break;
-  case AUTOR: /* Campo Autor */
-    fsk = fopen(ARQ_IS_AUTOR,"r+");
-    break;
-  case ANO: /* Campo Ano */
-    fsk = fopen(ARQ_IS_ANO,"r+");
-    break;
-  }
-
-  /*Gravo o tamanho da parte que esta no disco*/
+  tam = TAM_TITULO + TAM_NUMERO; 
+  
+  sprintf(nomeArq, "%d%d%s", sec->tipoCampo, sec->valorHash, EXTENSAO_SK);
+  fsk = fopen(nomeArq,"w");
+  
+  /* Gravo o tamanho do arquivo de chaves primarias. */
   fprintf(fsk, FORMATO_INT, sec->tamDisco);
 
-  /*Pulo para o fim do arquivo e gravo as SKs*/
-  fseek(fsk, sec->tamDisco * tam, SEEK_CUR);
   for (i = 0; i < sec->tamanho; i++) {
     fprintf(fsk, FORMATO_INT, sec->vetor[i].lenght);  /* grava o tamanho da sk */
-    fprintf(fsk, "%s", sec->vetor[i].key); /* grava a key */
-    fprintf(fsk, FORMATO_INT, sec->vetor[i].next);/* grava o proximo elemento na lista invertida */
+    fprintf(fsk, "%s", sec->vetor[i].key);            /* grava a key */
+    fprintf(fsk, FORMATO_INT, sec->vetor[i].next);    /* grava o proximo elemento na lista invertida */
   }
 
-  /* Libera memoria da estrutura E dos seus campos. */
-  free(sec->vetor);
-  free(sec);
   fclose(fsk);
-	
+  
   return;
 }
 
@@ -322,7 +309,7 @@ void gravaIndSk(IndSec *sec) {
 IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
 	
   int hashChave, tamanho = indSecun->tamDisco; 
-  char *nome, *campo;
+  char nome[TAM_NOME_ARQ+10], campo[TAM_NOME_ARQ];
   FILE *ind;
 
   hashChave = hashFunction(chave);
@@ -346,15 +333,20 @@ IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
     break;
   }
 
-  sprintf(nome, "%s%d%s", campo, hashChave, EXTENSAO_SK);
-  ind = fopen(nome, "r+");
+  	sprintf(nome, "%s%d%s", campo, hashChave, EXTENSAO_SK);
+  	ind = fopen(nome, "r");
 
-  free(indSecun); /* Libero o espaco que nao sera mais usado. */
-  indSecun = carregaSk(ind);
-  indSecun->valorHash = hashChave;
-  indSecun->tamDisco = tamanho;
+	if (ind) {
+  		free(indSecun); /* Libero o espaco que nao sera mais usado. */
+  		indSecun = carregaSk(ind);
+  		fclose(ind);
+	} else {
+		indSecun->tamanho = 0; /* Se o arquivo não existe, o indice eh vazio. */
+	}
+  	indSecun->valorHash = hashChave; /* Corrijo as informacoes que foram perdidas. */
+  	indSecun->tamDisco = tamanho;
 
-  return indSecun;
+  	return indSecun;
 }
 
 

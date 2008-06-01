@@ -1,4 +1,4 @@
-tp3: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o
+tp4: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o
 	gcc -ggdb -ansi -pedantic -Wall main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o -o tp3
 
 leitura.o: leitura.h leitura.c
@@ -26,10 +26,10 @@ hash.o: hash.h hash.c
 	gcc -ggdb -ansi -pedantic -Wall -c hash.c
 
 clean:
-	rm -f *.o *~ tp3
+	rm -f *.o *~ tp4
 
 del:
-	rm -f *.si *.pi *.av
+	rm -f /tmp/mv326/*.av /tmp/mc326/*.ch*
 	
 all:
 	${MAKE} tp3

@@ -5,63 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "catalogo.h"
-
-/* Nomes dos arquivos de indices secundarios. */
-#define ARQ_IS_TITULO ("titulo")
-#define ARQ_IS_TIPO ("tipo")
-#define ARQ_IS_AUTOR ("autor")
-#define ARQ_IS_ANO ("ano")
-
-#define EXTENSAO_SK (".chs")
-
-/* Nomes dos arquivos de avail list. */
-#define ARQ_AVAIL_TITULO ("titulo.av")
-#define ARQ_AVAIL_TIPO ("tipo.av")
-#define ARQ_AVAIL_AUTOR ("autor.av")
-#define ARQ_AVAIL_ANO ("ano.av")
-
-/**
- * Constantes usadas para determinar o tipo do campo para o indice
- */
-#define TITULO 0
-#define TIPO 1
-#define AUTOR 2
-#define ANO 3
-
-/** Constante usada para indicar o fim de uma lista invertida. */
-#define FIM_DE_LISTA -1
-
-/**
- * Estrutura que representa um chave secundaria.
- * 
- * key eh o vetor que contem a string que eh a chave propriamente
- * dita. next eh um apontador para a proxima chave no indice, e lenght
- * eh o tamanho da string.
-*/
-typedef struct _sk{
-  char key[TAM_TITULO+1];
-  int next;
-  int lenght;
-} Sk;
-
-/**
- * Estrutura que representa um indice secundario, formado por um vetor
- * de chaves secundarias e quatro inteiros que indicam o numero de
- * elementos no indice, o espaco alocado na memoria para este indice,
- * o tamanho da parte do indice no disco, e o noh cabeca da avail list
- * desse indice, que sera usado na operacao de insercao e remocao de
- * chaves.
- */
-typedef struct _vetorsk {
-  Sk *vetor;
-  int tamanho;
-  int alocado;
-  int tamDisco;
-  int valorHash;
-  int tipoCampo;
-} IndSec;
-
+#include "tipos.h"
 
 /**
  * Constroi todos os indices secundarios.  Tenta carregar o arquivo zero 

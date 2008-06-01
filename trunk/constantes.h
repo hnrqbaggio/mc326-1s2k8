@@ -12,10 +12,24 @@
 
 /* Defines para os nomes dos arquivos.*/
 #define TAM_NOME_ARQ 256
-#define ARQ_BASE ("/tmp/base00.dat")       /** Base de dados */
-#define ARQ_HTML ("/tmp/base24.html")      /** Html para saida dos resultados de busca */
-#define ARQ_PK ("primario")                /** Arquivo que contem os registros do indice primario */
-#define ARQ_AVAIL_BASE ("base24.av")       /** Avail list da base de dados */
+#define ARQ_BASE ("/tmp/mc326/base00.dat")       /** Base de dados */
+#define ARQ_HTML ("/tmp/mc326/base24.html")      /** Html para saida dos resultados de busca */
+#define ARQ_PK ("/tmp/mc326/primario")                /** Arquivo que contem os registros do indice primario */
+#define ARQ_AVAIL_BASE ("/tmp/mc326/base24.av")       /** Avail list da base de dados */
+
+/* Nomes dos arquivos de indices secundarios. */
+#define ARQ_IS_TITULO ("/tmp/mc326/titulo")
+#define ARQ_IS_TIPO ("/tmp/mc326/tipo")
+#define ARQ_IS_AUTOR ("/tmp/mc326/autor")
+#define ARQ_IS_ANO ("/tmp/mc326/ano")
+
+/* Nomes dos arquivos de avail list. */
+#define ARQ_AVAIL_TITULO ("titulo.av")
+#define ARQ_AVAIL_TIPO ("tipo.av")
+#define ARQ_AVAIL_AUTOR ("autor.av")
+#define ARQ_AVAIL_ANO ("ano.av")
+
+/* Extensoes dos arquivos. */
 #define EXTENSAO_PK (".chp")
 #define EXTENSAO_SK (".chs")
 
@@ -46,18 +60,6 @@
  * fim da listagem, logo, devem apenas ser inseridos 
  */
 #define MEIO 3 
-
-/* Nomes dos arquivos de indices secundarios. */
-#define ARQ_IS_TITULO ("titulo")
-#define ARQ_IS_TIPO ("tipo")
-#define ARQ_IS_AUTOR ("autor")
-#define ARQ_IS_ANO ("ano")
-
-/* Nomes dos arquivos de avail list. */
-#define ARQ_AVAIL_TITULO ("titulo.av")
-#define ARQ_AVAIL_TIPO ("tipo.av")
-#define ARQ_AVAIL_AUTOR ("autor.av")
-#define ARQ_AVAIL_ANO ("ano.av")
 
 /** Constantes usadas para determinar o tipo do campo para o indice. */
 #define TITULO 0

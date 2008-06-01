@@ -3,7 +3,6 @@
 /*Funcao de leitura da obra de arte a ser inserida*/
 TObra * leObra (IndicePrim *ind, TObra *obra) {
 
-  int valorHash;
   Pk *chave = (Pk *) malloc(sizeof(Pk));
   Pk *result = NULL;
 			
@@ -17,21 +16,9 @@ TObra * leObra (IndicePrim *ind, TObra *obra) {
   /*Verifica se ja existe a obra no catalogo*/
   
   strcpy(chave->pk, obra->titulo);
-  /*Hash da pk a ser inserida*/
-  valorHash = hashFunction(chave->pk);
-  
-  /*Se o indice aberto nao e o mesmo da pk a ser inserida*/
-  if(valorHash != ind->valorHash) {
-    /*Gravo o indPK aberto e atualizo o tamanho para 0*/
-    gravaPk(ind);
-    ind->tamanho = 0;
-  
-  	/*Atualizo o novo valor de hash*/
-  	ind->valorHash = valorHash;
-  	
-   /*abro pk correspondente ao valor do hash*/
-   ind = abrePk(ind);
-  }
+
+	/*Abro o indice primario relativo a obra a ser inserida*/
+	ind = trocaIndPrim(ind, chave->pk);
   
   /*Busco no indice que ja esta aberto*/ 
   chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */

@@ -63,7 +63,7 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
 	
   FILE *arq_ind; /* arquivo onde estao os indices, caso exista */
   char pkAux[TAM_TITULO+1], nome[TAM_NOME_ARQ];
-  int offset, valorHash;
+  int offset;
   int *tam;      /* apontador pro numero de elementos do vetor de
 		              indice. Pra facilitar a leitura do codigo. */
 
@@ -93,25 +93,11 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
   } else { /* vai ter que gerar a partir da base */
     
     while(fgets(pkAux, TAM_TITULO+1, base)){
-      /*Calculo o hash*/
-      valorHash = hashFunction(pkAux);
       
-      /*Indice primario vazio*/
-      if (indice->valorHash == -1) {
-
-        /*Abro o indicePk-hash*/
-        sprintf(nome, "%s%d%s", ARQ_PK, valorHash, EXTENSAO_PK);
-        arq_ind = fopen(nome, "r");
-        indice->valorHash = valorHash;
-        
-      /*Indice na memoria diferente*/
-      } else if (valorHash != indice->valorHash) {
-      	
-      	/*Troco de indice*/
-      	indice->valorHash = valorHash;
-      	trocaIndPrim(indice);
-      }
-
+      /*Abre o indice relativo a pkAux*/
+      indice = trocaIndPrim(indice, pkAux);
+      
+      /*Copio a pk para o indice primario*/
       strcpy(indice->vetor[(*tam)].pk, pkAux);
       (*tam)++;
       indice = realocaIndPrim(indice);
@@ -158,22 +144,11 @@ void gravaPk(IndicePrim *indice) {
 TObra * consulta(Pk *chave, FILE *base, IndicePrim *indice) {
   
   Pk *temp;
-  int retorno, valorHash;
+  int retorno;
   TObra * reg = (TObra *) malloc(sizeof(TObra));
   
-  valorHash = hashFunction(chave->pk);
-  
-  /*Arquivo de indice e diferente ao do hash*/
-  if(valorHash != indice->valorHash) {
-  	
-  	/*Grava o indice primario aberto*/
-  	gravaPk(indice);
-    indice->tamanho = 0;
-    indice->valorHash = valorHash;
-    
-    /*Abre o novo indice primario*/
-    abrePk(indice);
-  }
+  /*Abro o indice relativo a pk a ser buscada*/
+  indice = trocaIndPrim(indice, chave->pk);
   
   temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
 
@@ -242,7 +217,13 @@ void listaBase(FILE *base, IndicePrim *indice) {
 	for(j=0; j<= H; j++) {
 		
 	  	indice->valorHash = j;
-	  	trocaIndPrim(indice);		
+	  	/*Troca o indice primario*/
+		/*Gravo indice primario*/
+		gravaPk(indice);
+	
+		/*Abro o novo indice*/
+		indice->tamanho = 0;
+		abrePk(indice);
 	  	
 	  	/*Percorre o indice*/
 	  	for (i = 0; i < indice->tamanho; i++) {
@@ -383,7 +364,7 @@ IndicePrim * abrePk(IndicePrim *indice) {
   
   /*Abro o indicePk-hash*/
   sprintf(nome, "%s%d%s", ARQ_PK, indice->valorHash, EXTENSAO_PK);
-  arqInd = fopen(nome, "r");
+  arqInd = fopen(nome, "w+");
   
   /*Salvo no indice primario*/
   while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arqInd)) {
@@ -398,7 +379,17 @@ IndicePrim * abrePk(IndicePrim *indice) {
 }
 
 /*Troca os indices primarios*/
-IndicePrim * trocaIndPrim(IndicePrim * indice) {
+IndicePrim * trocaIndPrim(IndicePrim * indice, char *chave) {
+	
+	int hashChave;
+	
+	hashChave = hashFunction(chave);
+	
+	/*Caso o hash e o mesmo do indice aberto*/
+	if (hashChave == indice->valorHash) return indice;
+	
+	/*Troca o indice primario*/
+	indice->valorHash = hashChave;
 	
 	/*Gravo indice primario*/
 	gravaPk(indice);
@@ -406,5 +397,6 @@ IndicePrim * trocaIndPrim(IndicePrim * indice) {
 	/*Abro o novo indice*/
 	indice->tamanho = 0;
 	abrePk(indice);
+	
 	return indice;
 }

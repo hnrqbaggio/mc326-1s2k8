@@ -45,7 +45,7 @@ IndicePrim * abrePk(IndicePrim *);
 void ordenaIndice(IndicePrim *);
 
 /* Grava o indice da memoria para o arquivo. */
-void gravaPk(IndicePrim *);
+IndicePrim * gravaPk(IndicePrim *);
 
 /* 
  * Realiza uma consulta na base usando a chave primaria.

@@ -80,7 +80,7 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
 
   tam = &(indice->tamanho);
 
-  if (arq_ind) { /* existe o arquivo */
+  if (arq_ind != NULL) { /* existe o arquivo */
 
     while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arq_ind)) {
       (*tam)++;

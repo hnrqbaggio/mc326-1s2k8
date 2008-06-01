@@ -77,7 +77,7 @@ typedef struct _vetorsk {
   int alocado;
   int tamDisco;
   int valorHash;
-  int tipoCampo;
+  char tipoCampo[TAM_NOME_ARQ];
 } IndSec;
 
 #endif /*TIPOS_H_*/

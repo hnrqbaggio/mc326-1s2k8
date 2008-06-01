@@ -68,10 +68,6 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
   /* apontador pro numero de elementos do vetor de
      indice. Pra facilitar a leitura do codigo. */
 
-  /*Abro o indicePk-hash = 0*/
-  sprintf(nome, "%s%d%s", ARQ_PK, 0, EXTENSAO_PK);
-  arq_ind = fopen(nome, "r");
-  
   /*Inicializando indice*/
   indice = (IndicePrim *) malloc(sizeof(IndicePrim));
   indice->vetor = (Pk *) malloc(sizeof(Pk) * VETOR_MIN);
@@ -79,6 +75,10 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
   indice->tamanho = 0;
   indice->valorHash = 0;
 
+  /*Abro o indicePk-hash = 0*/
+  sprintf(nome, "%s%d%s", ARQ_PK, indice->valorHash, EXTENSAO_PK);
+  arq_ind = fopen(nome, "r");
+  
   tam = &(indice->tamanho);
 
   if (arq_ind != NULL) { /* existe o arquivo */
@@ -92,7 +92,7 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
     
   } else { /* vai ter que gerar a partir da base */
     
-    while(fgets(pkAux, TAM_TITULO+1, base)){
+    while(fgets(pkAux, TAM_TITULO+1, base)) {
       
       /*Abre o indice relativo a pkAux*/
       indice = trocaIndPrim(indice, pkAux);
@@ -124,7 +124,7 @@ void ordenaIndice(IndicePrim *indice) {
 IndicePrim * gravaPk(IndicePrim *indice) {
   FILE *ind;
   int i;
-  char nome[TAM_NOME_ARQ];
+  char nome[TAM_NOME_ARQ+10];
 
   sprintf(nome, "%s%d%s", ARQ_PK, indice->valorHash, EXTENSAO_PK);
 
@@ -359,7 +359,7 @@ FILE * preencheHtml(FILE *b, TObra valores) {
 /*Abre o arquivo correspondente ao valor de hash ja atualizado no proprio indice*/
 IndicePrim * abrePk(IndicePrim *indice) {
   
-  char nome[TAM_NOME_ARQ];
+  char nome[TAM_NOME_ARQ+10];
   int *tam = &(indice->tamanho);
   FILE *arqInd;
   

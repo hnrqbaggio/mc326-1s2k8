@@ -216,13 +216,10 @@ void listaBase(FILE *base, IndicePrim *indice) {
   
   /*Percorre todos os arquivos de indice primario*/
 	for(j=0; j<= H; j++) {
-		
-	  	indice->valorHash = j;
-	  	/*Troca o indice primario*/
 		/*Gravo indice primario*/
 		gravaPk(indice);
-	
-		/*Abro o novo indice*/
+	  	
+	  	indice->valorHash = j;
 		indice->tamanho = 0;
 		abrePk(indice);
 	  	

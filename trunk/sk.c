@@ -1,4 +1,5 @@
 #include "sk.h"
+#include "catalogo.h"
 
 IndSec * inicializaSecundario(char *tipoCampo) {
 	
@@ -22,7 +23,7 @@ void constroiSecundarios(IndicePrim *indPrim, FILE *base,
 IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano, 
 availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno) {
 	
-	int i;
+	int i, j;
 	char nomeTitulo[TAM_NOME_ARQ+10], nomeTipo[TAM_NOME_ARQ+10], nomeAutor[TAM_NOME_ARQ+10], nomeAno[TAM_NOME_ARQ+10];
 	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno;         /* Arquivos de chaves secundarias. */
 	FILE *arqPkTitulo, *arqPkTipo, *arqPkAutor, *arqPkAno; /* Arquivos de chaves primarias. */
@@ -70,6 +71,17 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 		arqPkAutor  = fopen(nomeAutor,  "w");
 		arqPkAno    = fopen(nomeAno,    "w");
 		
+		for(j=0; j<= H; j++) {
+		
+		/*Gravo indice primario*/
+		gravaPk(indPrim);
+		
+	  	indPrim->valorHash = j;
+	
+		/*Abro o novo indice*/
+		indPrim->tamanho = 0;
+		abrePk(indPrim);
+		
 		for (i = 0; i < indPrim->tamanho; ++i) {
 			
 			/* Posiciona o cursos pra leitura da obra. */
@@ -89,6 +101,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 			autor  = insereSk(autor,  arqPkAutor,  obra.titulo, obra.autor,  avAutor);
 			ano    = insereSk(ano,    arqPkAno,    obra.titulo, obra.ano,    avAno);
 			
+		}
 		}
 		
 		fclose(arqPkTitulo);

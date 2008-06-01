@@ -199,17 +199,10 @@ int main(int argc, char **argv){
         ind = removePk(elem->pk, ind, arq, &availBase);
 
         /*Remove todas as Sks */
-        strcpy(temp, consultaObra->titulo);
-        secTitulo = removeSk(temp, secTitulo, elem->pk, TITULO, &availTitulo);
-
-        strcpy(temp, consultaObra->tipo);
-        secTipo = removeSk(temp, secTipo, elem->pk, TIPO, &availTipo);
-
-        strcpy(temp, consultaObra->autor);
-        secAutor = removeSk(temp, secAutor, elem->pk, AUTOR, &availAutor);
-
-        strcpy(temp, consultaObra->ano);
-        secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
+        secTitulo = removeSk(consultaObra->titulo, secTitulo, elem->pk, &availTitulo);
+        secTipo = removeSk(consultaObra->tipo, secTipo, elem->pk, &availTipo);
+        secAutor = removeSk(consultaObra->autor, secAutor, elem->pk, &availAutor);
+        secAno = removeSk(consultaObra->ano, secAno, elem->pk, &availAno);
       }
       break;
 

@@ -49,7 +49,7 @@ int main(int argc, char **argv){
   availAno    = openAvail(ARQ_AVAIL_ANO);
 
 	/*Abre os indices secundarios*/
-  constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, availTitulo, availTipo, availAutor, availAno);
+  constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
 
   elem = (Pk *) malloc(sizeof(Pk));
 

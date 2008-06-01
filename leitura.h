@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdio_ext.h>
 #include <string.h>
+#include "catalogo.h"
 #include "sk.h"
 
 /*__________Funcoes de leitura das entradas do usuario__________*/

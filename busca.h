@@ -2,6 +2,7 @@
 #define _BUSCA_H
 
 #include <stdio.h>
+#include "catalogo.h"
 #include "sk.h"
 
 /**

@@ -15,7 +15,7 @@
 IndicePrim * removePk(char *, IndicePrim *, FILE *, availList *);
 
 /* Funcao q remove uma entrada de um indice secundario.
-* Parametros: uma string com a SK, um ponteiro pro indice secundario, outro pro arquivo de indice, e um pra avail list. */
-IndSec * removeSk(char *, IndSec *, char *, const int, availList *);
+* Parametros: uma string com a SK, um ponteiro pro indice secundario, a string da pk e a avail list. */
+IndSec * removeSk(char *, IndSec *, char *, availList *);
 
 #endif

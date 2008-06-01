@@ -7,6 +7,7 @@ IndicePrim * removePk(char *chave, IndicePrim *indPrim, FILE *base, availList *a
   strcpy(temp.pk, chave);
   temp.nrr = -1; /* Soh pra manter inicializado. */
 
+	/*Como o indice primario ja esta correto, devido a consulta realizada anteriormente, nao troco de indice primario*/
   result = (Pk *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(Pk), compare);
 
   /* Apesar da chave ser valida, eh bom evitar um segfault por uso indevido da funcao. */
@@ -36,41 +37,43 @@ IndicePrim * removePk(char *chave, IndicePrim *indPrim, FILE *base, availList *a
 
     ordenaIndice(indPrim);
 
-  } else {
-    /* Essa fica pra dps. */
+  } else {/*Erro desconhecido*/
+    printf("Erro ao remover obra de arte.\n");
   }
 
   return indPrim;
 }
 
-IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, availList *avail) {
+/*Remove a chave do indice secundario*/
+IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
 
-  FILE *fsk;
+  FILE *arq;
   Sk temp, *result;
-  char *token, pk2[TAM_TITULO+1];
-  int offset, prox, fim, atual, ant, tmp;
-  /* Variaveis auxiliares para se trabalhar com a lista invertida. */
+  char *token, pk2[TAM_TITULO+1], nomeArq[TAM_NOME_ARQ];
+  int offset, prox, fim, atual, ant, tmp; /* Variaveis auxiliares para se trabalhar com a lista invertida. */
 
-  switch (tipoCampo){
-  case TITULO: /* Campo a ser lido eh o titulo. */
-    fsk = fopen(ARQ_IS_TITULO,"r+");
-    
-    break;
-  case TIPO: /* Campo Tipo */
-    fsk = fopen(ARQ_IS_TIPO,"r+");
-    
-    break;
-  case AUTOR: /* Campo Autor */
-    fsk = fopen(ARQ_IS_AUTOR,"r+");
-    
-    break;
-  case ANO: /* Campo Ano */
-    fsk = fopen(ARQ_IS_ANO,"r+");
-    
-    break;
-  }
-
+	switch (indSecun->tipoCampo){
+  		case TITULO: /* Campo a ser lido eh o titulo. */
+    		sprintf(nomeArq, "%s%s", ARQ_IS_TITULO, EXTENSAO_PK);
+   		break;
+   		
+  		case TIPO: /* Campo Tipo */
+    		sprintf(nomeArq, "%s%s", ARQ_IS_TIPO, EXTENSAO_PK);
+    		break;
+    		
+  		case AUTOR: /* Campo Autor */
+    		sprintf(nomeArq, "%s%s", ARQ_IS_AUTOR, EXTENSAO_PK);
+    		break;
+    		
+  		case ANO: /* Campo Ano */
+    		sprintf(nomeArq, "%s%s", ARQ_IS_ANO, EXTENSAO_PK);
+    		break;
+  	}
+	/*Arquivo que contem as pks dos indices secundarios*/
+  arq = fopen(nomeArq, "r+");
+   
   token = strtok(chave, " ");
+
 
   while (token) {
 
@@ -78,6 +81,9 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
     temp.next = -1;
     temp.lenght = strlen(token);
 
+		/*Troco o indice secundario*/
+		indSecun = trocaIndSec(indSecun, temp.key);
+		
     result = (Sk *) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(temp), compareSk);
 
     if (result) {
@@ -91,16 +97,16 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 	 SK) na RAM. Nos demais casos, fazemos uma atualização em
 	 posicoes no arquivo. */
 
-      fseek(fsk, offset, SEEK_SET);
-      fgets(pk2, TAM_TITULO+1, fsk);
-      fscanf(fsk, FORMATO_INT, &prox);
+      fseek(arq, offset, SEEK_SET);
+      fgets(pk2, TAM_TITULO+1, arq);
+      fscanf(arq, FORMATO_INT, &prox);
 
       if (!strcmp(pk, pk2)) { /* o primeiro elemento da lista sera removido. */
 
 	tmp = *avail;
 	*avail = result->next;
-	fseek(fsk, -TAM_NUMERO, SEEK_CUR); /* Vai colocar o reg no inicio da lista invertida. */
-	fprintf(fsk, FORMATO_INT, tmp);
+	fseek(arq, -TAM_NUMERO, SEEK_CUR); /* Vai colocar o reg no inicio da lista invertida. */
+	fprintf(arq, FORMATO_INT, tmp);
 
 	if (prox != -1) {
 	  result->next = prox;
@@ -133,31 +139,31 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 
 	  /* Vai pra proxima posicao na lista invertida. */
 	  offset = prox * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
-	  fseek(fsk, offset, SEEK_SET);
+	  fseek(arq, offset, SEEK_SET);
 
-	  fgets(pk2, TAM_TITULO+1, fsk);
+	  fgets(pk2, TAM_TITULO+1, arq);
 
 	  if (!strcmp(pk, pk2)) {
       
 	    atual = prox;
-	    fscanf(fsk, FORMATO_INT, &prox);
+	    fscanf(arq, FORMATO_INT, &prox);
 
 	    /* Atualiza a avail list */
-	    fseek(fsk, -TAM_NUMERO, SEEK_CUR);
-	    fprintf(fsk, FORMATO_INT, *avail);
+	    fseek(arq, -TAM_NUMERO, SEEK_CUR);
+	    fprintf(arq, FORMATO_INT, *avail);
 	    *avail = atual;
 
 	    /* Atualiza a lista invertida. */
 	    offset = ant * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO + TAM_TITULO;
-	    fseek(fsk, offset, SEEK_SET);
-	    fprintf(fsk, FORMATO_INT, prox);
+	    fseek(arq, offset, SEEK_SET);
+	    fprintf(arq, FORMATO_INT, prox);
 
 
 	  } else {
 
 	    /* Vai pro proxima posicao na lista e guarda um 'ponteiro' pra atual. */
 	    ant = prox;
-	    fscanf(fsk, FORMATO_INT, &prox);
+	    fscanf(arq, FORMATO_INT, &prox);
 
 	  }
 
@@ -170,7 +176,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
     token = strtok(NULL, " ");
   }
 
-  fclose(fsk);
+  fclose(arq);
   return indSecun;
 }
 

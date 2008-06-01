@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "catalogo.h"
 #include "sk.h"
 
 /**

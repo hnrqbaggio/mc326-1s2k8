@@ -2,16 +2,8 @@
 #define HASH_H_
 
 #include <string.h>
-#define H 53
+#include "constantes.h"
 
-int hashFunction(char * chave) {
-	int h = 0, i;
-	
-	for (i = 0; i < strlen(chave); i++) {
-		h += (chave[i] * (i + 1)) % H;
-	}
-	
-	return h % H;
-}
+int hashFunction(char *);
 
 #endif /*HASH_H_*/

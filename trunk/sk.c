@@ -7,7 +7,7 @@ carrega parte de estrutura pra memoria e deixa a outra no disco.
 
 void constroiSecundarios(IndicePrim *indPrim, FILE *base, 
 IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano, 
-availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno) {
+availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno) {
 	
 	int i;
 	char *nomeTitulo, *nomeTipo, *nomeAutor, *nomeAno;

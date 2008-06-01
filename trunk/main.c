@@ -10,12 +10,9 @@
  */
 
 #include <stdio.h>
-#include "catalogo.h"
 #include "leitura.h"
-#include "sk.h"
 #include "menu.h"
 #include "remove.h"
-#include "avail.h"
 #include "busca.h"
 
 int main(int argc, char **argv){
@@ -134,7 +131,7 @@ int main(int argc, char **argv){
         case 1:/*Busca pelo titulo*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
-          secTitulo = carregaIndSec(secTitulo, temp);
+          secTitulo = trocaIndSec(secTitulo, temp);
           buscaSk(temp, ind, secTitulo, arq);
           break;
 

@@ -2,11 +2,11 @@
 
 IndSec * inicializaSecundario(int tipoCampo) {
 	
-	IndSec * indice = (IndSec *) malloc (sizeof(IndSec));
+	IndSec * indice = (IndSec *) malloc(sizeof(IndSec));
 	
-	indice->vetor = NULL;
-	indice->alocado = 0;
+	indice->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
 	indice->tamanho = 0;
+	indice->alocado = VETOR_MIN;
 	indice->tamDisco = 0;
 	indice->valorHash = 0;
 	indice->tipoCampo = tipoCampo;
@@ -15,17 +15,16 @@ IndSec * inicializaSecundario(int tipoCampo) {
 }
 
 /* Constroi um indice secundario.  Se existe o arquivo de indice, ele 
-carrega parte de estrutura pra memoria e deixa a outra no disco.
- Caso nao exista o indice, ele ira constri-lo a partir da base de
- dados.*/
-
+ * carrega parte de estrutura pra memoria e deixa a outra no disco.
+ * Caso nao exista o indice, ele ira constri-lo a partir da base de
+ * dados.*/
 void constroiSecundarios(IndicePrim *indPrim, FILE *base, 
 IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano, 
 availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno) {
 	
 	int i;
 	char nomeTitulo[TAM_NOME_ARQ], nomeTipo[TAM_NOME_ARQ], nomeAutor[TAM_NOME_ARQ], nomeAno[TAM_NOME_ARQ];
-	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno; /* Arquivos de chaves secundarias. */
+	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno;         /* Arquivos de chaves secundarias. */
 	FILE *arqPkTitulo, *arqPkTipo, *arqPkAutor, *arqPkAno; /* Arquivos de chaves primarias. */
 	TObra obra;
 	

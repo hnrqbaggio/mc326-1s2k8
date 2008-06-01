@@ -52,24 +52,8 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
   char *token, pk2[TAM_TITULO+1], nomeArq[TAM_NOME_ARQ];
   int offset, prox, fim, atual, ant, tmp; /* Variaveis auxiliares para se trabalhar com a lista invertida. */
 
-	switch (indSecun->tipoCampo){
-  		case TITULO: /* Campo a ser lido eh o titulo. */
-    		sprintf(nomeArq, "%s%s", ARQ_IS_TITULO, EXTENSAO_PK);
-   		break;
-   		
-  		case TIPO: /* Campo Tipo */
-    		sprintf(nomeArq, "%s%s", ARQ_IS_TIPO, EXTENSAO_PK);
-    		break;
-    		
-  		case AUTOR: /* Campo Autor */
-    		sprintf(nomeArq, "%s%s", ARQ_IS_AUTOR, EXTENSAO_PK);
-    		break;
-    		
-  		case ANO: /* Campo Ano */
-    		sprintf(nomeArq, "%s%s", ARQ_IS_ANO, EXTENSAO_PK);
-    		break;
-  	}
-	/*Arquivo que contem as pks dos indices secundarios*/
+  /*Arquivo que contem as pks dos indices secundarios*/
+  sprintf(nomeArq, "%s%s", indSecun->tipoCampo, EXTENSAO_PK);	
   arq = fopen(nomeArq, "r+");
    
   token = strtok(chave, " ");

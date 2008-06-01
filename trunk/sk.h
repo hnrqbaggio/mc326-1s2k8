@@ -111,7 +111,7 @@ IndSec * criaSk(IndicePrim *, FILE *, availList *, const int);
  *
  * Retorno: O vetor de SKs atualizado.
  */
-IndSec * insereSk(IndSec *, FILE *, char *pk, char *campo, availList *);
+IndSec * insereSk(IndSec *, FILE *, char *, char *, availList *);
 
 /**
  * Grava o indice secundário da RAM para o arquivo no final deste, e 

@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdio_ext.h>
 #include <string.h>
-#include "sk.h"
 /* 
  * Mensagem de erro enviada ao usuario caso uma entrada seja grande
  * demais para o campo da obra, ou esteja fora do padrao
@@ -26,15 +25,6 @@
  * Retorna a obra a ser inserida na base.
  */
 TObra * leObra(IndicePrim *, TObra *);
-
-/*** Funcoes de leitura das entradas do usuario ***/
-/* 
- * Essa funcao principal para insercao de uma nova obra. Utiliza
- * funcoes auxiliares que tratam tipos diferentes de dados e possiveis
- * entradas invalidas. Ao final de uma entrada do usuario, ele grava
- * os dados na base e atualiza o vetor de busca na memoria.
- */
-void insereObra(FILE *, IndicePrim *);
 
 /* 
  * Esta funcao realiza a leitura dos campos do tipo texto: Titulo,

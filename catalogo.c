@@ -121,22 +121,23 @@ void ordenaIndice(IndicePrim *indice) {
 }
 
 /* Gravacao do indice, ordenado por pk, no arquivo */
-void gravaPk(IndicePrim *indice) {
+IndicePrim gravaPk(IndicePrim *indice) {
   FILE *ind;
   int i;
+  char nome[TAM_NOME_ARQ];
 
-  ind = fopen(ARQ_PK, "w");
+  sprintf(nome, "%s%d%s", ARQ_PK, indice->valorHash, EXTENSAO_PK);
+
+  ind = fopen(nome, "w");
 
   for (i = 0; i < indice->tamanho; i++) {
     fprintf(ind, "%s", indice->vetor[i].pk);  /* grava a chave primaria   */
     fprintf(ind, "%d", indice->vetor[i].nrr); /* grava o nrr do registro. */
   }
 
-  /* Libera memoria da estrutura E dos seus campos. */
-  free(indice->vetor);
-  free(indice);
-
   fclose(ind);
+  
+  return indice;
 }
 
 /* Consulta de uma obra na base. 
@@ -358,7 +359,7 @@ FILE * preencheHtml(FILE *b, TObra valores) {
 /*Abre o arquivo correspondente ao valor de hash ja atualizado no proprio indice*/
 IndicePrim * abrePk(IndicePrim *indice) {
   
-  char *nome;
+  char nome[TAM_NOME_ARQ];
   int *tam = &(indice->tamanho);
   FILE *arqInd;
   
@@ -388,11 +389,11 @@ IndicePrim * trocaIndPrim(IndicePrim * indice, char *chave) {
 	/*Caso o hash e o mesmo do indice aberto*/
 	if (hashChave == indice->valorHash) return indice;
 	
+	/*Gravo indice primario*/
+	indice = gravaPk(indice);
+	
 	/*Troca o indice primario*/
 	indice->valorHash = hashChave;
-	
-	/*Gravo indice primario*/
-	gravaPk(indice);
 	
 	/*Abro o novo indice*/
 	indice->tamanho = 0;

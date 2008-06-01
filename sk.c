@@ -1,5 +1,19 @@
 #include "sk.h"
 
+IndSec * inicializaSecundario(int tipoCampo) {
+	
+	IndSec * indice = (IndSec *) malloc (sizeof(IndSec));
+	
+	indice->vetor = NULL;
+	indice->alocado = 0;
+	indice->tamanho = 0;
+	indice->tamDisco = 0;
+	indice->valorHash = 0;
+	indice->tipoCampo = tipoCampo;
+	
+	return indice;
+}
+
 /* Constroi um indice secundario.  Se existe o arquivo de indice, ele 
 carrega parte de estrutura pra memoria e deixa a outra no disco.
  Caso nao exista o indice, ele ira constri-lo a partir da base de
@@ -10,16 +24,16 @@ IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano,
 availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno) {
 	
 	int i;
-	char *nomeTitulo, *nomeTipo, *nomeAutor, *nomeAno;
+	char nomeTitulo[TAM_NOME_ARQ], nomeTipo[TAM_NOME_ARQ], nomeAutor[TAM_NOME_ARQ], nomeAno[TAM_NOME_ARQ];
 	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno; /* Arquivos de chaves secundarias. */
 	FILE *arqPkTitulo, *arqPkTipo, *arqPkAutor, *arqPkAno; /* Arquivos de chaves primarias. */
 	TObra obra;
 	
 	/* Tenta abrir os arquivos de indice de hash iguais a zero. */
-	sprintf(nomeTitulo, "%d%d%s", titulo->tipoCampo, 0, EXTENSAO_SK);
-	sprintf(nomeTipo,   "%d%d%s", tipo->tipoCampo,   0, EXTENSAO_SK);
-	sprintf(nomeAutor,  "%d%d%s", autor->tipoCampo,  0, EXTENSAO_SK);
-	sprintf(nomeAno,    "%d%d%s", ano->tipoCampo,    0, EXTENSAO_SK);
+	sprintf(nomeTitulo, "%d%d%s", titulo->tipoCampo, titulo->valorHash, EXTENSAO_SK);
+	sprintf(nomeTipo,   "%d%d%s", tipo->tipoCampo,   tipo->valorHash,   EXTENSAO_SK);
+	sprintf(nomeAutor,  "%d%d%s", autor->tipoCampo,  autor->valorHash,  EXTENSAO_SK);
+	sprintf(nomeAno,    "%d%d%s", ano->tipoCampo,    ano->valorHash,    EXTENSAO_SK);
 	
 	arqTitulo = fopen(nomeTitulo, "r");
 	arqTipo   = fopen(nomeTipo,   "r");

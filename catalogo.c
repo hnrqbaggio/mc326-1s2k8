@@ -26,8 +26,10 @@ int gravaObra(TObra obra, FILE *arq, availList *avail){
   
   /*Pega o valor da avail, e percorre a base com fseek para inserir na posicao.*/
   fseek(arq, (*avail*(int)TAM_REG), SEEK_SET);
+  
   /*Se for o final do arquivo, atualizo a avail com +1*/
   if(fscanf(arq, FORMATO_INT, &prox) == EOF) {
+  	
     end = *avail;
     *avail = *avail + 1;
     fprintf(arq, "%s", obra.titulo);
@@ -37,9 +39,12 @@ int gravaObra(TObra obra, FILE *arq, availList *avail){
     fprintf(arq, "%s", obra.valor);
     fprintf(arq, "%s", obra.imagem);
     return end;
+    
   } else { /*Caso nao e final da base */
+  	
     end = *avail;
     *avail = prox;
+    
     /*Volta para sobrescrever o antigo next da avail*/
     fseek(arq, -TAM_NUMERO, SEEK_CUR);
     fprintf(arq, "%s", obra.titulo);
@@ -55,11 +60,12 @@ int gravaObra(TObra obra, FILE *arq, availList *avail){
 /*** Funcoes de manipulacao do indice primario. ***/
 /* funcao que carrega o indice do arquivo ou monta-o a partir da base */
 IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
+	
   FILE *arq_ind; /* arquivo onde estao os indices, caso exista */
-  char *pkAux, *nome;
+  char pkAux[TAM_TITULO+1], nome[TAM_NOME_ARQ];
   int offset, valorHash;
   int *tam;      /* apontador pro numero de elementos do vetor de
-		    indice. Pra facilitar a leitura do codigo. */
+		              indice. Pra facilitar a leitura do codigo. */
 
   /*Abro o indicePk-hash = 0*/
   sprintf(nome, "%s%d%s", ARQ_PK, 0, EXTENSAO_PK);
@@ -70,7 +76,7 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
   indice->vetor = (Pk *) malloc(sizeof(Pk) * VETOR_MIN);
   indice->alocado = VETOR_MIN;
   indice->tamanho = 0;
-  indice->valorHash = -1;
+  indice->valorHash = 0;
 
   tam = &(indice->tamanho);
 

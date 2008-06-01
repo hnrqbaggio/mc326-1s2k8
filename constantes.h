@@ -24,10 +24,10 @@
 #define ARQ_IS_ANO ("/tmp/mc326/ano")
 
 /* Nomes dos arquivos de avail list. */
-#define ARQ_AVAIL_TITULO ("titulo.av")
-#define ARQ_AVAIL_TIPO ("tipo.av")
-#define ARQ_AVAIL_AUTOR ("autor.av")
-#define ARQ_AVAIL_ANO ("ano.av")
+#define ARQ_AVAIL_TITULO ("/tmp/mc326/titulo.av")
+#define ARQ_AVAIL_TIPO ("/tmp/mc326/tipo.av")
+#define ARQ_AVAIL_AUTOR ("/tmp/mc326/autor.av")
+#define ARQ_AVAIL_ANO ("/tmp/mc326/ano.av")
 
 /* Extensoes dos arquivos. */
 #define EXTENSAO_PK (".chp")

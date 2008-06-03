@@ -328,7 +328,7 @@ void gravaIndSk(IndSec *sec) {
 
 IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
 	
-  	int hashChave;
+  	int hashChave, tamanho = indSecun->tamDisco;
   	char nome[TAM_NOME_ARQ+10];
   	FILE *ind;
 
@@ -351,7 +351,8 @@ IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
 	}
 
 	/* Atualiza o valor hash do indice. */
-  	indSecun->valorHash = hashChave; 
+  	indSecun->valorHash = hashChave;
+  	indSecun->tamDisco = tamanho;
 
   	return indSecun;
 }

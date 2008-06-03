@@ -15,7 +15,7 @@ void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
   fsk = fopen(nomeArq,"r");
 
   fhtml = fopen(ARQ_HTML, "w");
-  
+ 
   /*Busco chave no indice secundario*/
   strcpy(temp.key, chave);
   temp.lenght = strlen(chave);

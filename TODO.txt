@@ -1,0 +1,48 @@
+=========
+TODO LIST
+=========
+
+== BELO ==
+
+(TP2)
+- Consertar base zuada. (Eh soh fazer uma nova)
+- Revisar tudo que possa ser problematico e desconte nota. 
+- Jah adianto que eh legal usar contantes nos switchs. Temos tudo em define, eh bem simples e jah fiz isso ontem no TP3
+
+(TP3)
+- Alterar comentários pra podermos usar o Doxygen.
+- Terminar o relatorio. Baggio vai preparar o doxyfile pra branch TP3.
+
+(TP4)
+- Testar, testar muito e ver cada furo.
+
+(TP5)
+- Planejar relatório. Fazer paralelamente ao desenvolvimento, 
+para ter ele pronto junto com o programa.
+
+
+== MATÃO ==
+
+(TP4)
+- Remoção. Testar e finalizar isso.
+- Atributos binarios.
+- Alterar comentários.
+- Problema da base inexistente! (Também TP3)
+- Valgrind!
+
+(TP5)
+- Estudar B+
+
+
+== BAGGIO ==
+ 
+(TP3)
+Doxyfile.
+
+(TP4)
+- Atributos binarios.
+- Começar relatório.
+- Help no Valgrind.
+
+(TP5)
+- Começar a pensar na B+. Ver oq vai mudar e não perder mais tempo.

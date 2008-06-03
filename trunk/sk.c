@@ -97,6 +97,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 				fgets(obra.valor,  TAM_VALOR + 1,  base);
 				fgets(obra.imagem, TAM_IMAGEM + 1, base);
 				
+				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/
 				maiuscula(obra.titulo);
@@ -104,7 +105,6 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 				maiuscula(obra.autor);
 				maiuscula(indPrim->vetor[i].pk);
 				strcpy(pkAux, indPrim->vetor[i].pk);
-				
 				/* Para cada indice, faz a inserção das chaves. */
 				titulo = insereSk(titulo, arqPkTitulo, pkAux, obra.titulo, avTitulo);
 				tipo   = insereSk(tipo,   arqPkTipo,   pkAux, obra.tipo,   avTipo);
@@ -153,6 +153,64 @@ IndSec * carregaSk(IndSec *indSk, FILE *arqSk){
 
   free(sk);
   return indSk;
+}
+
+IndSec * criaSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tipoCampo) {
+
+  int i, tam;
+  int offset = 0, offset_ext; /* Deslocamentos no arquivo */
+  char  campo[TAM_TITULO+1];
+  IndSec * secundario = (IndSec *) malloc(sizeof(IndSec)); /* O indice secundario */
+  FILE *fsk;
+
+  /* Como vamos criar o indice, a lista invertida eh vazia. */
+  *avail = -1;
+
+  /*Inicializando o vetor de SKs*/ 
+  secundario->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
+  secundario->alocado = VETOR_MIN;
+  secundario->tamanho = 0;
+  secundario->tamDisco = 0;
+  
+  switch (tipoCampo){
+  case TITULO: /* Campo a ser lido eh o titulo. */
+    tam = TAM_TITULO;
+    offset_ext = 0;
+    fsk = fopen(ARQ_IS_TITULO,"w");
+    break;
+  case TIPO: /* Campo Tipo */
+    tam = TAM_TIPO;
+    offset_ext = TAM_TITULO;
+    fsk = fopen(ARQ_IS_TIPO,"w");
+    break;
+  case AUTOR: /* Campo Autor */
+    tam = TAM_AUTOR;
+    offset_ext = TAM_TITULO + TAM_TIPO;
+    fsk = fopen(ARQ_IS_AUTOR,"w");
+    break;
+  case ANO: /* Campo Ano */
+    tam = TAM_ANO;
+    offset_ext = TAM_TITULO + TAM_TIPO + TAM_AUTOR;
+    fsk = fopen(ARQ_IS_ANO,"w");
+    break;
+  }
+
+  /* Criando o arquivo com os campo do cabecalho zerado. */ 
+  fprintf(fsk, FORMATO_INT, 0);
+
+  for (i = 0; i < indPrim->tamanho; i++) {
+    offset = indPrim->vetor[i].nrr * TAM_REG;
+
+    fseek(base, offset, SEEK_SET); 
+    fseek(base, offset_ext, SEEK_CUR);
+    fgets(campo, tam + 1, base); /* Le o campo do registro */
+
+    /* Insere a SK relativa ao token, sendo q neste caso a avail list eh vazia. */
+    secundario = insereSk(secundario, fsk, indPrim->vetor[i].pk, campo, avail);
+ 
+  }
+  fclose(fsk);
+  return secundario;
 }
 
 IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail) {
@@ -306,6 +364,9 @@ IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
   	return indSecun;
 }
 
+
+
+
 /* Realoca espaco para o vetor caso seja necessario. */
 IndSec * realocaIndSec(IndSec *sec) {
 
@@ -339,16 +400,4 @@ int compareSk(const void *a, const void *b) {
   return strcmp(a2->key, b2->key);
 
 }
-
-/*Transforma para maiuscula a string passada como parametro*/
-void maiuscula(char *chave) {
-
-	int i;
-
-	/* Copia os valores dos parametros, convertendo pra maiuscula */
-  	for (i = 0; i <= strlen(chave); i++) chave[i] = toupper(chave[i]);
-  	chave[i] = '\0';
-  	
-}
-
 

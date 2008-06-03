@@ -88,11 +88,5 @@ IndSec * realocaIndSec(IndSec *);
 */
 int compareSk(const void *, const void *);
 
-/**
- * Transforma para maiuscula a string passada como parametro
- * 
-*/
-void maiuscula(char *);
-
 
 #endif

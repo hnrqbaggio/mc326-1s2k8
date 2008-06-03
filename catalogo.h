@@ -22,10 +22,11 @@ void fechaCatalogo(FILE *);
 
 /* 
  * Grava uma obra na base de dados. Os parametros sao a obra e o
- * ponteiro pro arquivo da base e a avail list da base.
- * Retorna o nrr da obra inserida.
+ * ponteiro pro arquivo da base, a avail list da base e o indice primario,
+ * pois contem o tamanho da base.
+ * Retorna o nrr da obra inserida ou o tamanho da base.
  */
-int gravaObra(TObra, FILE *, availList *);
+int gravaObra(TObra, FILE *, availList *, IndicePrim *);
 
 
 /*** Funcoes de manipulacao do indice ***/
@@ -104,5 +105,11 @@ FILE * endHtml(FILE *);
  * Troca os indices primarios.
  * Recebe o indice prmario e a chave a ser calculada o hash*/
 IndicePrim * trocaIndPrim(IndicePrim *, char *);
+
+/**
+ * Transforma para maiuscula a string passada como parametro
+ * 
+*/
+void maiuscula(char *);
 
 #endif

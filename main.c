@@ -76,10 +76,14 @@ int main(int argc, char **argv){
       do {
         /*leitura da obra a ser inserida e gravacao no indice primario*/
         obra = *(leObra(ind, &obra));
-
-        /*Insercao nos indices secundarios*/
+        
+         /*Grava a obra inserida na base de dados*/
+        end = gravaObra(obra, arq, &availBase, ind);
+        
+        /*Obra2 sera inserida na base. obra sera usada na insereSk*/
         strcpy(obra2.titulo, obra.titulo);
         
+        /*Insercao nos indices secundarios*/
         /*titulo*/
         sprintf(nome, "%s%s", secTitulo->tipoCampo, EXTENSAO_PK);
         bigfile = fopen(nome,"r+");
@@ -107,16 +111,6 @@ int main(int argc, char **argv){
 
         secAno = insereSk(secAno, bigfile, obra2.titulo, obra.ano, &availAno);
         fclose(bigfile);
-        
-        /* Copia os parametros que faltam para gravar 
-        strcpy(obra2.valor, obra.valor);
-        strcpy(obra2.imagem, obra.imagem);*/
-
-        /*Grava a obra inserida na base de dados*/
-        end = gravaObra(obra, arq, &availBase);
-
-        /* Atualizo o nrr na pk */
-        ind->vetor[ind->tamanho-1].nrr = end;
 
         /* Notificacao de insere */
         option = geraNotificaInsere();
@@ -137,6 +131,7 @@ int main(int argc, char **argv){
         case 1:/*Busca pelo titulo*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
+          maiuscula(temp);
           secTitulo = trocaIndSec(secTitulo, temp);
           buscaSk(temp, ind, secTitulo, arq);
           break;
@@ -144,6 +139,7 @@ int main(int argc, char **argv){
         case 2:/*Busca pelo tipo*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
+          maiuscula(temp);
           secTipo = trocaIndSec(secTitulo, temp);
           buscaSk(temp, ind, secTipo, arq);
           break;
@@ -151,6 +147,7 @@ int main(int argc, char **argv){
         case 3:/*Busca pelo autor*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
+          maiuscula(temp);
           secAutor = trocaIndSec(secAutor, temp);
           buscaSk(temp, ind, secAutor, arq);
           break;
@@ -158,6 +155,7 @@ int main(int argc, char **argv){
         case 4:/*Busca por ano*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
+          maiuscula(temp);
           secAno = trocaIndSec(secAno, temp);
           buscaSk(temp, ind, secAno, arq);
           break;

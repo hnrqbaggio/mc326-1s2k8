@@ -17,6 +17,7 @@ TObra * leObra (IndicePrim *ind, TObra *obra) {
   
   strcpy(chave->pk, obra->titulo);
 
+	maiuscula(chave->pk);
 	/*Abro o indice primario relativo a obra a ser inserida*/
 	ind = trocaIndPrim(ind, chave->pk);
   

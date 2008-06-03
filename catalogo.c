@@ -17,32 +17,37 @@ void fechaCatalogo(FILE *arq) {
 }
 
 /* Esta funcao grava os dados da obra no arquivo .dat ela recebe como
- * parametros a struct TObra e o arquivo de saida e a avail da base de dados.
- * Retorna o endereco da obra inserida.
+ * parametros a struct TObra e o arquivo de saida, a avail da base de dados e
+ * o indice primario, que contem o tamanho da base.
+ * Retorna o endereco da obra inserida ou o tamanho da base.
 */
-int gravaObra(TObra obra, FILE *arq, availList *avail){
+int gravaObra(TObra obra, FILE *arq, availList *avail, IndicePrim * indice ){
   
   int end, prox = 0;
   
-  /*Pega o valor da avail, e percorre a base com fseek para inserir na posicao.*/
-  fseek(arq, (*avail*(int)TAM_REG), SEEK_SET);
-  
-  /*Se for o final do arquivo, atualizo a avail com +1*/
-  if(fscanf(arq, FORMATO_INT, &prox) == EOF) {
+  /*Caso e o final do arquivo*/
+  if(*avail == -1) {
+  	fseek(arq, (indice->tamBase *(int)TAM_REG), SEEK_SET);
   	
-    end = *avail;
-    *avail = *avail + 1;
     fprintf(arq, "%s", obra.titulo);
     fprintf(arq, "%s", obra.tipo);
     fprintf(arq, "%s", obra.autor);
     fprintf(arq, "%s", obra.ano);
     fprintf(arq, "%s", obra.valor);
     fprintf(arq, "%s", obra.imagem);
-    return end;
     
-  } else { /*Caso nao e final da base */
+    /*Atualizo o nrr*/
+    indice->vetor[indice->tamanho-1].nrr  =  indice->tamBase;  
+    /*Atualizo tamanho da base*/
+    indice->tamBase++;
+    
+    return indice->tamBase;
+    
+  } else { 
+  	/*Pega o valor da avail, e percorre a base com fseek para inserir na posicao.*/
+  	fseek(arq, (*avail*(int)TAM_REG), SEEK_SET);
   	
-    end = *avail;
+  	end = *avail;
     *avail = prox;
     
     /*Volta para sobrescrever o antigo next da avail*/
@@ -53,6 +58,10 @@ int gravaObra(TObra obra, FILE *arq, availList *avail){
     fprintf(arq, "%s", obra.ano);
     fprintf(arq, "%s", obra.valor);
     fprintf(arq, "%s", obra.imagem);
+    
+    /*Atualizo o nrr*/
+    indice->vetor[indice->tamanho-1].nrr  =  end; 
+
     return end;
   }
 }
@@ -83,6 +92,9 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
 
   if (arq_ind != NULL) { /* existe o arquivo */
 
+	/*Pego o tamanho da base*/
+	fscanf(arq_ind, FORMATO_INT, &(indice->tamBase));
+		
     while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arq_ind)) {
       (*tam)++;
       indice = realocaIndPrim(indice);
@@ -94,6 +106,7 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
     
     while(fgets(pkAux, TAM_TITULO+1, base)) {
       
+      maiuscula(pkAux);
       /*Abre o indice relativo a pkAux*/
       indice = trocaIndPrim(indice, pkAux);
       
@@ -101,6 +114,7 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
       strcpy(indice->vetor[(*tam)].pk, pkAux);
       indice->vetor[*tam].nrr = position;
       (*tam)++;
+      indice->tamBase++;
       indice = realocaIndPrim(indice);
 
       /* Posiciona o cursor do arquivo no campo Titulo do proximo registro. */
@@ -129,10 +143,13 @@ IndicePrim * gravaPk(IndicePrim *indice) {
   sprintf(nome, "%s%d%s", ARQ_PK, indice->valorHash, EXTENSAO_PK);
 
   ind = fopen(nome, "w");
-
+	
+	/* Gravo o tamanho da base. */
+  	fprintf(ind, FORMATO_INT, indice->tamBase);
+  	
   for (i = 0; i < indice->tamanho; i++) {
     fprintf(ind, "%s", indice->vetor[i].pk);  /* grava a chave primaria   */
-    fprintf(ind, "%d", indice->vetor[i].nrr); /* grava o nrr do registro. */
+    fprintf(ind, FORMATO_INT, indice->vetor[i].nrr); /* grava o nrr do registro. */
   }
 
   fclose(ind);
@@ -149,6 +166,7 @@ TObra * consulta(Pk *chave, FILE *base, IndicePrim *indice) {
   TObra * reg = (TObra *) malloc(sizeof(TObra));
   
   /*Abro o indice relativo a pk a ser buscada*/
+  maiuscula(chave->pk);
   indice = trocaIndPrim(indice, chave->pk);
   
   temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
@@ -365,12 +383,14 @@ IndicePrim * abrePk(IndicePrim *indice) {
   arqInd = fopen(nome, "r");
   
   if (arqInd) {
-  
+		/*Pego o tamanho da base*/
+		fscanf(arqInd, FORMATO_INT, &(indice->tamBase));
+		
 	  /*Salvo no indice primario*/
 	  while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arqInd)) {
 	    (*tam)++;
 	    indice = realocaIndPrim(indice);
-	    fscanf(arqInd, "%d", &(indice->vetor[*tam-1].nrr)); /* le o nrr do registro */
+	    fscanf(arqInd, FORMATO_INT, &(indice->vetor[*tam-1].nrr)); /* le o nrr do registro */
 	  }
 	  fclose(arqInd);
   
@@ -383,22 +403,38 @@ IndicePrim * abrePk(IndicePrim *indice) {
 /*Troca os indices primarios*/
 IndicePrim * trocaIndPrim(IndicePrim * indice, char *chave) {
 	
-	int hashChave;
+	int hashChave, tamBase;
 	
 	hashChave = hashFunction(chave);
 	
 	/*Caso o hash e o mesmo do indice aberto*/
 	if (hashChave == indice->valorHash) return indice;
 	
+	tamBase = indice->tamBase;
+	
 	/*Gravo indice primario*/
 	indice = gravaPk(indice);
 	
-	/*Troca o indice primario*/
+	/*Troca o o valor do Hash*/
 	indice->valorHash = hashChave;
 	
 	/*Abro o novo indice*/
 	indice->tamanho = 0;
 	abrePk(indice);
 	
+	/*Atualizo o tamanho da base*/
+	indice->tamBase = tamBase;
+	
 	return indice;
+}
+
+/*Transforma para maiuscula a string passada como parametro*/
+void maiuscula(char *chave) {
+
+	int i;
+
+	/* Copia os valores dos parametros, convertendo pra maiuscula */
+  	for (i = 0; i <= strlen(chave); i++) chave[i] = toupper(chave[i]);
+  	chave[i] = '\0';
+  	
 }

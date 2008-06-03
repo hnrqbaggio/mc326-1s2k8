@@ -25,6 +25,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 	
 	int i, j;
 	char nomeTitulo[TAM_NOME_ARQ+10], nomeTipo[TAM_NOME_ARQ+10], nomeAutor[TAM_NOME_ARQ+10], nomeAno[TAM_NOME_ARQ+10];
+	char pkAux[TAM_TITULO+1];
 	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno;         /* Arquivos de chaves secundarias. */
 	FILE *arqPkTitulo, *arqPkTipo, *arqPkAutor, *arqPkAno; /* Arquivos de chaves primarias. */
 	TObra obra;
@@ -97,10 +98,11 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 				fgets(obra.imagem, TAM_IMAGEM + 1, base);
 				
 				/* Para cada indice, faz a inserção das chaves. */
-				titulo = insereSk(titulo, arqPkTitulo, obra.titulo, obra.titulo, avTitulo);
-				tipo   = insereSk(tipo,   arqPkTipo,   obra.titulo, obra.tipo,   avTipo);
-				autor  = insereSk(autor,  arqPkAutor,  obra.titulo, obra.autor,  avAutor);
-				ano    = insereSk(ano,    arqPkAno,    obra.titulo, obra.ano,    avAno);
+				strcpy(pkAux, obra.titulo);
+				titulo = insereSk(titulo, arqPkTitulo, pkAux, obra.titulo, avTitulo);
+				tipo   = insereSk(tipo,   arqPkTipo,   pkAux, obra.tipo,   avTipo);
+				autor  = insereSk(autor,  arqPkAutor,  pkAux, obra.autor,  avAutor);
+				ano    = insereSk(ano,    arqPkAno,    pkAux, obra.ano,    avAno);
 				
 			}
 		}

@@ -9,21 +9,10 @@ void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
   TObra reg;
 
   int offset;
-
-  switch(indSecun->tipoCampo){
-  case TITULO: /* Campo a ser lido eh o titulo. */
-    fsk = fopen(ARQ_IS_TITULO,"r");
-    break;
-  case TIPO: /* Campo Tipo */
-    fsk = fopen(ARQ_IS_TIPO,"r");
-    break;
-  case AUTOR: /* Campo Autor */
-    fsk = fopen(ARQ_IS_AUTOR,"r");
-    break;
-  case ANO: /* Campo Ano */
-    fsk = fopen(ARQ_IS_ANO,"r");
-    break;
-  }
+  char nomeArq[TAM_NOME_ARQ+10];
+  
+  sprintf(nomeArq, "%s%s", indSecun->tipoCampo, EXTENSAO_PK);
+  fsk = fopen(nomeArq,"r");
 
   fhtml = fopen(ARQ_HTML, "w");
   
@@ -46,6 +35,9 @@ void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
 
       fgets(temp2.pk, TAM_TITULO+1, fsk);
       fscanf(fsk, FORMATO_INT, &(temp2.nrr));
+      
+      /* Verifico o indice ao qual pertence a nova chave. */
+      trocaIndPrim(indPrim, temp2.pk);
 
       result2 = (Pk *) bsearch(&temp2, indPrim->vetor, indPrim->tamanho, sizeof(temp2), compare);
 

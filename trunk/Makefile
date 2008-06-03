@@ -1,29 +1,35 @@
-tp4: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o
-	gcc -ggdb -ansi -pedantic -Wall main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o -o tp4
+FLAGS = -ggdb -ansi -pedantic -Wall
+IMGFLAGS = -ljpeg -lgif -lpng -lm
+
+tp4: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o libimg.o
+	gcc $(FLAGS) $(IMGFLAGS) main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o libimg.o -o tp4
 
 leitura.o: leitura.h leitura.c
-	gcc -ggdb -ansi -pedantic -Wall -c leitura.c 
+	gcc $(FLAGS) -c leitura.c 
 
 sk.o: sk.h sk.c
-	gcc -ggdb -ansi -pedantic -Wall -c sk.c
+	gcc $(FLAGS) -c sk.c
 
 catalogo.o: catalogo.h catalogo.c
-	gcc -ggdb -ansi -pedantic -Wall -c catalogo.c
+	gcc $(FLAGS) -c catalogo.c
 
 menu.o: menu.h menu.c
-	gcc -ggdb -ansi -pedantic -Wall -c menu.c 
+	gcc $(FLAGS) -c menu.c 
 
 busca.o: busca.h busca.c
-	gcc -ggdb -ansi -pedantic -Wall -c busca.c
+	gcc $(FLAGS) -c busca.c
 
 remove.o: remove.h remove.c
-	gcc -ggdb -ansi -pedantic -Wall -c remove.c
+	gcc $(FLAGS) -c remove.c
 
 avail.o: avail.h avail.c
-	gcc -ggdb -ansi -pedantic -Wall -c avail.c
+	gcc $(FLAGS) -c avail.c
 	
 hash.o: hash.h hash.c
-	gcc -ggdb -ansi -pedantic -Wall -c hash.c
+	gcc $(FLAGS) -c hash.c
+
+libimg.o: libimg.h libimg.c
+	gcc $(FLAGS) -c libimg.c 
 
 clean:
 	rm -f *.o *~ tp4

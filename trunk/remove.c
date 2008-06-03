@@ -56,6 +56,8 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
   sprintf(nomeArq, "%s%s", indSecun->tipoCampo, EXTENSAO_PK);	
   arq = fopen(nomeArq, "r+");
    
+   /*Jogo a chave para maiuscula para nao ocorrer conflito com o BIG FILE*/
+   maiuscula(chave);
   token = strtok(chave, " ");
 
 

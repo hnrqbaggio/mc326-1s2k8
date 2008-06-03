@@ -82,6 +82,11 @@ int main(int argc, char **argv){
         
         /*Obra2 sera inserida na base. obra sera usada na insereSk*/
         strcpy(obra2.titulo, obra.titulo);
+        maiuscula(obra2.titulo);
+        maiuscula(obra.titulo);
+        maiuscula(obra.tipo);
+        maiuscula(obra.autor);
+        maiuscula(obra.ano);
         
         /*Insercao nos indices secundarios*/
         /*titulo*/
@@ -140,7 +145,7 @@ int main(int argc, char **argv){
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
           maiuscula(temp);
-          secTipo = trocaIndSec(secTitulo, temp);
+          secTipo = trocaIndSec(secTipo, temp);
           buscaSk(temp, ind, secTipo, arq);
           break;
 

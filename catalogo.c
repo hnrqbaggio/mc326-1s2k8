@@ -432,9 +432,9 @@ IndicePrim * trocaIndPrim(IndicePrim * indice, char *chave) {
 void maiuscula(char *chave) {
 
 	int i;
-
+	int tamanho = strlen(chave);
 	/* Copia os valores dos parametros, convertendo pra maiuscula */
-  	for (i = 0; i <= strlen(chave); i++) chave[i] = toupper(chave[i]);
+  	for (i = 0; i < strlen(chave); i++) chave[i] = toupper(chave[i]);
   	chave[i] = '\0';
   	
 }

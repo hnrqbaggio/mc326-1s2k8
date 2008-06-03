@@ -20,7 +20,7 @@ int main(int argc, char **argv){
   int ent, option, end;
   TObra obra, obra2, *consultaObra;
   char temp[TAM_TITULO];
-  char *nome;
+  char nome[TAM_NOME_ARQ+10];
  
   /* Ponteiro pra base de dados. */
   FILE *arq;

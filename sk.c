@@ -97,8 +97,15 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 				fgets(obra.valor,  TAM_VALOR + 1,  base);
 				fgets(obra.imagem, TAM_IMAGEM + 1, base);
 				
+				/*Coloca tudo em maiuscula para nao 
+				 * occorer discrepancia entre os dados buscados*/
+				maiuscula(obra.titulo);
+				maiuscula(obra.tipo);
+				maiuscula(obra.autor);
+				maiuscula(indPrim->vetor[i].pk);
+				strcpy(pkAux, indPrim->vetor[i].pk);
+				
 				/* Para cada indice, faz a inserção das chaves. */
-				strcpy(pkAux, obra.titulo);
 				titulo = insereSk(titulo, arqPkTitulo, pkAux, obra.titulo, avTitulo);
 				tipo   = insereSk(tipo,   arqPkTipo,   pkAux, obra.tipo,   avTipo);
 				autor  = insereSk(autor,  arqPkAutor,  pkAux, obra.autor,  avAutor);
@@ -332,4 +339,16 @@ int compareSk(const void *a, const void *b) {
   return strcmp(a2->key, b2->key);
 
 }
+
+/*Transforma para maiuscula a string passada como parametro*/
+void maiuscula(char *chave) {
+
+	int i;
+
+	/* Copia os valores dos parametros, convertendo pra maiuscula */
+  	for (i = 0; i <= strlen(chave); i++) chave[i] = toupper(chave[i]);
+  	chave[i] = '\0';
+  	
+}
+
 

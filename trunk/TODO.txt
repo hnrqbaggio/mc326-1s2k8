@@ -40,9 +40,11 @@ para ter ele pronto junto com o programa.
 Doxyfile.
 
 (TP4)
-- Atributos binarios.
+- Atributos binarios - 
+      Biblioteca implementada. 
+      Testar funções.
+      Corrigir pequenos erros.
 - Começar relatório.
-- Help no Valgrind.
 
 (TP5)
 - Começar a pensar na B+. Ver oq vai mudar e não perder mais tempo.

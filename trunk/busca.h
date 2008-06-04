@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "catalogo.h"
 #include "sk.h"
+#include "descritor.h"
 
 /**
  * Esta biblioteca implementa as funcionalidades de busca na base de
@@ -20,5 +21,7 @@
  * que define o tipo do campo.
 */
 void buscaSk(char *, IndicePrim *, IndSec *, FILE *);
+
+void buscaPorConteudo(char *, IndDesc *, IndicePrim *, FILE *);
 
 #endif

@@ -36,6 +36,9 @@ int main(int argc, char **argv){
   /* Variaveis de indice secundario e respectivas avail lists. */
   IndSec *secTitulo, *secAutor, *secTipo, *secAno;
   availList availTitulo, availTipo, availAno, availAutor;
+  
+  	/* Indice de descritores. */
+	IndDesc *indDescritor;
 
   /*Abre a availList da base, a base e o indice primario*/
   availBase = openAvail(ARQ_AVAIL_BASE);
@@ -53,9 +56,11 @@ int main(int argc, char **argv){
   availTipo   = openAvail(ARQ_AVAIL_TIPO);
   availAutor  = openAvail(ARQ_AVAIL_AUTOR);
   availAno    = openAvail(ARQ_AVAIL_ANO);
-
+  
+  	indDescritor = inicializaDescritor();
+  
 	/*Abre os indices secundarios*/
-  constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
+  	constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
 
   elem = (Pk *) malloc(sizeof(Pk));
 
@@ -133,9 +138,11 @@ int main(int argc, char **argv){
         option = geraMenuBusca();
 
         switch (option) {
+        		
         /*Somente uma palavra por vez, por enquanto*/
+        
         case 1:/*Busca pelo titulo*/
-          printf("Digite uma palavra:\n");
+          printf("Digite uma palavra: ");
           scanf("%s", temp);
           maiuscula(temp);
           secTitulo = trocaIndSec(secTitulo, temp);
@@ -143,7 +150,7 @@ int main(int argc, char **argv){
           break;
 
         case 2:/*Busca pelo tipo*/
-          printf("Digite uma palavra:\n");
+          printf("Digite uma palavra: ");
           scanf("%s", temp);
           maiuscula(temp);
           secTipo = trocaIndSec(secTipo, temp);
@@ -151,7 +158,7 @@ int main(int argc, char **argv){
           break;
 
         case 3:/*Busca pelo autor*/
-          printf("Digite uma palavra:\n");
+          printf("Digite uma palavra: ");
           scanf("%s", temp);
           maiuscula(temp);
           secAutor = trocaIndSec(secAutor, temp);
@@ -159,7 +166,7 @@ int main(int argc, char **argv){
           break;
 
         case 4:/*Busca por ano*/
-          printf("Digite uma palavra:\n");
+          printf("Digite uma palavra: ");
           scanf("%s", temp);
           maiuscula(temp);
           secAno = trocaIndSec(secAno, temp);
@@ -175,7 +182,14 @@ int main(int argc, char **argv){
           
           /*Libera consultaObra, que e alocado dentro da funcao consulta*/
           free(consultaObra);
-          break; 
+          break;
+          
+			case 6: /* Busca por conteudo. */
+				printf("Digite o nome da imagem: ");
+				scanf("%s", nome);
+				buscaPorConteudo(nome, indDescritor, ind, arq);
+        		break;
+        		 
         case 0:/*Menu anterior*/
           break;
 
@@ -207,28 +221,29 @@ int main(int argc, char **argv){
 
         /*Remove todas as Sks */
         secTitulo = removeSk(consultaObra->titulo, secTitulo, elem->pk, &availTitulo);
-        secTipo = removeSk(consultaObra->tipo, secTipo, elem->pk, &availTipo);
-        secAutor = removeSk(consultaObra->autor, secAutor, elem->pk, &availAutor);
-        secAno = removeSk(consultaObra->ano, secAno, elem->pk, &availAno);
+        secTipo   = removeSk(consultaObra->tipo,   secTipo,   elem->pk, &availTipo);
+        secAutor  = removeSk(consultaObra->autor,  secAutor,  elem->pk, &availAutor);
+        secAno    = removeSk(consultaObra->ano,    secAno,    elem->pk, &availAno);
       }
       /*Libera consultaObra, que e alocado dentro da funcao consulta*/
       free(consultaObra);
       break;
 
     case 0:/*Sair do programa*/
+    
       /*fecha todos os arquivos abertos e libera memoria para sair do programa*/
       fechaCatalogo(arq);
       gravaPk(ind);
 
       /* Troco os indices secundarios para o de indice de valor 0, pois este deve ter
-       * o tamanho do arquivo de indices secundarios atualizado, pois e o primeiro a
-       * ser carregado no programa */
+       * o tamanho do arquivo de indices secundarios atualizado, jah que eh o primeiro
+       * a ser carregado no programa. */
       trocaIndSec(secTitulo, "\0");
       trocaIndSec(secTipo, "\0");
       trocaIndSec(secAutor, "\0");
       trocaIndSec(secAno, "\0");
       
-      /*Gravo os indice secundarios*/
+      /*Grava os indice secundarios*/
       gravaIndSk(secTitulo);
       gravaIndSk(secTipo);
       gravaIndSk(secAutor);

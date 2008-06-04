@@ -1,8 +1,8 @@
 FLAGS = -ggdb -ansi -pedantic -Wall
 IMGFLAGS = -ljpeg -lgif -lpng -lm
 
-tp4: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o libimg.o
-	gcc $(FLAGS) $(IMGFLAGS) main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o libimg.o -o tp4
+tp4: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o libimg.o descritor.o
+	gcc $(FLAGS) $(IMGFLAGS) main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o descritor.o libimg.o -o tp4
 
 leitura.o: leitura.h leitura.c
 	gcc $(FLAGS) -c leitura.c 
@@ -27,6 +27,9 @@ avail.o: avail.h avail.c
 	
 hash.o: hash.h hash.c
 	gcc $(FLAGS) -c hash.c
+	
+descritor.o: descritor.h descritor.c
+	gcc $(FLAGS) -c descritor.c
 
 libimg.o: libimg.h libimg.c
 	gcc $(FLAGS) -c libimg.c 

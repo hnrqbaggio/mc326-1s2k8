@@ -23,6 +23,8 @@
 #define ARQ_IS_AUTOR ("/tmp/mc326/autor")
 #define ARQ_IS_ANO ("/tmp/mc326/ano")
 
+#define ARQ_DESCRITOR ("/tmp/mc326/descritor")
+
 /* Nomes dos arquivos de avail list. */
 #define ARQ_AVAIL_TITULO ("/tmp/mc326/titulo.av")
 #define ARQ_AVAIL_TIPO ("/tmp/mc326/tipo.av")
@@ -32,6 +34,7 @@
 /* Extensoes dos arquivos. */
 #define EXTENSAO_PK (".chp")
 #define EXTENSAO_SK (".chs")
+#define EXTENSAO_DESC (".dsc")
 
 /** 
  * Constante para fazer reallocs mais eficientes. A primeira alocacao

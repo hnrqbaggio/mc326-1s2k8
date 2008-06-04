@@ -199,7 +199,7 @@ TObra * consulta(Pk *chave, FILE *base, IndicePrim *indice) {
 
     if (saida) {
       printf("\n--------------------------------------------------\n");
-      printf("Registo encontrado e saida gerada com sucesso.\n");
+      printf("Registro encontrado e saida gerada com sucesso.\n");
       printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
       printf("--------------------------------------------------\n");				
     } else {
@@ -215,7 +215,7 @@ TObra * consulta(Pk *chave, FILE *base, IndicePrim *indice) {
   } else {/*Registro nao encontrado*/
     retorno = 0;
     printf("\n-----------------------\n");
-    printf("Registo não encontrado.\n");
+    printf("Registro não encontrado.\n");
     printf("-----------------------\n");
     reg = NULL;
   }

@@ -34,11 +34,18 @@ IndicePrim * removePk(char *chave, IndicePrim *indPrim, FILE *base, availList *a
     indPrim->vetor[fim].nrr = temp.nrr;
 
     (indPrim->tamanho)--;
+    
+    printf("\n-------------------------------------\n");
+    printf("Obra de arte removida com sucesso.\n");
+    printf("--------------------------------------\n");
 
     ordenaIndice(indPrim);
 
   } else {/*Erro desconhecido*/
+  	printf("\n-------------------------------------\n");
     printf("Erro ao remover obra de arte.\n");
+    printf("--------------------------------------\n");
+    
   }
 
   return indPrim;

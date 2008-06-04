@@ -24,11 +24,11 @@ para ter ele pronto junto com o programa.
 == MATÃO ==
 
 (TP4)
-- Remoção. Testar e finalizar isso.
-- Atributos binarios.
-- Alterar comentários.
-- Problema da base inexistente! (Também TP3)
-- Valgrind!
+- Remoção. Testar e finalizar isso. == FINALIZADO
+- Atributos binarios. == AGORA É NOIS!
+- Alterar comentários. == Alterei vários, porém é necessário varredura no código inteiro.
+- Problema da base inexistente! (Também TP3) == FINALIZADO
+- Valgrind == FINALIZADO (por enquanto, precisa testar com os atributos binários)
 
 (TP5)
 - Estudar B+

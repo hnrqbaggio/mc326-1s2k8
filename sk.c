@@ -15,10 +15,6 @@ IndSec * inicializaSecundario(char *tipoCampo) {
 	return indice;
 }
 
-/* Constroi um indice secundario.  Se existe o arquivo de indice, ele 
- * carrega parte de estrutura pra memoria e deixa a outra no disco.
- * Caso nao exista o indice, ele ira constri-lo a partir da base de
- * dados.*/
 void constroiSecundarios(IndicePrim *indPrim, FILE *base, 
 IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano, 
 availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno) {
@@ -105,6 +101,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 				maiuscula(obra.autor);
 				maiuscula(indPrim->vetor[i].pk);
 				strcpy(pkAux, indPrim->vetor[i].pk);
+				
 				/* Para cada indice, faz a inserção das chaves. */
 				titulo = insereSk(titulo, arqPkTitulo, pkAux, obra.titulo, avTitulo);
 				tipo   = insereSk(tipo,   arqPkTipo,   pkAux, obra.tipo,   avTipo);
@@ -119,14 +116,8 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 		fclose(arqPkAutor);
 		fclose(arqPkAno);
 	}
-	
 }
 
-
-/* 
- * Funcao que,caso exista o arquivo de SKs, carrega a parte que deve
- * ficar na RAM e no no cabeca da AVAIL LIST da parte que fica no disco 
- */
 IndSec * carregaSk(IndSec *indSk, FILE *arqSk){
 
   int tamSk = 0;
@@ -384,7 +375,6 @@ int compareSk(const void *a, const void *b) {
   Sk *a2 = (Sk *)a;
   Sk *b2 = (Sk *)b;
   int i, x, y;
-
 
   /* Calculo do tamanho das strings. */
   x = a2->lenght;

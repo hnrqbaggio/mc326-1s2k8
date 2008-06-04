@@ -70,3 +70,50 @@ void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
   fclose(fsk);
   fclose(fhtml);
 }
+
+void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndicePrim *indPrim, FILE *base) {
+	
+	int i;
+	char descritorReferencia;
+	IndDesc * resposta;
+	Pk temp, *result;
+	FILE *saida;
+	TObra reg;
+	
+	descritorReferencia = CalculaDescritor(arqImagem);
+	resposta = filtraInd(indice, descritorReferencia);
+	saida = fopen(ARQ_HTML, "w");
+	
+	/*Inicio do HTML*/
+	headHtml(saida);
+	
+	for (i = 0; i < resposta->tamanho; ++i) {
+		strcpy(temp.pk, resposta->vetor[i].pk);
+		
+		/*Abre o indice relativo a pk a ser buscada*/
+  		maiuscula(temp.pk);
+  		indPrim = trocaIndPrim(indPrim, temp.pk);
+		
+		result = (Pk *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(temp), compare);
+		
+		if (result) {
+		    
+		    fseek(base, TAM_REG * (result->nrr), SEEK_SET);
+		
+		    /* leitura do registro */
+		    fgets(reg.titulo, TAM_TITULO + 1, base);
+		    fgets(reg.tipo, TAM_TIPO + 1, base);
+		    fgets(reg.autor, TAM_AUTOR + 1, base); 
+		    fgets(reg.ano, TAM_ANO + 1, base);
+		    fgets(reg.valor, TAM_VALOR + 1, base);
+		    fgets(reg.imagem, TAM_IMAGEM + 1, base);
+		
+		    /* passagem do resultado pra função que gera a saida em html */
+		    preencheHtml(saida, reg);
+		    
+		}	
+		/*Fim do HTML*/
+	   endHtml(saida);
+	   fclose(saida);	
+	}
+}

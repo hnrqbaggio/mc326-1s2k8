@@ -36,7 +36,7 @@ typedef struct _pk {
  * Alocado eh o espaco alocado para o vetor atraves da alocacao dinamica com malloc e 
  * usado para controlar quando realocar espaco para o vetor. 
  */
-typedef struct struct_vet {
+typedef struct _vetorPk {
   Pk * vetor;
   int tamanho;
   int alocado;
@@ -71,7 +71,7 @@ typedef struct _sk{
  * desse indice, que sera usado na operacao de insercao e remocao de
  * chaves.
  */
-typedef struct _vetorsk {
+typedef struct _vetorSk {
   Sk *vetor;
   int tamanho;
   int alocado;
@@ -79,5 +79,20 @@ typedef struct _vetorsk {
   int valorHash;
   char tipoCampo[TAM_NOME_ARQ];
 } IndSec;
+
+
+/* Tipos de dados para os descritores das imagens. */
+typedef struct _descritor {
+	char pk[TAM_TITULO+1];
+	char valorDescritor;
+	double similaridade;
+} Descritor;
+
+typedef struct _vetorDescritor {
+	Descritor *vetor;
+	int tamanho;
+	int alocado;
+	int valorHash;
+} IndDesc;
 
 #endif /*TIPOS_H_*/

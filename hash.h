@@ -5,5 +5,6 @@
 #include "constantes.h"
 
 int hashFunction(char *);
+int hashDescritor(char);
 
 #endif /*HASH_H_*/

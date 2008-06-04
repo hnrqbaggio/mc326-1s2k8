@@ -82,6 +82,7 @@ int main(int argc, char **argv){
         
         /*Obra2 sera inserida na base. obra sera usada na insereSk*/
         strcpy(obra2.titulo, obra.titulo);
+        /*Passo todas as strings para maiuscula para nao ocorrer conflito nas pesquisas*/
         maiuscula(obra2.titulo);
         maiuscula(obra.titulo);
         maiuscula(obra.tipo);
@@ -170,7 +171,10 @@ int main(int argc, char **argv){
           preencher(elem->pk, sizeof(elem->pk));
           elem->nrr = -1;
 
-          consulta(elem, arq, ind);
+          consultaObra = consulta(elem, arq, ind);
+          
+          /*Libera consultaObra, que e alocado dentro da funcao consulta*/
+          free(consultaObra);
           break; 
         case 0:/*Menu anterior*/
           break;
@@ -207,6 +211,8 @@ int main(int argc, char **argv){
         secAutor = removeSk(consultaObra->autor, secAutor, elem->pk, &availAutor);
         secAno = removeSk(consultaObra->ano, secAno, elem->pk, &availAno);
       }
+      /*Libera consultaObra, que e alocado dentro da funcao consulta*/
+      free(consultaObra);
       break;
 
     case 0:/*Sair do programa*/

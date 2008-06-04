@@ -47,11 +47,16 @@ int gravaObra(TObra obra, FILE *arq, availList *avail, IndicePrim * indice ){
   	/*Pega o valor da avail, e percorre a base com fseek para inserir na posicao.*/
   	fseek(arq, (*avail*(int)TAM_REG), SEEK_SET);
   	
+  	/*Leio o next da avail list*/
+  	fscanf(arq, FORMATO_INT, &prox);
+  	
   	end = *avail;
     *avail = prox;
     
     /*Volta para sobrescrever o antigo next da avail*/
     fseek(arq, -TAM_NUMERO, SEEK_CUR);
+    
+    /*Gravacao da obra*/
     fprintf(arq, "%s", obra.titulo);
     fprintf(arq, "%s", obra.tipo);
     fprintf(arq, "%s", obra.autor);

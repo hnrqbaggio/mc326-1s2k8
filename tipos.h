@@ -86,6 +86,7 @@ typedef struct _descritor {
 	char pk[TAM_TITULO+1];
 	char valorDescritor;
 	double similaridade;
+	char imagem[TAM_IMAGEM];
 } Descritor;
 
 typedef struct _vetorDescritor {

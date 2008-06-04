@@ -1,9 +1,19 @@
 #include "descritor.h"
 
+IndDesc * inicializaDescritor() {
+	
+	IndDesc * d = (IndDesc *) malloc (sizeof(IndDesc));
+	d->vetor = (Descritor *) malloc (sizeof(Descritor) * VETOR_MIN);
+	d->alocado = VETOR_MIN;
+	d->tamanho = 0;
+	d->valorHash = 0;
+	
+	return d;
+}
 
 void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 	
-	char nomeArq[TAM_NOME_ARQ+10], valor;
+	char nomeArq[TAM_NOME_ARQ+10], imagem[TAM_NOME_ARQ+10], valor;
 	FILE *arqDesc;
 	TObra obra;
 	int i, j;
@@ -54,13 +64,14 @@ void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 				maiuscula(indPrim->vetor[i].pk);
 				
 				/* Calcula o descritor da imagem lida da base. */
-				valor = CalculaDescritor(obra.imagem);
+				sprintf(imagem, "%s%s", "/tmp/mc326/img/", obra.imagem);
+				valor = CalculaDescritor(imagem);
 				
 				/* Verifica se qual indice de descritores ela pertence. */
 				indDesc = trocaIndDesc(indDesc, valor);
 				
 				/* Faz a inserção do descritor no indice. */
-				indDesc = insereDesc(indDesc, indPrim->vetor[i].pk, valor, 0);
+				indDesc = insereDesc(indDesc, indPrim->vetor[i].pk, valor, obra.imagem, 0);
 				
 			}
 		}
@@ -69,14 +80,16 @@ void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 
 IndDesc * carregaDescritor(IndDesc *indice, FILE *arqIndice){
 
-  char pk[TAM_TITULO+1];
+  char pk[TAM_TITULO+1], imagem[TAM_IMAGEM];
   char valorDesc;
 	
   /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
   while (fgets(pk, TAM_TITULO+1, arqIndice)) {
   	
     fscanf(arqIndice, "%c", &(valorDesc));
-    indice = insereDesc(indice, pk, valorDesc, 0); /* Insere o descritor no indice, a similaridade aqui eh irrelevante. */
+    fgets(imagem, TAM_IMAGEM+1, arqIndice);
+    
+    indice = insereDesc(indice, pk, valorDesc, imagem, 0); /* Insere o descritor no indice, a similaridade aqui eh irrelevante. */
 
   }
 
@@ -95,6 +108,7 @@ void gravaIndDesc(IndDesc *ind) {
   for (i = 0; i < ind->tamanho; i++) {
     fprintf(arq, "%s", ind->vetor[i].pk);                       /* grava a pk. */
     fprintf(arq, FORMATO_INT, ind->vetor[i].valorDescritor);    /* grava o valor do descritor. */
+    fprintf(arq, "%s", ind->vetor[i].imagem);
   }
 
   fclose(arq);
@@ -117,7 +131,7 @@ IndDesc * trocaIndDesc(IndDesc *ind, char valor) {
   	sprintf(nome, "%s%d%s", ARQ_DESCRITOR, hashDesc, EXTENSAO_DESC);
   	arq = fopen(nome, "r");
 
-	if (ind) {
+	if (arq) {
 		
   		ind = carregaDescritor(ind, arq);
   		fclose(arq);
@@ -132,10 +146,11 @@ IndDesc * trocaIndDesc(IndDesc *ind, char valor) {
   	return ind;
 }
 
-IndDesc * insereDesc(IndDesc *indDesc, char *pk, char valor, double simil) {
+IndDesc * insereDesc(IndDesc *indDesc, char *pk, char valor, char * imagem, double simil) {
 	int i = indDesc->tamanho;
 	
 	strcpy(indDesc->vetor[i].pk, pk);
+	strcpy(indDesc->vetor[i].imagem, imagem);
 	indDesc->vetor[i].valorDescritor = valor;
 	indDesc->vetor[i].similaridade = simil;
 		
@@ -157,13 +172,14 @@ IndDesc * realocaIndDesc(IndDesc * indice) {
   
 }
 
-IndDesc * filtraInd(IndDesc *indice, IndicePrim *indPrim, char* imgRef) {
+IndDesc * filtraInd(IndDesc *indice, char* imgRef) {
 	IndDesc *filtrado;
-	char temp;
+	char temp, referencia, imagem[TAM_NOME_ARQ];
 	int i;
 	double simil;
 	
 	filtrado = inicializaDescritor();
+	referencia = CalculaDescritor(imgRef);
 	
 	for (i = 0; i < indice->tamanho; ++i) {
 		
@@ -173,10 +189,10 @@ IndDesc * filtraInd(IndDesc *indice, IndicePrim *indPrim, char* imgRef) {
 		/* Cado o hash do XOR seja menor que dois, insere o descritor no indice filtrado. */
 		if (hashDescritor(temp) <= 2) {
 			
+			sprintf(imagem, "%s%s", "/tmp/mc326/img/", indice->vetor[i].imagem );
 			
-			
-			simil = ComputaSimilaridade(img, imgRef);
-			insereDesc(filtrado, indice->vetor[i].pk, indice->vetor[i].valorDescritor, simil);		
+			simil = ComputaSimilaridade(indice->vetor[i].imagem, imgRef);
+			insereDesc(filtrado, indice->vetor[i].pk, indice->vetor[i].valorDescritor, indice->vetor[i].imagem, simil);		
 		}
 	}
 	

@@ -74,14 +74,12 @@ void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
 void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndicePrim *indPrim, FILE *base) {
 	
 	int i;
-	char descritorReferencia;
 	IndDesc * resposta;
 	Pk temp, *result;
 	FILE *saida;
 	TObra reg;
 	
-	descritorReferencia = CalculaDescritor(arqImagem);
-	resposta = filtraInd(indice, descritorReferencia);
+	resposta = filtraInd(indice, arqImagem);
 	saida = fopen(ARQ_HTML, "w");
 	
 	/*Inicio do HTML*/

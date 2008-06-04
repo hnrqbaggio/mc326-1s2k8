@@ -57,11 +57,14 @@ void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
     }
     /*Finaliza as tags abertas do HTML*/
     endHtml(fhtml);
+    printf("\n--------------------------------------------------\n");
+    printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
+    printf("--------------------------------------------------\n");
     
   } else {/*Nenhum registro encontrado*/
-    printf("************************************\n\n");
-    printf("Nenhum registro foi encontrado.     \n\n");
-    printf("************************************\n\n");
+    printf("\n----------------------------\n");
+    printf("Nenhum registro foi encontrado.\n");
+    printf("------------------------------\n");
   }
 
   fclose(fsk);

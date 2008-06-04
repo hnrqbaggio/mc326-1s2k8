@@ -214,7 +214,15 @@ int main(int argc, char **argv){
       fechaCatalogo(arq);
       gravaPk(ind);
 
-      /* Grava os indices nos arquivos. */
+      /* Troco os indices secundarios para o de indice de valor 0, pois este deve ter
+       * o tamanho do arquivo de indices secundarios atualizado, pois e o primeiro a
+       * ser carregado no programa */
+      trocaIndSec(secTitulo, "\0");
+      trocaIndSec(secTipo, "\0");
+      trocaIndSec(secAutor, "\0");
+      trocaIndSec(secAno, "\0");
+      
+      /*Gravo os indice secundarios*/
       gravaIndSk(secTitulo);
       gravaIndSk(secTipo);
       gravaIndSk(secAutor);
@@ -226,6 +234,9 @@ int main(int argc, char **argv){
       gravaAvail(availTipo, ARQ_AVAIL_TIPO);
       gravaAvail(availAutor, ARQ_AVAIL_AUTOR);
       gravaAvail(availAno, ARQ_AVAIL_ANO);
+      
+      /*Libera os indices e seus vetores*/
+      liberaIndices(ind, secTitulo,secTipo, secAutor, secAno);
 
       free(elem);
       break;

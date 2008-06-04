@@ -112,4 +112,10 @@ IndicePrim * trocaIndPrim(IndicePrim *, char *);
 */
 void maiuscula(char *);
 
+/**
+ * Libera os indices e vetores alocados na utilizacao do programa
+ * 
+*/
+void liberaIndices(IndicePrim *, IndSec *, IndSec *, IndSec *, IndSec *);
+
 #endif

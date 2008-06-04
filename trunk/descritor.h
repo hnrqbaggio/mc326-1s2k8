@@ -12,15 +12,17 @@
 
 IndDesc * inicializaDescritor();
 
+void constroiIndDesc(IndDesc *, IndicePrim *, FILE *);
+
 IndDesc * trocaIndDesc(IndDesc *, char);
 
 IndDesc * carregaDescritor(IndDesc *, FILE *);
 
-IndDesc * insereDesc(IndDesc *, char *, char, double);
+IndDesc * insereDesc(IndDesc *, char *, char, char *, double);
 
 IndDesc * realocaIndDesc(IndDesc *);
 
-IndDesc * filtraInd(IndDesc *, char);
+IndDesc * filtraInd(IndDesc *, char*);
 
 int compareDesc(const void *, const void *);
 

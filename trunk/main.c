@@ -61,7 +61,8 @@ int main(int argc, char **argv){
   
 	/*Abre os indices secundarios*/
   	constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
-
+	constroiIndDesc(indDescritor, ind, arq);
+	
   elem = (Pk *) malloc(sizeof(Pk));
 
   /*Entrada do programa*/

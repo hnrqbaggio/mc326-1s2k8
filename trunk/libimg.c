@@ -256,12 +256,13 @@ Hist faz_hist(Imagem* im){
 Imagem* Imagem_le(char* nome_arq)
 {
   char ext[4];
-  int i = strlen(nome_arq) - 1;
+  int i = strlen(nome_arq) - 3;
   
-  ext[0] = nome_arq[i-2];
-  ext[1] = nome_arq[i-1];
-  ext[2] = nome_arq[i];
-  ext[3] = '\0';
+  ext[0] = nome_arq[i]; nome_arq[i++] = '.';
+  ext[1] = nome_arq[i]; nome_arq[i++] = ext[0];
+  ext[2] = nome_arq[i]; nome_arq[i++] = ext[1];
+  ext[3] = '\0'; nome_arq[i++] = ext[2];
+  nome_arq[i++] = ext[3];
 
   if (strcmp(strlwr(ext),"png")==0){
     return le_png(nome_arq);

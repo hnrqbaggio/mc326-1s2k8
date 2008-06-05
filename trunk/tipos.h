@@ -1,7 +1,7 @@
 #ifndef TIPOS_H_
 #define TIPOS_H_
 #include "constantes.h"
-/* 
+/** 
  * TAD que usaremos para representar uma obra.
  * Um char a mais em cada campo pro '\0'. 
  */
@@ -14,7 +14,7 @@ typedef struct obra {
   char imagem[TAM_IMAGEM + 1];
 }TObra;
 
-/* 
+/** 
  * TAD usado para representar um elemento do indice.  PK eh uma string
  * que contera a chave primaria do registro, e nrr sera o seu numero
  * relativo de registro, correspondente a posicao deste no arquivo da
@@ -25,20 +25,13 @@ typedef struct _pk {
   int nrr;
 } Pk;
 
-/* TAD que representara o indice */
-/* 
- * Vetor eh um vetor dinamico que ira armazenar os elementos de indice.  
-
- * Tamanho eh o numero de elementos validos, assim, indica
- * tambem a proxima posicao livre do vetor. Sera usado nas funcoes de
- * insercao, ordenacao e busca. 
- 
+/** TAD que representara o indice 
  * Alocado eh o espaco alocado para o vetor atraves da alocacao dinamica com malloc e 
  * usado para controlar quando realocar espaco para o vetor. 
  */
 typedef struct _vetorPk {
-  Pk * vetor;
-  int tamanho;
+  Pk * vetor;  /**< Vetor eh um vetor dinamico que ira armazenar os elementos de indice.*/
+  int tamanho; /**< Eh o numero de elementos validos, assim, indica tambem a proxima posicao livre do vetor. */
   int alocado;
   int tamBase;
   int valorHash;
@@ -86,7 +79,7 @@ typedef struct _descritor {
 	char pk[TAM_TITULO+1];
 	char valorDescritor;
 	double similaridade;
-	char imagem[TAM_IMAGEM];
+	char imagem[TAM_IMAGEM+1];
 } Descritor;
 
 typedef struct _vetorDescritor {

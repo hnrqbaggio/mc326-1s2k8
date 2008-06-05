@@ -38,7 +38,7 @@ clean:
 	rm -f *.o *~ tp4
 
 del:
-	rm -f /tmp/mc326/*.av /tmp/mc326/*.ch*
+	rm -f /tmp/mc326/*.av /tmp/mc326/*.ch* /tmp/mc326/*.dsc
 	
 all:
 	${MAKE} tp4

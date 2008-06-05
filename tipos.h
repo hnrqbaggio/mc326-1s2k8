@@ -70,7 +70,7 @@ typedef struct _vetorSk {
   int alocado;
   int tamDisco;
   int valorHash;
-  char tipoCampo[TAM_NOME_ARQ];
+  char tipoCampo[TAM_NOME_ARQ+1];
 } IndSec;
 
 

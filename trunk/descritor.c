@@ -80,7 +80,7 @@ void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 
 IndDesc * carregaDescritor(IndDesc *indice, FILE *arqIndice){
 
-  char pk[TAM_TITULO+1], imagem[TAM_IMAGEM];
+  char pk[TAM_TITULO+1], imagem[TAM_IMAGEM+1];
   char valorDesc;
 	
   /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
@@ -107,7 +107,7 @@ void gravaIndDesc(IndDesc *ind) {
   
   for (i = 0; i < ind->tamanho; i++) {
     fprintf(arq, "%s", ind->vetor[i].pk);                       /* grava a pk. */
-    fprintf(arq, FORMATO_INT, ind->vetor[i].valorDescritor);    /* grava o valor do descritor. */
+    fprintf(arq, "%c", ind->vetor[i].valorDescritor);    /* grava o valor do descritor. */
     fprintf(arq, "%s", ind->vetor[i].imagem);
   }
 
@@ -132,7 +132,7 @@ IndDesc * trocaIndDesc(IndDesc *ind, char valor) {
   	arq = fopen(nome, "r");
 
 	if (arq) {
-		
+		ind->tamanho = 0;
   		ind = carregaDescritor(ind, arq);
   		fclose(arq);
   		
@@ -165,8 +165,8 @@ IndDesc * insereDesc(IndDesc *indDesc, char *pk, char valor, char * imagem, doub
 IndDesc * realocaIndDesc(IndDesc * indice) {
 	
 	if (indice->tamanho == indice->alocado) {
-    indice->alocado *= 2;
-    indice->vetor = (Descritor *) realloc(indice->vetor, sizeof(Descritor) * indice->alocado);
+    indice->alocado = 2*(indice->alocado);
+    indice->vetor = (Descritor *) realloc(indice->vetor, 224 * indice->alocado );
   }
   return indice;
   

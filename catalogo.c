@@ -124,7 +124,7 @@ void consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
 
     if (saida) {
       printf("\n--------------------------------------------------\n");
-      printf("Registo encontrado e saida gerada com sucesso.\n");
+      printf("Registro encontrado e saida gerada com sucesso.\n");
       printf("A consulta esta disponivel no arquivo %s.\n", NOME_HTML);
       printf("--------------------------------------------------\n");				
     } else {
@@ -137,7 +137,7 @@ void consulta(ElementoIndice *chave, FILE *base, TIndice *indice) {
 		
   } else {
     printf("\n-----------------------\n");
-    printf("Registo não encontrado.\n");
+    printf("Registro não encontrado.\n");
     printf("-----------------------\n");
   }
 }

@@ -155,14 +155,14 @@ int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
     preencheHtml(saida, *reg);
 
     if (saida) {
-      printf("\n--------------------------------------------------\n");
+      printf("\n*******************************************************\n");
       printf("Registo encontrado e saida gerada com sucesso.\n");
       printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
-      printf("--------------------------------------------------\n");				
+      printf("*******************************************************\n");				
     } else {
-      printf("\n--------------------\n");
+      printf("\n*********************\n");
       printf("Erro ao gerar saida!\n");
-      printf("--------------------\n");
+      printf("*********************\n");
     }
 		/*Fim do HTML*/
     endHtml(saida);
@@ -173,9 +173,9 @@ int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
 		
   } else {/*Registro nao encontrado*/
     retorno = 0;
-    printf("\n-----------------------\n");
+    printf("\n***********************\n");
     printf("Registo não encontrado.\n");
-    printf("-----------------------\n");
+    printf("***********************\n");
   }
 
   return retorno;
@@ -213,9 +213,9 @@ void listaBase(FILE *base, TIndice *indice) {
   /*Final do HTML*/
   endHtml(saida);
   
-  printf("\n--------------------------------------------------\n");
+  printf("\n*******************************************************\n");
   printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
-  printf("--------------------------------------------------\n")	;
+  printf("*******************************************************\n")	;
 
   fclose(saida);
 }

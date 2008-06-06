@@ -1,0 +1,120 @@
+MC326 - Estruturas de Arquivos
+
+=========  Grupo 24  =========
+Claudio Georgete Neto - 070488
+Henrique Baggio       - 071139
+Victor Carmona        - 073805
+==============================
+
+===============================
+TP2 - CATALOGO DE OBRAS DE ARTE
+===============================
+-------------
+1. INTRODUCAO
+-------------
+
+Neste lab implementamos um catalogo de obras de arte com as seguintes funcionalidades:
+- Recebe as entradas do usuario da entrada padrao;
+- Salva as obras numa base de dados;
+- Permite consultas atraves do titulo da obra, utilizando um arquivo indice primario (que e criado a partir da base caso nao exista); e
+- Gera uma listagem contendo todas as obras do catalogo, sendo o resultado da consulta e a listagem exibidas em um arquivo html.
+
+
+------------------------
+2. DESCRICAO DO PROGRAMA
+------------------------
+
+Este programa utiliza praticamente todo o codigo do TP1, com ajustes para resolver os problemas encontrados na correcao do mesmo e para estar dentro da especificacao pedidas para o TP2. Assim, o TP1 pode ser praticamente encontrado em leitura.c e em leitura.h, arquivos responsaveis pela leitura de uma nova obra de arte.
+
+
+---------
+2.1 TAD's
+---------
+
+Utilizamos tres tipos de TAD's : uma struct onde sao armazenados os dados de cada obra; uma struct para ser armazenado cada elemento do indice(pk/nrr); uma struct com um vetor de indices, o tamanho do espaco alocado para este e o tamanho efetivamente utilizado por registros validos. As TAD's sao mostradas abaixo.
+
+typedef struct obra {
+  char titulo[TAM_TITULO + 1];
+  char tipo[TAM_TIPO + 1];
+  char autor[TAM_AUTOR + 1];
+  char ano[TAM_ANO + 1];
+  char valor[TAM_VALOR + 1];
+  char imagem[TAM_IMAGEM + 1];
+}TObra;
+
+typedef struct ind {
+  char pk[TAM_TITULO + 1];
+  int nrr;
+} ElementoIndice;
+
+typedef struct vet {
+    ElementoIndice * vetor;
+    int tamanho;
+    int alocado;
+} TIndice;
+
+
+-------------------------------
+2.2 CRIANDO/CARREGANDO ARQUIVOS
+-------------------------------
+
+Ao iniciar o programa, ele roda as funcoes "abreCatalogo" e "carregaIndice", que abrem (ou criam, caso nao existam) base24.dat e indice.dat, que sao a base de obras de arte e o indice de pk/nrr para busca primaria.
+A funcao "carregaIndice" tenta abrir o arquivo "indice.dat". Caso exista, ela le todo o arquivo, armazena em um ponteiro do tipo "TIndice". Caso nao exista, ela le cada titulo de obra presente no catalogo e vai armazenando em "TIndice", juntamente com o seu nrr. Ao final, ordena o vetor do indice para que seja possivel realizar busca binaria de chaves primarias.
+
+--------
+2.3 MENU
+--------
+
+O menu e apresentado ao usuario, dando-lhe as seguintes opcoes:
+    1 - Inserir nova obra;
+    2 - Buscar obra por titulo;
+    3 - Listar todas as obras;
+    4 - Sair.
+
+    1 - Inserir nova obra:
+    Chama a funcao "insereObra", que recebe as entradas do usuario e grava uma nova obra na base e suas PK e seu NRR no indice. Alem disso, realiza a reordenacao do indice depois da insercao de novas obras e faz um teste de duplicacao de chave primaria antes da insercao. Para isso, "insereObra" utiliza as funcoes: "leTexto", "leNumero", "leImagem", "preenche", para a leitura da obra digitada pelo usuario; "bsearch", para verificar se a obra ja pertence ao catalogo; "gravaObra", que insere a obra no catalogo;  "ordenaIndice", para ordenar o indice apos a insercao de uma ou mais obras.
+
+    2 - Buscar obra por titulo:
+    Le o titulo da obra digitado pelo usuario, completa este com espacos ate chegar ao tamanho fixo do titulo e chama a funcao "consulta", que vai buscar no indice a obra digitada pelo usuario. "consulta" utiliza "bsearch" para verificar se a obra pertence ao catalogo e "geraHtml" para criar o resultado da pesquisa em formato html.
+
+    3 - Listar todas as obras:
+    Chama a funcao "listaBase", que utiliza a funcao "geraHtml" para gerar um arquivo html contento todas as obras de arte da base, ordenadas por chave primaria, ou seja, alfabeticamente.
+    4 - Sair: Fecha os arquivos abertos, utilizando as funcoes "fechaCatalogo" e "gravaIndice" e sai do programa.
+
+
+---------------------
+2.4 SAIDA DE ARQUIVOS
+---------------------
+
+O programa gera tres tipos de arquivos:
+    base24.dat: Arquivo que contem os registros com as informacoes sobre as obras de arte (titulo, tipo, etc);
+    indice.dat:  Arquivo  que contem a pk e o nrr de cada registro arazenado em base24.dat;
+    base24.html:  Arquivo  que exibe a consulta do catalogo. E sobrescrito  a cada nova consulta ou listagem.
+
+
+---------------------------------------
+3. ALGUMAS ESTRATEGIAS DA IMPLEMENTACAO
+---------------------------------------
+Aqui iremos comentar algumas das estategias tomadas durante o desenvolvimento do programa.
+
+=> Comparacao:
+As funcoes qsort e bsearch da stdlib.h utilizam uma funcao auxiliar para fazer a comparacao de elementos. Porem, nem sempre eh a mesma funcao nos dois casos.
+Decidimos entao que, para poder usar a mesma funcao, iriamos copiar a string de busca para uma variavel do tipo ElementoIndice, que eh o mesmo tipo dos elementos do vetor do indice. Assim, ambas as funcoes, qsort e bsearch, iriam comparar elementos do mesmo tipo, sendo que assim as funcoes de comparacao teriam declaracoes iguais, podendo ser entao a mesma funcao para ambos os casos.
+
+Outro detalhe na comparacao, eh que ela eh insensitiva a maiuscula/minuscula. Para isso, usamos a funcao toupper da ctype.h, que converte as strings para maiuscula para que depois possam ser comparadas. Infelizmente, isso tem o efeito de o indice, na memoria, ficar em maiusculas, e ser gravado no arquivo de indice assim. Esse efeito colateral nao afeta em nada a estrutura do programa, pois a base de dados permanece intacta e com as palavras gravadas do modo como foram digitadas pelo usuario.
+
+=> Vetor do Indice:
+O Indice eh uma estrutura formada por um vetor dinamico e dois inteiros, alocado e tamanho, que representam o espaco alocado na memoria para o vetor e o numero de elementos que ele possui, respectivamente.
+O espaço efetivamente utilizado por elementos validos eh importante para no uso das funcoes de busca e comparacao, que precisam conhecer o tamanho do vetor para poder operar sobre ele.
+A quantidade de memoria alocada eh importante para poder ampliar (e futuramente, reduzir) esse espaco, quando ha a insercao de mais elementos no vetor, e ele se torna maior do que o tamanho anteriormente reservado para ele.
+
+
+--------------------------
+4. PRINCIPAIS DIFICULDADES
+--------------------------
+
+Sem duvida, os principais problemas durante o projeto foram as falhas de segmentação durante os testes. Mas, considerando o grande numero de apontadores presentes no codigo, era de se esperar que esse problema ocorresse. Neste caso, o uso do GDB foi extremamente importante, e ajudou bastante.
+
+Uma abordagem errada no inicio do TP nos custou dois ou tres dias de trabalho: Comecamos a implentar as funcoes do TP2 sem antes ajustar o TP1 a nova especificacao e corrigir seus erros. Isso causou um grande atraso e dificuldades para implentar as funções sem se ter uma base correta para se testar. Apos sentarmos e repensarmos a situacao, dividimos melhor as tarefas e planejamos com mais detalhes o que precisavamos, conseguimos dar uma "arrancada".
+
+Os demais problemas foram de menor grau e pudemos resolve-los mais facilmente, bastando dar a devida atencao as particularidades da implentacao.

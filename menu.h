@@ -32,3 +32,7 @@ int geraNotificaInsere ();
  */
 int geraNotificaErroInsere ();
 
+/**
+ * Funcao que exibe notificacao de remocao concluida.
+ */
+void geraNotificaRemocao();

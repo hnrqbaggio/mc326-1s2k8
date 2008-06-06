@@ -123,24 +123,28 @@ int main(int argc, char **argv){
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
           buscaSk(temp, ind, secTitulo, arq, TITULO);
+          LimpaBuffer();
           break;
 
         case 2:/*Busca pelo tipo*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
           buscaSk(temp, ind, secTipo, arq, TIPO);
+          LimpaBuffer();
           break;
 
         case 3:/*Busca pelo autor*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
           buscaSk(temp, ind, secAutor, arq, AUTOR);
+          LimpaBuffer();
           break;
 
         case 4:/*Busca por ano*/
           printf("Digite uma palavra:\n");
           scanf("%s", temp);
           buscaSk(temp, ind, secAno, arq, ANO);
+          LimpaBuffer();
           break;
 
         case 5:/*Busca por PK*/
@@ -149,6 +153,7 @@ int main(int argc, char **argv){
           elem->nrr = -1;
 
           consulta(elem, arq, ind, &consultaObra);
+          LimpaBuffer();
           break; 
         case 0:/*Menu anterior*/
           break;
@@ -174,24 +179,28 @@ int main(int argc, char **argv){
         printf("Digite uma palavra:\n");
         scanf("%s", temp);
         resultado = buscaSk(temp, ind, secTitulo, arq, TITULO);
+        LimpaBuffer();
         break;
 
       case 2:/*Busca pelo tipo*/
         printf("Digite uma palavra:\n");
         scanf("%s", temp);
         resultado = buscaSk(temp, ind, secTipo, arq, TIPO);
+        LimpaBuffer();
         break;
 
       case 3:/*Busca pelo autor*/
         printf("Digite uma palavra:\n");
         scanf("%s", temp);
         resultado = buscaSk(temp, ind, secAutor, arq, AUTOR);
+        LimpaBuffer();
         break;
 
       case 4:/*Busca por ano*/
         printf("Digite uma palavra:\n");
         scanf("%s", temp);
         resultado = buscaSk(temp, ind, secAno, arq, ANO);
+        LimpaBuffer();
         break;
 
       case 5:/*Busca por PK*/
@@ -199,6 +208,7 @@ int main(int argc, char **argv){
         preencher(elem->pk, sizeof(elem->pk));
         elem->nrr = -1;
         resultado = consulta(elem, arq, ind, &consultaObra);
+        LimpaBuffer();
         break; 
 
       case 0:
@@ -217,6 +227,7 @@ int main(int argc, char **argv){
   
         /*Faz a pesquisa da pk e mostra no html*/
         if(consulta(elem, arq, ind, &consultaObra) == 1) {
+          
           /*Somente se consulta retornou verdadeiro*/
           ind = removePk(elem->pk, ind, arq, &availBase);
   
@@ -232,8 +243,11 @@ int main(int argc, char **argv){
   
           strcpy(temp, consultaObra.ano);
           secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
+        
+          geraNotificaRemocao();
         }
       }
+      LimpaBuffer();
       break;
 
     case 0:/*Sair do programa*/

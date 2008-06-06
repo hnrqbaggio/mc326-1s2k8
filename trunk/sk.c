@@ -362,7 +362,7 @@ IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
 IndSec * realocaIndSec(IndSec *sec) {
 
   if (sec->tamanho == sec->alocado) {
-    sec->alocado *= 2;
+    sec->alocado = 2*(sec->alocado);
     sec->vetor = (Sk *) realloc(sec->vetor, sizeof(Sk) * sec->alocado);
   }
   return sec;

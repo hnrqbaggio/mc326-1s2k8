@@ -16,7 +16,7 @@ void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 	char nomeArq[TAM_NOME_ARQ+10], imagem[TAM_NOME_ARQ+10], valor;
 	FILE *arqDesc;
 	TObra obra;
-	int i, j;
+	int i, j, cont;
 	
 	sprintf(nomeArq, "%s%d%s", ARQ_DESCRITOR, indDesc->valorHash, EXTENSAO_DESC);
 	
@@ -33,7 +33,7 @@ void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 		fclose(arqDesc);
 		
 	} else {
-		
+	  cont = 0;
 		for(j=0; j<= H; j++) {
 		
 		/*Gravo indice primario*/
@@ -58,6 +58,7 @@ void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 				fgets(obra.ano,    TAM_ANO + 1,    base);
 				fgets(obra.valor,  TAM_VALOR + 1,  base);
 				fgets(obra.imagem, TAM_IMAGEM + 1, base);
+				fprintf(stderr, "Processado registro %d -> Imagem %s.\n", ++cont, obra.imagem);
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/
@@ -153,11 +154,11 @@ IndDesc * insereDesc(IndDesc *indDesc, char *pk, char valor, char * imagem, doub
 	strcpy(indDesc->vetor[i].imagem, imagem);
 	indDesc->vetor[i].valorDescritor = valor;
 	indDesc->vetor[i].similaridade = simil;
-		
-   /*Verifica se precisa ser realocado memoria*/
-   indDesc = realocaIndDesc(indDesc);	
 	
 	(indDesc->tamanho++);
+	
+   /*Verifica se precisa ser realocado memoria*/
+   indDesc = realocaIndDesc(indDesc);	
 	
 	return indDesc;
 }
@@ -166,7 +167,7 @@ IndDesc * realocaIndDesc(IndDesc * indice) {
 	
 	if (indice->tamanho == indice->alocado) {
     indice->alocado = 2*(indice->alocado);
-    indice->vetor = (Descritor *) realloc(indice->vetor, 224 * indice->alocado );
+    indice->vetor = (Descritor *) realloc(indice->vetor, sizeof(Descritor) * (indice->alocado));
   }
   return indice;
   
@@ -180,6 +181,8 @@ IndDesc * filtraInd(IndDesc *indice, char* imgRef) {
 	
 	filtrado = inicializaDescritor();
 	referencia = CalculaDescritor(imgRef);
+
+	indice = trocaIndDesc(indice, referencia);
 	
 	for (i = 0; i < indice->tamanho; ++i) {
 		
@@ -191,7 +194,7 @@ IndDesc * filtraInd(IndDesc *indice, char* imgRef) {
 			
 			sprintf(imagem, "%s%s", "/tmp/mc326/img/", indice->vetor[i].imagem );
 			
-			simil = ComputaSimilaridade(indice->vetor[i].imagem, imgRef);
+			simil = ComputaSimilaridade(imagem, imgRef);
 			insereDesc(filtrado, indice->vetor[i].pk, indice->vetor[i].valorDescritor, indice->vetor[i].imagem, simil);		
 		}
 	}

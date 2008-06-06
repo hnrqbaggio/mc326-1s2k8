@@ -255,7 +255,7 @@ Hist faz_hist(Imagem* im){
 
 Imagem* Imagem_le(char* nome_arq)
 {
-  char ext[4];
+  char ext[4], imagem[50];
   int i = strlen(nome_arq) - 1;
   
   ext[0] = nome_arq[i-2];
@@ -263,20 +263,20 @@ Imagem* Imagem_le(char* nome_arq)
   ext[2] = nome_arq[i];
   ext[3] = '\0';
 
-  if(nome_arq[i-3] != '.') {
-    nome_arq[i-3] = '.';
-    nome_arq[i-2] = ext[0];
-    nome_arq[i-1] = ext[1];
-    nome_arq[i] = ext[2];
-  }
-
-
+  for (i = 0; i < strlen(nome_arq) - 3; i++) imagem[i] = nome_arq[i];
+  
+  imagem[i++] = '.';
+  imagem[i++] = ext[0];
+  imagem[i++] = ext[1];
+  imagem[i++] = ext[2];
+  imagem[i++] = ext[3];
+  
   if (strcmp(strlwr(ext),"png")==0){
-    return le_png(nome_arq);
+    return le_png(imagem);
   }else if (strcmp(strlwr(ext),"jpg")==0){
-    return le_jpeg(nome_arq);
+    return le_jpeg(imagem);
   }else if (strcmp(strlwr(ext),"gif")==0){
-    return le_gif(nome_arq);
+    return le_gif(imagem);
   }else{
     fprintf(stderr, "Formato de arquivo %s desconhecido!", ext);
     return NULL;

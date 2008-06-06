@@ -33,7 +33,11 @@ void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 		fclose(arqDesc);
 		
 	} else {
-	  cont = 0;
+		
+		fprintf(stdout, "Carregando indices de descritores das imagens.\n");
+		fprintf(stdout, "Isso pode demorar um pouco, dependendo do tamanho da sua base de dados.\n");
+		
+		cont = 0;
 		for(j=0; j<= H; j++) {
 		
 		/*Gravo indice primario*/
@@ -58,7 +62,7 @@ void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
 				fgets(obra.ano,    TAM_ANO + 1,    base);
 				fgets(obra.valor,  TAM_VALOR + 1,  base);
 				fgets(obra.imagem, TAM_IMAGEM + 1, base);
-				fprintf(stderr, "Processado registro %d -> Imagem %s.\n", ++cont, obra.imagem);
+				fprintf(stdout, "Processado registro %d -> Imagem %s.\n", ++cont, obra.imagem);
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/

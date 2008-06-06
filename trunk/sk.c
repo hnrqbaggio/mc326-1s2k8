@@ -39,6 +39,8 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 	
 	if (arqTitulo && arqTipo && arqAutor && arqAno) { /* Se existem todos os arquivos. */
 		
+		fprintf(stdout, "Carregando indices secundários. ");
+		
 		/* Carrega chaves do arquivo. */
 		titulo = carregaSk(titulo, arqTitulo);
 		tipo   = carregaSk(tipo,   arqTipo);
@@ -57,6 +59,8 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 		fclose(arqAno);
 		
 	} else { /* Vai precisar criar todos a partir da base de dados. */
+		
+		fprintf(stdout, "Gerando indices secundários. ");
 		
 		sprintf(nomeTitulo, "%s%s", titulo->tipoCampo, EXTENSAO_PK);
 		sprintf(nomeTipo,   "%s%s", tipo->tipoCampo,   EXTENSAO_PK);
@@ -115,7 +119,12 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 		fclose(arqPkTipo);
 		fclose(arqPkAutor);
 		fclose(arqPkAno);
+		
+
 	}
+	
+	fprintf(stdout, "OK.\n");
+	
 }
 
 IndSec * carregaSk(IndSec *indSk, FILE *arqSk){

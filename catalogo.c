@@ -108,29 +108,32 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
     fclose(arq_ind);
     
   } else { /* vai ter que gerar a partir da base */
-    
+   
     while(fgets(pkAux, TAM_TITULO+1, base)) {
+    	
+    	
       
-      maiuscula(pkAux);
-      /*Abre o indice relativo a pkAux*/
-      indice = trocaIndPrim(indice, pkAux);
-      
-      /*Copio a pk para o indice primario*/
-      strcpy(indice->vetor[(*tam)].pk, pkAux);
-      indice->vetor[*tam].nrr = position;
-      (*tam)++;
-      indice->tamBase++;
-      indice = realocaIndPrim(indice);
-
-      /* Posiciona o cursor do arquivo no campo Titulo do proximo registro. */
-      /* Usamos apenar tamanho e nao tamanho-1 pois iniciamos o nrr em zero. */
-      offset = TAM_REG * (++position);
-      fseek(base, offset, SEEK_SET);
+		maiuscula(pkAux);
+		/*Abre o indice relativo a pkAux*/
+		indice = trocaIndPrim(indice, pkAux);
+		  
+		/*Copio a pk para o indice primario*/
+		strcpy(indice->vetor[(*tam)].pk, pkAux);
+		indice->vetor[*tam].nrr = position;
+		(*tam)++;
+		indice->tamBase++;
+		indice = realocaIndPrim(indice);
+		
+		/* Posiciona o cursor do arquivo no campo Titulo do proximo registro. */
+		/* Usamos apenar tamanho e nao tamanho-1 pois iniciamos o nrr em zero. */
+		offset = TAM_REG * (++position);
+		fseek(base, offset, SEEK_SET);
     }
 
     /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
     qsort(indice->vetor, *tam, sizeof(Pk), compare);
   }
+ 
   return indice;
 }
 

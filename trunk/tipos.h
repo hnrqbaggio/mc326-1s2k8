@@ -1,92 +1,74 @@
 #ifndef TIPOS_H_
 #define TIPOS_H_
 #include "constantes.h"
-/** 
- * TAD que usaremos para representar uma obra.
- * Um char a mais em cada campo pro '\0'. 
- */
-typedef struct obra {
-  char titulo[TAM_TITULO + 1];
-  char tipo[TAM_TIPO + 1];
-  char autor[TAM_AUTOR + 1];
-  char ano[TAM_ANO + 1];
-  char valor[TAM_VALOR + 1];
-  char imagem[TAM_IMAGEM + 1];
-}TObra;
 
-/** 
- * TAD usado para representar um elemento do indice.  PK eh uma string
- * que contera a chave primaria do registro, e nrr sera o seu numero
- * relativo de registro, correspondente a posicao deste no arquivo da
- * base.
+/*! \file tipos.h
+ *  \brief Arquivo que contem os tipo abstratos de dados usados no programa.
  */
-typedef struct _pk {
-  char pk[TAM_TITULO + 1];
-  int nrr;
+
+/*! \brief TAD que usaremos para representar uma obra de arte. */
+typedef struct {
+  char titulo[TAM_TITULO + 1];   /**< Titulo da obra de arte. */
+  char tipo[TAM_TIPO + 1];       /**< Tipo da obra. */
+  char autor[TAM_AUTOR + 1];     /**< Nome do autor. */
+  char ano[TAM_ANO + 1];         /**< Ano de publicacao. */
+  char valor[TAM_VALOR + 1];     /**< Valor da Obra. */
+  char imagem[TAM_IMAGEM + 1];   /**< Imagem correspondente. */
+} TObra;
+
+/*! \brief TAD usado para representar uma chave primaria. */
+typedef struct {
+  char pk[TAM_TITULO + 1]; /**< String usada para armazenar a chave primaria propriamente dita. */
+  int nrr;    					/**< Numero relativo do registro na base de dados. */
 } Pk;
 
-/** TAD que representara o indice 
- * Alocado eh o espaco alocado para o vetor atraves da alocacao dinamica com malloc e 
- * usado para controlar quando realocar espaco para o vetor. 
- */
-typedef struct _vetorPk {
-  Pk * vetor;  /**< Vetor eh um vetor dinamico que ira armazenar os elementos de indice.*/
-  int tamanho; /**< Eh o numero de elementos validos, assim, indica tambem a proxima posicao livre do vetor. */
-  int alocado;
-  int tamBase;
-  int valorHash;
-} IndicePrim;
+/*! \brief TAD que representa o indice primario. */
+typedef struct {
+  Pk * vetor;    /**< Vetor eh um vetor dinamico que ira armazenar os elementos de indice.*/
+  int tamanho;   /**< Eh o numero de elementos validos, assim, indica tambem a proxima posicao livre do vetor. */
+  int alocado;   /**< Espaco reservado na memoria para o vetor. Aumanta conforme o tamanho do indice se iguala a ele. */
+  int tamBase;   /**< Tamanho da base de dados. Usado nas operacoes de insercao quando a avail list eh vazia. */
+  int valorHash; /**< Valor da funcao de espalhamento para as strings das chaves primarias contidas no indice. */
+} IndPrim;
 
-/**
- * Este inteiro será usado para representar a cabeca de uma avail
- * list, que sera um alista invertida de posicoes livres no disco.
+/*!
+ * \brief	Este inteiro sera usado para representar a cabeca de uma avail
+ * 			list, que sera um a lista invertida de posicoes livres no disco.
  */
 typedef int availList;
 
-/**
- * Estrutura que representa um chave secundaria.
- * 
- * key eh o vetor que contem a string que eh a chave propriamente
- * dita. next eh um apontador para a proxima chave no indice, e lenght
- * eh o tamanho da string.
-*/
-typedef struct _sk{
-  char key[TAM_TITULO+1];
-  int next;
-  int lenght;
+/*! \brief TAD que representa uma chave secundaria. */
+typedef struct {
+  char key[TAM_TITULO+1]; 	/**< String que eh a chave propriamente dita. */
+  int next; 					/**< Apontador para a proxima chave no indice. */
+  int lenght;					/**< Tamanho da string que contem a chave. */
 } Sk;
 
-/**
- * Estrutura que representa um indice secundario, formado por um vetor
- * de chaves secundarias e quatro inteiros que indicam o numero de
- * elementos no indice, o espaco alocado na memoria para este indice,
- * o tamanho da parte do indice no disco, e o noh cabeca da avail list
- * desse indice, que sera usado na operacao de insercao e remocao de
- * chaves.
- */
-typedef struct _vetorSk {
-  Sk *vetor;
-  int tamanho;
-  int alocado;
-  int tamDisco;
-  int valorHash;
-  char tipoCampo[TAM_NOME_ARQ+1];
+/*! \brief TAD que representa um indice secundario. */
+typedef struct {
+  Sk *vetor; 								/**< Vetor dinamico de chaves secundarias. */
+  int tamanho;								/**< Tamanho do vetor do indice. */
+  int alocado;								/**< Espaco alocado para o vetor. Cresce dinamicamente com o /tamanho/ */
+  int tamDisco;							/**< Tamanho do BIGFILE ao qual o indice eh associado. Usado para controlar operacoes de insercao. */
+  int valorHash;							/**< Valor da funcao de espalhamento das chaves do indice. */
+  char tipoCampo[TAM_NOME_ARQ+1];	/**< Tipo de campo da \a Obra ao qual o indice esta associado. */
 } IndSec;
 
 
-/* Tipos de dados para os descritores das imagens. */
-typedef struct _descritor {
-	char pk[TAM_TITULO+1];
-	char valorDescritor;
-	double similaridade;
-	char imagem[TAM_IMAGEM+1];
+/*! \brief TAD de um descritor de imagem. */
+typedef struct {
+	char pk[TAM_TITULO+1]; 		/**< Chave primaria do registro ao qual o descritor pertence. */
+	char valorDescritor;			/**< Valor do descritor da imagem da \a Obra. */
+	double similaridade;			/**< Valor da similaridade da imagem com uma imagem de referencia. Usado na operacao de busca por conteudo.*/
+	char imagem[TAM_IMAGEM+1];	/**< Imagem da Obra. */
 } Descritor;
 
-typedef struct _vetorDescritor {
-	Descritor *vetor;
-	int tamanho;
-	int alocado;
-	int valorHash;
+/*! \brief TAD de um indice de descritores. */
+typedef struct {
+	Descritor *vetor;	/**< Vetor dinamico que contem os descritores do indice. */
+	int tamanho;		/**< Tamanho do vetor e consequantemente do indice. */
+	int alocado;		/**< Espaco alocado para o vetor do indice. Como nos demais indices, cresce dinamicamente com o tamanho do vetor. */
+	int valorHash;		/**< Valor da funcao de espalhamento dos descritores do indice. */
 } IndDesc;
 
 #endif /*TIPOS_H_*/

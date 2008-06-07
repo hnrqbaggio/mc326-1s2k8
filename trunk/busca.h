@@ -1,3 +1,8 @@
+/** @file busca.h
+ * @brief Esta biblioteca implementa as funcionalidades 
+ * de busca na base de dados.
+ */
+
 #ifndef _BUSCA_H
 #define _BUSCA_H
 
@@ -7,21 +12,26 @@
 #include "descritor.h"
 
 /**
- * Esta biblioteca implementa as funcionalidades de busca na base de
- * dados.
+ * @brief Realiza uma busca por palavra inteira na base de dados, produzindo
+ * uma saida com uma lista de todas as obras que possuem a chave secundaria buscada.
+ * 
+ * @param chave A chave de busca.
+ * @param prim O indice primario (pose ser atualizado durante a operacao, devido ao hash).
+ * @param sec O indice secundario (tambem pode ser atualizado).
+ * @param base O ponteiro para a base de dados.
  */
+void buscaSk(char *chave, IndPrim *prim, IndSec *sec, FILE *base);
+
 
 /**
- * Funcao que busca palavra passada por parametro nos indices secundarios.
- * Ela busca as PKs correspondentes a SK da palavra nos indices secundarios,
- * busca os nrr das PKs encontradas no indice primario e gera um arquivo html
- * com os dados das obras encontradas.
- * Recebe como parametros a palavra a ser buscada, o indice primario,
- * o indice secundario onde sera realizada a busca, a base de dados e um inteiro
- * que define o tipo do campo.
-*/
-void buscaSk(char *, IndicePrim *, IndSec *, FILE *);
-
-void buscaPorConteudo(char *, IndDesc *, IndicePrim *, FILE *);
+ * @brief Realiza uma busca por conteudo nas imagens da base de dados, usando
+ * a similaridade entre as mesmas e uma imagem de referencia.
+ * 
+ * @param arqImagem O nome da imagem de referencia.
+ * @param descr O inidice de descritores (pose ser atualizado durante a operacao, devido ao hash).
+ * @param prim O indice primario (tambem pode ser atualizado).
+ * @param base O ponteiro para a base de dados.
+ */
+void buscaPorConteudo(char *arqImagem, IndDesc *descr, IndPrim *prim, FILE *base);
 
 #endif

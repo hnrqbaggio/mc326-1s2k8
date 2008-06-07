@@ -21,7 +21,7 @@ void fechaCatalogo(FILE *arq) {
  * o indice primario, que contem o tamanho da base.
  * Retorna o endereco da obra inserida ou o tamanho da base.
 */
-int gravaObra(TObra obra, FILE *arq, availList *avail, IndicePrim * indice ){
+int gravaObra(TObra obra, FILE *arq, availList *avail, IndPrim * indice ){
   
   int end, prox = 0;
   
@@ -73,7 +73,7 @@ int gravaObra(TObra obra, FILE *arq, availList *avail, IndicePrim * indice ){
 
 /*** Funcoes de manipulacao do indice primario. ***/
 /* funcao que carrega o indice do arquivo ou monta-o a partir da base */
-IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
+IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
 	
   FILE *arq_ind; /* arquivo onde estao os indices, caso exista */
   char pkAux[TAM_TITULO+1], nome[TAM_NOME_ARQ];
@@ -83,7 +83,7 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
      indice. Pra facilitar a leitura do codigo. */
 
   /*Inicializando indice*/
-  indice = (IndicePrim *) malloc(sizeof(IndicePrim));
+  indice = (IndPrim *) malloc(sizeof(IndPrim));
   indice->vetor = (Pk *) malloc(sizeof(Pk) * VETOR_MIN);
   indice->alocado = VETOR_MIN;
   indice->tamanho = 0;
@@ -138,12 +138,12 @@ IndicePrim * iniciaPk(FILE *base, IndicePrim *indice) {
 }
 
 /*  Realiza a ordenacao do indice usando qsort. */
-void ordenaIndice(IndicePrim *indice) {
+void ordenaIndice(IndPrim *indice) {
   qsort(indice->vetor, indice->tamanho, sizeof(Pk), compare);
 }
 
 /* Gravacao do indice, ordenado por pk, no arquivo */
-IndicePrim * gravaPk(IndicePrim *indice) {
+IndPrim * gravaPk(IndPrim *indice) {
   FILE *ind;
   int i;
   char nome[TAM_NOME_ARQ+10];
@@ -167,7 +167,7 @@ IndicePrim * gravaPk(IndicePrim *indice) {
 
 /* Consulta de uma obra na base. 
    Chave já vem preenchido. */
-TObra * consulta(Pk *chave, FILE *base, IndicePrim *indice) {
+TObra * consulta(Pk *chave, FILE *base, IndPrim *indice) {
   
   Pk *temp;
   int retorno;
@@ -230,7 +230,7 @@ TObra * consulta(Pk *chave, FILE *base, IndicePrim *indice) {
  * Realiza a listagem as obras na base, e envia os resultados pra um
  * arquivo em html. 
  */
-void listaBase(FILE *base, IndicePrim *indice) {
+void listaBase(FILE *base, IndPrim *indice) {
   int i, j;
   TObra reg;
   FILE *saida;
@@ -303,7 +303,7 @@ int compare(const void *a, const void *b) {
 }
 
 /* Realoca espaco para o vetor caso seja necessario. */
-IndicePrim * realocaIndPrim(IndicePrim *ind) {
+IndPrim * realocaIndPrim(IndPrim *ind) {
 
   if (ind->tamanho == ind->alocado) {
     ind->alocado *= 2;
@@ -380,7 +380,7 @@ FILE * preencheHtml(FILE *b, TObra valores) {
 }
 
 /*Abre o arquivo correspondente ao valor de hash ja atualizado no proprio indice*/
-IndicePrim * abrePk(IndicePrim *indice) {
+IndPrim * abrePk(IndPrim *indice) {
   
   char nome[TAM_NOME_ARQ+10];
   int *tam = &(indice->tamanho);
@@ -409,7 +409,7 @@ IndicePrim * abrePk(IndicePrim *indice) {
 }
 
 /*Troca os indices primarios*/
-IndicePrim * trocaIndPrim(IndicePrim * indice, char *chave) {
+IndPrim * trocaIndPrim(IndPrim * indice, char *chave) {
 	
 	int hashChave, tamBase;
 	
@@ -448,7 +448,7 @@ void maiuscula(char *chave) {
 }
 
 /*Funcao que libera os mallocs/reallocs utilizados*/
-void liberaIndices(IndicePrim * indPrim, IndSec *indTitulo,
+void liberaIndices(IndPrim * indPrim, IndSec *indTitulo,
 IndSec *indTipo, IndSec *indAutor, IndSec *indAno) {
 	
 	/*Libero os vetores alocados em cada indice*/

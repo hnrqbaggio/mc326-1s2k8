@@ -1,6 +1,6 @@
 #include "remove.h"
 
-IndicePrim * removePk(char *chave, IndicePrim *indPrim, FILE *base, availList *avail) {
+IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail) {
   Pk temp, *result;
   int offset, fim;
 

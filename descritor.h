@@ -12,7 +12,7 @@
 
 IndDesc * inicializaDescritor();
 
-void constroiIndDesc(IndDesc *, IndicePrim *, FILE *);
+void constroiIndDesc(IndDesc *, IndPrim *, FILE *);
 
 IndDesc * trocaIndDesc(IndDesc *, char);
 

@@ -74,6 +74,8 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 
   while (token) {
 
+	maiuscula(token);
+	
     strcpy(temp.key, token);
     temp.next = -1;
     temp.lenght = strlen(token);

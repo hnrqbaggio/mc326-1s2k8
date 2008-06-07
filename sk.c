@@ -158,6 +158,8 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
 
   /* Quebra a string em varios tokens */
   token = strtok(campo, " ");
+  
+  maiuscula(pk);
 
   while (token) { /* Realiza a insercao para cada novo token existente na string. */
 

@@ -73,6 +73,10 @@ int main(int argc, char **argv){
       do {
         /*leitura da obra a ser inserida e gravacao no indice primario*/
         if(leObra(ind, &obra)) {/*Insercao feita com sucesso na PK*/
+          
+          /*Grava a obra inserida na base de dados*/
+          end = gravaObra(obra, arq, &availBase);
+          
           /*Insercao nos indices secundarios*/
           /*titulo*/
           fsk = fopen(ARQ_IS_TITULO,"r+");
@@ -81,24 +85,17 @@ int main(int argc, char **argv){
           fclose(fsk);
           /*tipo*/
           fsk = fopen(ARQ_IS_TIPO,"r+");
-          strcpy(obra2.tipo, obra.tipo);
           secTipo = insereSk(secTipo, fsk, obra2.titulo, obra.tipo, &availTipo);
           fclose(fsk);
           /*autor*/
           fsk = fopen(ARQ_IS_AUTOR,"r+");
-          strcpy(obra2.autor, obra.autor);
           secAutor = insereSk(secAutor, fsk, obra2.titulo, obra.autor, &availAutor);
           fclose(fsk);
           /*ano*/
           fsk = fopen(ARQ_IS_ANO,"r+");
-          strcpy(obra2.ano, obra.ano);
           secAno = insereSk(secAno, fsk, obra2.titulo, obra.ano, &availAno);
           fclose(fsk);
-          /*Copia os parametros que faltam para gravar*/
-          strcpy(obra2.valor, obra.valor);
-          strcpy(obra2.imagem, obra.imagem);
-          /*Grava a obra inserida na base de dados*/
-          end = gravaObra(obra2, arq, &availBase);
+          
           /*Atualizo o nrr na pk*/
           ind->vetor[ind->tamanho-1].nrr = end;
           /*Notificacao de insere*/

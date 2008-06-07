@@ -29,7 +29,7 @@ int main(int argc, char **argv){
   FILE *bigfile;
 
   /* Variavais de indice primario e sua avail list da base de dados. */
-  IndicePrim *ind;
+  IndPrim *ind;
   Pk *elem;
   availList availBase = FIM_DE_LISTA;
 

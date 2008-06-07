@@ -46,8 +46,7 @@ IndSec * inicializaSecundario(char *campo);
  * @param avAutor Avail List do indice de autores.
  * @param avAno Avail List do indice de ano.
  */
-void constroiSecundarios(IndPrim *indPrimario, FILE *base, IndSec *indTitulo, IndSec *indTipo, IndSec *indAutor, IndSec *indAno, 
-								availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno);
+void constroiSecundarios(IndPrim *indPrimario, FILE *base, IndSec *indTitulo, IndSec *indTipo, IndSec *indAutor, IndSec *indAno, availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno);
 /** @brief Troca o indice secundario atual por outro 
  *  no disco de acordo com o valor hash da string.
  * 
@@ -83,7 +82,7 @@ IndSec * insereSk(IndSec *indice, FILE *bigFile, char *pk, char *campo, availLis
 /**
  * @brief Grava as informacoes do indice secundario no disco.
  * @param indice O indice secundario.
- * @return Não tem.
+ * @return Nï¿½o tem.
 */
 void gravaIndSk(IndSec *indice);
 

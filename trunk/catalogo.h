@@ -26,33 +26,33 @@ void fechaCatalogo(FILE *);
  * pois contem o tamanho da base.
  * Retorna o nrr da obra inserida ou o tamanho da base.
  */
-int gravaObra(TObra, FILE *, availList *, IndicePrim *);
+int gravaObra(TObra, FILE *, availList *, IndPrim *);
 
 
 /*** Funcoes de manipulacao do indice ***/
 /* Carrega o indice do arquivo para a memoria. Cria o indice caso o
  * arquivo nao exista. 
  */
-IndicePrim * iniciaPk(FILE *, IndicePrim *);
+IndPrim * iniciaPk(FILE *, IndPrim *);
 
 /**
   * Abre o arquivo de indice primario correspondente ao valor de hash 
   * e carrega pra RAM. Fecha o arquivo e retorna o indice primario.
   * O valor de hash e passado na propria estrutura de indice primario.
 */
-IndicePrim * abrePk(IndicePrim *);
+IndPrim * abrePk(IndPrim *);
 
 /* Realiza a ordenacao do indice passado como parametro. */
-void ordenaIndice(IndicePrim *);
+void ordenaIndice(IndPrim *);
 
 /* Grava o indice da memoria para o arquivo. */
-IndicePrim * gravaPk(IndicePrim *);
+IndPrim * gravaPk(IndPrim *);
 
 /* 
  * Realiza uma consulta na base usando a chave primaria.
  * Recebe a pk, o base de dados, o indice primario. 
  */
-TObra * consulta(Pk *, FILE *, IndicePrim *);
+TObra * consulta(Pk *, FILE *, IndPrim *);
 
 /* 
  * Lista todos os registros da base de dados. Ela percorre o vetor do
@@ -60,7 +60,7 @@ TObra * consulta(Pk *, FILE *, IndicePrim *);
  * dados no primeiro parametro, que eh a base de dados. Os resultados
  * sao passados pra funcao que gera o HTML.
  */
-void listaBase(FILE *, IndicePrim *);
+void listaBase(FILE *, IndPrim *);
 
 /*** Funcoes auxiliares. ***/
 /* 
@@ -83,7 +83,7 @@ int compare(const void *a, const void *b);
  * sufuciente para o espaco alocado para o vetor e reservar mais caso
  * seja necessario. 
  */
-IndicePrim * realocaIndPrim(IndicePrim *ind);
+IndPrim * realocaIndPrim(IndPrim *ind);
 
 /** 
  * Preenche as tabelas do HTML fornecido como parametro com a obra tambem fornecida
@@ -104,7 +104,7 @@ FILE * endHtml(FILE *);
 /**
  * Troca os indices primarios.
  * Recebe o indice prmario e a chave a ser calculada o hash*/
-IndicePrim * trocaIndPrim(IndicePrim *, char *);
+IndPrim * trocaIndPrim(IndPrim *, char *);
 
 /**
  * Transforma para maiuscula a string passada como parametro
@@ -116,6 +116,6 @@ void maiuscula(char *);
  * Libera os indices e vetores alocados na utilizacao do programa
  * 
 */
-void liberaIndices(IndicePrim *, IndSec *, IndSec *, IndSec *, IndSec *);
+void liberaIndices(IndPrim *, IndSec *, IndSec *, IndSec *, IndSec *);
 
 #endif

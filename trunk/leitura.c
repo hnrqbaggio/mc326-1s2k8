@@ -1,7 +1,7 @@
 #include "leitura.h"
 
 /*Funcao de leitura da obra de arte a ser inserida*/
-TObra * leObra (IndicePrim *ind, TObra *obra) {
+TObra * leObra (IndPrim *ind, TObra *obra) {
 
   Pk *chave = (Pk *) malloc(sizeof(Pk));
   Pk *result = NULL;

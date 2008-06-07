@@ -1,6 +1,6 @@
 #include "busca.h"
 
-void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
+void buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE *base) {
   
   Sk temp, *result;
   Pk temp2, *result2;
@@ -71,7 +71,7 @@ void buscaSk(char *chave, IndicePrim *indPrim, IndSec *indSecun, FILE *base) {
   fclose(fhtml);
 }
 
-void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndicePrim *indPrim, FILE *base) {
+void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *base) {
 	
 	int i;
 	IndDesc * resposta;

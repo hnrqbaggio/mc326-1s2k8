@@ -15,7 +15,7 @@ IndSec * inicializaSecundario(char *tipoCampo) {
 	return indice;
 }
 
-void constroiSecundarios(IndicePrim *indPrim, FILE *base, 
+void constroiSecundarios(IndPrim *indPrim, FILE *base, 
 IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano, 
 availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno) {
 	
@@ -155,7 +155,7 @@ IndSec * carregaSk(IndSec *indSk, FILE *arqSk){
   return indSk;
 }
 
-IndSec * criaSk(IndicePrim *indPrim, FILE *base, availList *avail, const int tipoCampo) {
+IndSec * criaSk(IndPrim *indPrim, FILE *base, availList *avail, const int tipoCampo) {
 
   int i, tam;
   int offset = 0, offset_ext; /* Deslocamentos no arquivo */

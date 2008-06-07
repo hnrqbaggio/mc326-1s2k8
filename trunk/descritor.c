@@ -11,7 +11,7 @@ IndDesc * inicializaDescritor() {
 	return d;
 }
 
-void constroiIndDesc(IndDesc * indDesc, IndicePrim *indPrim, FILE *base) {
+void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 	
 	char nomeArq[TAM_NOME_ARQ+10], imagem[TAM_NOME_ARQ+10], valor;
 	FILE *arqDesc;

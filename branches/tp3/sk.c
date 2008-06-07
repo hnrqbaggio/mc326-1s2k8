@@ -161,6 +161,9 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
 
   while (token) { /* Realiza a insercao para cada novo token existente na string. */
 
+	/*Transformo tudo para maiuscula*/
+	maiuscula(token);
+	
     /* Inicializo os valores num elemento que usarei como chave da
        busca binaria no indice. */
     strcpy(sk->key, token);

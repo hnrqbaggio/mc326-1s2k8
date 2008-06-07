@@ -169,6 +169,7 @@ int main(int argc, char **argv){
     case 3:
       /*Mostra a base inteira em ordem ASCII, no html*/
       listaBase(arq, ind);
+      break;
 
     case 4: /* Remocao */
       /******BUSCA**********/

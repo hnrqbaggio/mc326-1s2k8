@@ -177,5 +177,11 @@ FILE * headHtml(FILE *);
  */
 FILE * endHtml(FILE *);
 
+/**
+ * Transforma para maiuscula a string passada como parametro
+ * 
+*/
+void maiuscula(char *);
+
 
 #endif

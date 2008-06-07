@@ -27,6 +27,8 @@ int buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const i
 
   fhtml = fopen(ARQ_HTML, "w");
   
+  /*Mudo o que vai ser buscado para maiuscula, para ficar no padrao dos indices*/
+  maiuscula(chave);
   /*Busco chave no indice secundario*/
   strcpy(temp.key, chave);
   temp.lenght = strlen(chave);
@@ -49,19 +51,21 @@ int buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const i
 
       result2 = (ElementoIndice *) bsearch(&temp2, indPrim->vetor, indPrim->tamanho, sizeof(temp2), compare);
 
-      offset = TAM_REG * result2->nrr;
-      fseek(base, offset, SEEK_SET);
+	  if(result2) {
+	  	offset = TAM_REG * result2->nrr;
+        fseek(base, offset, SEEK_SET);
 
-      /* leitura do registro */
-      fgets(reg.titulo, TAM_TITULO + 1, base);
-      fgets(reg.tipo, TAM_TIPO + 1, base);
-      fgets(reg.autor, TAM_AUTOR + 1, base); 
-      fgets(reg.ano, TAM_ANO + 1, base);
-      fgets(reg.valor, TAM_VALOR + 1, base);
-      fgets(reg.imagem, TAM_IMAGEM + 1, base);
+      	/* leitura do registro */
+      	fgets(reg.titulo, TAM_TITULO + 1, base);
+      	fgets(reg.tipo, TAM_TIPO + 1, base);
+      	fgets(reg.autor, TAM_AUTOR + 1, base); 
+      	fgets(reg.ano, TAM_ANO + 1, base);
+      	fgets(reg.valor, TAM_VALOR + 1, base);
+      	fgets(reg.imagem, TAM_IMAGEM + 1, base);
 
-      /*Insere no arquivo HTML*/
+      	/*Insere no arquivo HTML*/
     	preencheHtml(fhtml, reg);
+	  }
     }
     /*Finaliza as tags abertas do HTML*/
     endHtml(fhtml);

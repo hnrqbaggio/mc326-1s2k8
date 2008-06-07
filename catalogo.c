@@ -80,6 +80,11 @@ TIndice * carregaIndice(FILE *base, TIndice *indice, availList *avail) {
   } else { /* vai ter que gerar a partir da base */
  
     while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, base)){
+      
+      /*Transforma pra maiuscula para nao ocorrer conflito com os indices
+       * secundarios e com as palavras buscadas*/
+      maiuscula(indice->vetor[*tam].pk);
+      
       (*tam)++;
       indice = realocaIndice(indice);
       indice->vetor[*tam-1].nrr = *tam - 1;
@@ -129,6 +134,9 @@ void gravaIndice(TIndice *indice) {
 int consulta(ElementoIndice *chave, FILE *base, TIndice *indice, TObra *reg) {
   ElementoIndice *temp;
   int retorno;
+  
+  /*Mudo o que vai ser buscado para maiuscula, para ficar no padrao dos indices*/
+  maiuscula(chave->pk);
   
   temp = (ElementoIndice *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(ElementoIndice), compare);
 
@@ -322,4 +330,15 @@ FILE * preencheHtml(FILE *b, TObra valores) {
   fprintf(b, "%s", "</td><tr>");
   
   return b;
+}
+
+/*Transforma para maiuscula a string passada como parametro*/
+void maiuscula(char *chave) {
+
+	int i;
+	
+	/* Copia os valores dos parametros, convertendo pra maiuscula */
+  	for (i = 0; i < strlen(chave); i++) chave[i] = toupper(chave[i]);
+  	chave[i] = '\0';
+  	
 }

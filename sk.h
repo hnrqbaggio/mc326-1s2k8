@@ -1,3 +1,8 @@
+/** \file sk.h
+ *  \brief Biblioteca que implementa as funcoes
+ *         de manipulacao dos indices secundarios.
+ */
+
 #ifndef _SK_H
 #define _SK_H
 
@@ -8,85 +13,99 @@
 #include "tipos.h"
 #include "hash.h"
 
-IndSec * inicializaSecundario(char *);
-
-/**
- * Constroi todos os indices secundarios.  Tenta carregar o arquivo zero 
- * de cada indice e se algum falhar, constroi todos a partir da base de dados.
+/** @brief Inicializa um indice secundario,
+ * alocando memoria para a sua propria estrutura
+ * e tamabem para o vetor de SKs. Tambem inicializa
+ * os demais campos do indice com valores apropriados.
  * 
- * Parametros: O indice primario e a base de dados, 
- * os quatro indices secundarios e suas avail lists
- *
- * Retorno: um ponteiro pra um vetor de sks.
- */
-void constroiSecundarios(IndicePrim *, FILE *, IndSec *, IndSec *, IndSec *, IndSec *, availList *, availList *, availList *, availList *);
-
-IndSec * trocaIndSec(IndSec *, char *);
-
-/**
- * Carrega um indice secundario a partir do arquivo em disco.
- * Armazena a parte que ficara na RAM em um vetor de SKs e retorna o
- * ponteiro para a estrutura que contem esse vetor e intormacaoes
- * sobre o seu tamanho.
- *
- * Parametro: o ponteiro pra o arquivo de indice.
- */
-IndSec * carregaSk(IndSec *, FILE *);
-
-/**
- * Cria o indice secundario a partir da base de dados, carregando as
- * informacoes de cada registro.
- *
- * Essa funcao aloca espaco pro vetor de SKs. Ha uma funcao especifica
- * para liberar esse espaco.
+ * @param campo Uma string que determina o campo da obra
+ * ao qual o indice se refere.
  * 
- * Parametros: o indice primario, a base de dados e uma constante que
- * indica o tipo de campo que formara o indice.
- *
- * Retorna o ponteiro para a estrutura que representa o vetor de SKs.
+ * return O Indice alocado com valores iniciais.
  */
-IndSec * criaSk(IndicePrim *, FILE *, availList *, const int);
+IndSec * inicializaSecundario(char *campo);
+
+/** @brief Constroi todos os indices secundarios de uma vez.*/
+/** 
+ * Essa operacao eh feita de uma soh vez para economizar acessos 
+ * ao disco, percorrendo a base de dados no maximo uma unica vez.
+ * 
+ * Tenta carregar o arquivo zero de cada indice e se algum falhar, 
+ * constroi todos a partir da base de dados.
+ * 
+ * @param indPrimario Eh o indice primario. 
+ * Eh atualizado caso o hash de alguma chave a ser inserida/carregada 
+ * seja diferente do seu.
+ * @param base O ponteiro para o arquivo da base de dados.
+ * @param indTitulo indice secundario de titulos.
+ * @param indTipo indice secundario de tipos.
+ * @param indAutor indice secundario de autores.
+ * @param indAno indice secundario de anos.
+ * @param avTitulo Avail List do indice de titulos.
+ * @param avTipo Avail List do indice de tipos.
+ * @param avAutor Avail List do indice de autores.
+ * @param avAno Avail List do indice de ano.
+ */
+void constroiSecundarios(IndPrim *indPrimario, FILE *base, IndSec *indTitulo, IndSec *indTipo, IndSec *indAutor, IndSec *indAno, 
+								availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno);
+/** @brief Troca o indice secundario atual por outro 
+ *  no disco de acordo com o valor hash da string.
+ * 
+ *  @param indice O Indice secundario.
+ *  @param chave A chave secundaria cujo hash se deseja calcular.
+ *  return O indice secundario atualizado. */
+IndSec * trocaIndSec(IndSec *indice, char *chave);
 
 /**
- * Insere uma SK no vetor que contem o indice secundario pra um
- * determinado campo, e atualiza a lista invertida no disco.
- *
- * Parametros: o vetor de SKs, um ponteiro pro arquivo de chaves primarias,
- * uma string com a chave primaria do registro, um string com o valor do 
- * campo relativo ao indice e uma referencia ao valor do noh cabeca da 
- * avail list do arquivo de indice.
- *
- * Retorno: O vetor de SKs atualizado.
+ * @brief Carrega um indice secundario a partir do arquivo em disco.
+ * @param indice O ponteiro para o indice secundario vazio.
+ * @param bigFile O BigFile associado ao campo da obra ao qual 
+ * 					o indice se refere, formado pela lista invertida
+ * 					de chaves primarias cujos registros contem a SK.
+ * @return O ponteiro para o indice contendo os registros.
  */
-IndSec * insereSk(IndSec *, FILE *, char *, char *, availList *);
+IndSec * carregaSk(IndSec *indice, FILE *bigFile);
 
 /**
- * Grava o indice secundário da RAM para o arquivo no final deste, e 
- * grava também o tamanho do arquivo que sempre esta em disco.
- * Libera a memoria utilizada nesses e fecha o arquivo de SK.
+ * @brief Insere as SKs de uma string relativa a um campo da obra
+ * num indice secundario. Atualiza a lista invertida no BigFile.
  *
- * Parametros: o vetor de SKs.
+ * @param indice O indice secundario.
+ * @param bigFile Um ponteiro para o BigFile do indice.
+ * @param pk A chave primaria do registro.
+ * @param campo A string do campo que ira gerar as chaves.
+ * @param avail Um ponteiro para a Avail List do indice.
  *
- * Retorno: void 
+ * @return O Indice com a nova chave inserida.
+ */
+IndSec * insereSk(IndSec *indice, FILE *bigFile, char *pk, char *campo, availList *avail);
+
+/**
+ * @brief Grava as informacoes do indice secundario no disco.
+ * @param indice O indice secundario.
+ * @return N�o tem.
 */
-void gravaIndSk(IndSec *);
+void gravaIndSk(IndSec *indice);
 
-/**
- * Funcao usada para realocar espaco para o vetor da SK caso seja
- * necessario. Ela ira verificar se o numero de elementos eh
+/** @brief Funcao usada para realocar espaco para o vetor da SKs do indice caso seja necessario. */
+/** 
+ * Ela ira verificar se o numero de elementos eh
  * sufuciente para o espaco alocado para o vetor e reservar mais caso
  * seja necessario.
  *
- * Parametros: o vetor de SKs.
+ * @param indice O Indice a ser realocado.
  *
- * Retorno: O vetor de SKs, realocado ou nao. 
+ * @return O Indice, com seu vetor realocado ou nao. 
  */
-IndSec * realocaIndSec(IndSec *);
+IndSec * realocaIndSec(IndSec *indice);
 
 /**
- *comenta aki porra
+ * @brief Funcao que compara duas chaves secundarias.
+ * @param a Um ponteiro para void que sera comparado (com um cast para Sk*).
+ * @param b O outro ponteiro usado na comparacao (tambem com cast).
+ * @return Um inteiro que vale -1 se o campo key da chave a eh 
+ * alfabeticamente menor que o da chave b, 1 se for maior, ou 0 se forem iguais.
 */
-int compareSk(const void *, const void *);
-
+int compareSk(const void *a, const void *b);
 
 #endif

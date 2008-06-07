@@ -68,6 +68,7 @@ void insereObra(FILE *arq, TIndice *ind) {
       preencher(obra.titulo, sizeof(obra.titulo));
 
       strcpy(chave->pk, obra.titulo);
+      maiuscula(chave->pk);
       chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
       result = (ElementoIndice *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(ElementoIndice), compare);
     

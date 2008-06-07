@@ -99,71 +99,73 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, 
 
       if (!strcmp(pk, pk2)) { /* o primeiro elemento da lista sera removido. */
 
-	tmp = *avail;
-	*avail = result->next;
-	fseek(fsk, -TAM_NUMERO, SEEK_CUR); /* Vai colocar o reg no inicio da lista invertida. */
-	fprintf(fsk, FORMATO_INT, tmp);
-
-	if (prox != -1) {
-	  result->next = prox;
-
-	} else {
-
-	  /* Atualiza o indice. */
-	  fim = indSecun->tamanho-1;
-
-	  strcpy(temp.key, result->key);
-	  temp.next = result->next;
-
-	  strcpy(result->key, indSecun->vetor[fim].key);
-	  result->next = indSecun->vetor[fim].next;
-
-	  strcpy(indSecun->vetor[fim].key, temp.key);
-	  indSecun->vetor[fim].next = temp.next;
-
-	  (indSecun->tamanho)--;
-
-	  qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+		tmp = *avail;
+		*avail = result->next;
+		fseek(fsk, -TAM_NUMERO, SEEK_CUR); /* Vai colocar o reg no inicio da lista invertida. */
+		fprintf(fsk, FORMATO_INT, tmp);
 	
-	}
+		if (prox != -1) {
+		  result->next = prox;
+	
+		} else {
+	
+		  /* Atualiza o indice. */
+		  fim = indSecun->tamanho-1;
+	
+		  strcpy(temp.key, result->key);
+		  temp.next = result->next;
+	
+		  strcpy(result->key, indSecun->vetor[fim].key);
+		  result->next = indSecun->vetor[fim].next;
+	
+		  strcpy(indSecun->vetor[fim].key, temp.key);
+		  indSecun->vetor[fim].next = temp.next;
+	
+		  (indSecun->tamanho)--;
+	
+		  qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+		
+		}
 	
       } else {
-
-	atual = result->next;
-    
-	while (prox != -1) {
-
-	  /* Vai pra proxima posicao na lista invertida. */
-	  offset = prox * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
-	  fseek(fsk, offset, SEEK_SET);
-
-	  fgets(pk2, TAM_TITULO+1, fsk);
-
-	  if (!strcmp(pk, pk2)) {
-      
-	    atual = prox;
-	    fscanf(fsk, FORMATO_INT, &prox);
-
-	    /* Atualiza a avail list */
-	    fseek(fsk, -TAM_NUMERO, SEEK_CUR);
-	    fprintf(fsk, FORMATO_INT, *avail);
-	    *avail = atual;
-
-	    /* Atualiza a lista invertida. */
-	    offset = ant * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO + TAM_TITULO;
-	    fseek(fsk, offset, SEEK_SET);
-	    fprintf(fsk, FORMATO_INT, prox);
-
-
-	  } else {
-
-	    /* Vai pro proxima posicao na lista e guarda um 'ponteiro' pra atual. */
-	    ant = prox;
-	    fscanf(fsk, FORMATO_INT, &prox);
-
-	  }
-
-	}
+		
+		/*guarda um 'ponteiro' pra atual. */
+		ant = prox;
+		atual = result->next;
+	    
+		while (prox != -1) {
+	
+		  /* Vai pra proxima posicao na lista invertida. */
+		  offset = prox * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
+		  fseek(fsk, offset, SEEK_SET);
+	
+		  fgets(pk2, TAM_TITULO+1, fsk);
+	
+		  if (!strcmp(pk, pk2)) {
+	      
+		    atual = prox;
+		    fscanf(fsk, FORMATO_INT, &prox);
+	
+		    /* Atualiza a avail list */
+		    fseek(fsk, -TAM_NUMERO, SEEK_CUR);
+		    fprintf(fsk, FORMATO_INT, *avail);
+		    *avail = atual;
+	
+		    /* Atualiza a lista invertida. */
+		    offset = ant * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO + TAM_TITULO;
+		    fseek(fsk, offset, SEEK_SET);
+		    fprintf(fsk, FORMATO_INT, prox);
+	
+	
+		  } else {
+	
+		    /* Vai pro proxima posicao na lista e guarda um 'ponteiro' pra atual. */
+		    ant = prox;
+		    fscanf(fsk, FORMATO_INT, &prox);
+	
+		  }
+	
+		}
 
       }
 

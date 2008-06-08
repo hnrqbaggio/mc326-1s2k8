@@ -4,47 +4,39 @@ TODO LIST
 
 == BELO ==
 
-(TP2)
-- Consertar base zuada. (Eh soh fazer uma nova)
-- Revisar tudo que possa ser problematico e desconte nota. 
-- Jah adianto que eh legal usar contantes nos switchs. Temos tudo em define, eh bem simples e jah fiz isso ontem no TP3
-
 (TP3)
-- Alterar comentários pra podermos usar o Doxygen.
-- Terminar o relatorio. Baggio vai preparar o doxyfile pra branch TP3.
+- Alterar comentarios pra podermos usar o Doxygen - ATRASADO!
+- Terminar o relatorio. 
+  Matao terminou o relatorio.
+  Baggio vai preparar o doxyfile pra branch TP3.
 
 (TP4)
 - Testar, testar muito e ver cada furo.
 
 (TP5)
-- Planejar relatório. Fazer paralelamente ao desenvolvimento, 
+- Planejar relatorio. Fazer paralelamente ao desenvolvimento, 
 para ter ele pronto junto com o programa.
 
 
-== MATÃO ==
+== MATAO ==
 
 (TP4)
-- Remoção. Testar e finalizar isso. == FINALIZADO
-- Atributos binarios. == AGORA É NOIS!
-- Alterar comentários. == Alterei vários, porém é necessário varredura no código inteiro.
-- Problema da base inexistente! (Também TP3) == FINALIZADO
-- Valgrind == FINALIZADO (por enquanto, precisa testar com os atributos binários)
+- Valgrind - Testar agora q tem os descritores.
 
 (TP5)
-- Estudar B+
+- Estudar B+.
 
 
 == BAGGIO ==
  
 (TP3)
-Doxyfile.
+Doxyfile - Eh soh commitar pra branch o q usa no TP4.
 
 (TP4)
 - Atributos binarios - 
-      Biblioteca implementada. 
-      Testar funções.
       Corrigir pequenos erros.
-- Começar relatório.
+- Comecar relatorio - Vai ser em LATEX. =)
 
 (TP5)
-- Começar a pensar na B+. Ver oq vai mudar e não perder mais tempo.
+- Na terca a tarde eh pau na maquina. 
+  Ateh lah o IFWG tah gritando "Media 7!".

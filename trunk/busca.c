@@ -1,5 +1,7 @@
 #include "busca.h"
 
+FILE * Html(FILE *b, TObra valores, double similaridade);
+
 void buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE *base) {
   
   Sk temp, *result;
@@ -79,8 +81,9 @@ void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *
 	FILE *saida;
 	TObra reg;
 	
-	resposta = filtraInd(indice, arqImagem);
 	saida = fopen(ARQ_HTML, "w");
+
+	resposta = filtraInd(indice, arqImagem);
 	
 	/*Inicio do HTML*/
 	headHtml(saida);
@@ -107,11 +110,67 @@ void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *
 		    fgets(reg.imagem, TAM_IMAGEM + 1, base);
 		
 		    /* passagem do resultado pra função que gera a saida em html */
-		    preencheHtml(saida, reg);
+		    Html(saida, reg, resposta->vetor[i].similaridade);
 		    
 		}	
-		/*Fim do HTML*/
-	   endHtml(saida);
-	   fclose(saida);	
+
 	}
+
+	/*Fim do HTML*/
+	endHtml(saida);
+	fclose(saida);
+}
+
+FILE * Html(FILE *b, TObra valores, double similaridade) {
+  
+  char aux[TAM_IMAGEM + 2];
+  int j,i = 0;
+  int ponto = 0;
+  
+  /*Preenchimento da tabela*/
+  fprintf(b, "%s", "<tr height=\"8\"></tr>");
+  fprintf(b, "%s","<tr><td nowrap width=\"200\"><b>TITULO DA OBRA</b></td><td nowrap width=\"400\">");
+  fprintf(b, "%s", valores.titulo);	
+  fprintf(b, "%s","</td><td nowrap width=\"200\" align=\"center\"><b>IMAGEM</b></td></tr>");
+  fprintf(b, "%s","<tr><td><b>TIPO DA OBRA</b></td><td>");
+  fprintf(b, "%s", valores.tipo);
+  fprintf(b, "%s","</td><td rowspan=\"4\" align=\"center\">");	
+
+  /* 
+  * Este loop insere o ponto no nome do arquivo da imagem. Ele
+  * verifica se ateh as tres ultimas posicoes do vetor ha somente
+  * digitos numericos e insere o ponto assim que essa condicao
+  * torna-se falsa. 
+  */
+
+  for(i = 0, j = 0; i < TAM_IMAGEM; i++, j++)
+  {
+    aux[j] = valores.imagem[i];
+    if ( (valores.imagem[i] < '0' || valores.imagem[i] > '9') && ponto == 0)
+    {
+      aux[j] = '.';
+      --i;
+      ponto = 1;
+    }
+  }
+  aux[j] = '\0';
+
+  fprintf(b, "%s", "<a href=\"img/");
+  fprintf(b, "%s", aux);
+  fprintf(b, "%s", "\"><img src=\"img/");
+  fprintf(b, "%s", aux);
+  fprintf(b, "%s","\" \"width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a></td></tr>");
+  fprintf(b, "%s","<tr><td><b>AUTOR</b></td><td>");
+  fprintf(b, "%s", valores.autor);
+  fprintf(b, "%s","</td></tr><tr><td><b>ANO</b></td><td>");
+  fprintf(b, "%s", valores.ano);
+  fprintf(b, "%s","</td></tr><tr><td><b>VALOR</b></td><td>");
+  fprintf(b, "%s", valores.valor);
+  
+  fprintf(b, "%s","</td></tr><tr><td><b>Similaridade</b></td><td>");
+  fprintf(b, "%f", similaridade);
+  
+  fprintf(b, "%s", "</td><tr>");
+  
+  return b;
 }

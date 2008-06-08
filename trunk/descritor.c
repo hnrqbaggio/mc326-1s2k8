@@ -62,7 +62,7 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 				fgets(obra.ano,    TAM_ANO + 1,    base);
 				fgets(obra.valor,  TAM_VALOR + 1,  base);
 				fgets(obra.imagem, TAM_IMAGEM + 1, base);
-				fprintf(stdout, "Processado registro %d -> Imagem %s.\n", ++cont, obra.imagem);
+				fprintf(stdout, "Processando registro %d -> Imagem %s.\n", ++cont, obra.imagem);
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/
@@ -182,6 +182,8 @@ IndDesc * filtraInd(IndDesc *indice, char* imgRef) {
 	char temp, referencia, imagem[TAM_NOME_ARQ];
 	int i;
 	double simil;
+
+	printf("\nCriando indice de similaridade");
 	
 	filtrado = inicializaDescritor();
 	referencia = CalculaDescritor(imgRef);
@@ -189,6 +191,9 @@ IndDesc * filtraInd(IndDesc *indice, char* imgRef) {
 	indice = trocaIndDesc(indice, referencia);
 	
 	for (i = 0; i < indice->tamanho; ++i) {
+	  
+	  fflush(stdout);
+	  printf(".");
 		
 		/* Calcula o XOR entre o valor do descritor atual e o de referencia */
 		temp = indice->vetor[i].valorDescritor ^ referencia;
@@ -202,7 +207,9 @@ IndDesc * filtraInd(IndDesc *indice, char* imgRef) {
 			insereDesc(filtrado, indice->vetor[i].pk, indice->vetor[i].valorDescritor, indice->vetor[i].imagem, simil);		
 		}
 	}
-	
+
+	printf("\n");
+
 	/* Ja ordena o indice por similaridade com o descritor de referencia. */
 	ordenaIndDesc(filtrado);
 		

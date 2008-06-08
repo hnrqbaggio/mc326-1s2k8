@@ -513,6 +513,8 @@ Imagem* le_gif(char *arquivo) {
       PrintGifError();
       return NULL;
    }
+
    free(oBuffer);
+
    return resul;
 }

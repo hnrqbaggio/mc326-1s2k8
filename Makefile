@@ -2,7 +2,7 @@ FLAGS = -ggdb -ansi -pedantic -Wall
 IMGFLAGS = -ljpeg -lgif -lpng -lm
 
 tp4: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o libimg.o descritor.o
-	gcc $(FLAGS) $(IMGFLAGS) -lefence main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o descritor.o libimg.o -o tp4
+	gcc $(FLAGS) $(IMGFLAGS) main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o descritor.o libimg.o -o tp4
 
 leitura.o: leitura.h leitura.c
 	gcc $(FLAGS) -c leitura.c 
@@ -40,5 +40,11 @@ clean:
 del:
 	rm -f /tmp/mc326/*.av /tmp/mc326/*.ch* /tmp/mc326/*.dsc
 
+ef: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o libimg.o descritor.o
+	gcc $(FLAGS) $(IMGFLAGS) -lefence main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o descritor.o libimg.o -o tp4
+
 all:
 	${MAKE} tp4
+
+efence:
+	${MAKE} ef

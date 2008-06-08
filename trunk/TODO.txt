@@ -2,6 +2,16 @@
 TODO LIST
 =========
 
+== TAREFAS GERAIS ==
+- Mudar os defines de nomes de arquivos!
+	tirar o /tmp/mc326
+- Numeros magicos
+	cacar e exterminar todos! =]
+- Colocar a função de busca por indice primario no arquivo busca.c, hoje tah no catalogo.c
+- To preocupado com o tamanho do MAIN... 
+	Tah mto foda de adaptá-lo a alguma mudança.
+	Vi umas alternativas... Se der tempo pesquiso.
+
 == BELO ==
 
 (TP3)
@@ -35,8 +45,10 @@ Doxyfile - Eh soh commitar pra branch o q usa no TP4.
 (TP4)
 - Atributos binarios - 
       Corrigir pequenos erros.
+- Remoção nos indices de descritores.
 - Comecar relatorio - Vai ser em LATEX. =)
 
 (TP5)
 - Na terca a tarde eh pau na maquina. 
   Ateh lah o IFWG tah gritando "Media 7!".
+

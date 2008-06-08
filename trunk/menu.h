@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "constantes.h"
 
 /**
   * Funcao que gera menu principal para que usuario escolha a opcao desejada:
@@ -22,3 +23,7 @@ int geraMenuBusca ();
   * inserir uma nova obra.
 */
 int geraNotificaInsere ();
+
+void printSearchSuccess();
+
+void printSearchFailed();

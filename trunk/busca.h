@@ -10,6 +10,9 @@
 #include "catalogo.h"
 #include "sk.h"
 #include "descritor.h"
+#include "menu.h"
+
+void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base);
 
 /**
  * @brief Realiza uma busca por palavra inteira na base de dados, produzindo

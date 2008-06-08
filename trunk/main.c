@@ -19,7 +19,6 @@ int main(int argc, char **argv){
 
   int ent, option, end;
   TObra obra, obra2, *consultaObra;
-  char temp[TAM_TITULO];
   char nome[TAM_NOME_ARQ+10];
  
   /* Ponteiro pra base de dados. */
@@ -143,35 +142,19 @@ int main(int argc, char **argv){
         /*Somente uma palavra por vez, por enquanto*/
         
         case 1:/*Busca pelo titulo*/
-          printf("Digite uma palavra: ");
-          scanf("%s", temp);
-          maiuscula(temp);
-          secTitulo = trocaIndSec(secTitulo, temp);
-          buscaSk(temp, ind, secTitulo, arq);
+				buscaSecudario(ind, secTitulo, arq);
           break;
 
         case 2:/*Busca pelo tipo*/
-          printf("Digite uma palavra: ");
-          scanf("%s", temp);
-          maiuscula(temp);
-          secTipo = trocaIndSec(secTipo, temp);
-          buscaSk(temp, ind, secTipo, arq);
+				buscaSecudario(ind, secTipo, arq);
           break;
 
         case 3:/*Busca pelo autor*/
-          printf("Digite uma palavra: ");
-          scanf("%s", temp);
-          maiuscula(temp);
-          secAutor = trocaIndSec(secAutor, temp);
-          buscaSk(temp, ind, secAutor, arq);
+				buscaSecudario(ind, secAutor, arq);
           break;
 
         case 4:/*Busca por ano*/
-          printf("Digite uma palavra: ");
-          scanf("%s", temp);
-          maiuscula(temp);
-          secAno = trocaIndSec(secAno, temp);
-          buscaSk(temp, ind, secAno, arq);
+				buscaSecudario(ind, secAno, arq);
           break;
 
         case 5:/*Busca por PK*/

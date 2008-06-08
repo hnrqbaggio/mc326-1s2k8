@@ -2,6 +2,18 @@
 
 FILE * Html(FILE *b, TObra valores, double similaridade);
 
+void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base) {
+	
+	char temp[TAM_TITULO+1];
+	
+	printf("Digite uma palavra: ");
+	scanf("%s", temp);
+	maiuscula(temp);
+	secundario = trocaIndSec(secundario, temp);
+	buscaSk(temp, primario, secundario, base);
+	
+}
+
 void buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE *base) {
   
   Sk temp, *result;
@@ -59,14 +71,10 @@ void buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE *base) {
     }
     /*Finaliza as tags abertas do HTML*/
     endHtml(fhtml);
-    printf("\n--------------------------------------------------\n");
-    printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
-    printf("--------------------------------------------------\n");
+    printSearchSuccess();
     
   } else {/*Nenhum registro encontrado*/
-    printf("\n----------------------------\n");
-    printf("Nenhum registro foi encontrado.\n");
-    printf("------------------------------\n");
+  	printSearchFailed();
   }
 
   fclose(fsk);
@@ -88,7 +96,7 @@ void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *
 	/*Inicio do HTML*/
 	headHtml(saida);
 	
-	for (i = 0; i < resposta->tamanho; ++i) {
+	for (i = resposta->tamanho; i >=0; --i) {
 		strcpy(temp.pk, resposta->vetor[i].pk);
 		
 		/*Abre o indice relativo a pk a ser buscada*/
@@ -119,6 +127,8 @@ void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *
 	/*Fim do HTML*/
 	endHtml(saida);
 	fclose(saida);
+
+	printSearchSuccess();
 }
 
 FILE * Html(FILE *b, TObra valores, double similaridade) {

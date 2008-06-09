@@ -208,6 +208,9 @@ int main(int argc, char **argv){
         secTipo   = removeSk(consultaObra->tipo,   secTipo,   elem->pk, &availTipo);
         secAutor  = removeSk(consultaObra->autor,  secAutor,  elem->pk, &availAutor);
         secAno    = removeSk(consultaObra->ano,    secAno,    elem->pk, &availAno);
+        
+        /* Remove o descritor da imagem. */
+        removeDesc(indDescritor, consultaObra->imagem);
       }
       /*Libera consultaObra, que e alocado dentro da funcao consulta*/
       free(consultaObra);

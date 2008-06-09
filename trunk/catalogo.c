@@ -111,9 +111,6 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
    
     while(fgets(pkAux, TAM_TITULO+1, base)) {
     	
-    	
-      
-		maiuscula(pkAux);
 		/*Abre o indice relativo a pkAux*/
 		indice = trocaIndPrim(indice, pkAux);
 		  
@@ -166,7 +163,7 @@ IndPrim * gravaPk(IndPrim *indice) {
 }
 
 /* Consulta de uma obra na base. 
-   Chave já vem preenchido. */
+   Chave ja vem preenchido. */
 TObra * consulta(Pk *chave, FILE *base, IndPrim *indice) {
   
   Pk *temp;
@@ -174,7 +171,6 @@ TObra * consulta(Pk *chave, FILE *base, IndPrim *indice) {
   TObra * reg = (TObra *) malloc(sizeof(TObra));
   
   /*Abro o indice relativo a pk a ser buscada*/
-  maiuscula(chave->pk);
   indice = trocaIndPrim(indice, chave->pk);
   
   temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
@@ -201,10 +197,7 @@ TObra * consulta(Pk *chave, FILE *base, IndPrim *indice) {
     preencheHtml(saida, *reg);
 
     if (saida) {
-      printf("\n--------------------------------------------------\n");
-      printf("Registro encontrado e saida gerada com sucesso.\n");
-      printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
-      printf("--------------------------------------------------\n");				
+      printSearchSuccess();			
     } else {
       printf("\n--------------------\n");
       printf("Erro ao gerar saida!\n");
@@ -217,9 +210,7 @@ TObra * consulta(Pk *chave, FILE *base, IndPrim *indice) {
 		
   } else {/*Registro nao encontrado*/
     retorno = 0;
-    printf("\n-----------------------\n");
-    printf("Registro não encontrado.\n");
-    printf("-----------------------\n");
+    printSearchFailed();
     reg = NULL;
   }
 
@@ -268,9 +259,7 @@ void listaBase(FILE *base, IndPrim *indice) {
   /*Final do HTML*/
   endHtml(saida);
   
-  printf("\n--------------------------------------------------\n");
-  printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
-  printf("--------------------------------------------------\n")	;
+  printSearchSuccess();
 
   fclose(saida);
 }
@@ -299,7 +288,7 @@ int compare(const void *a, const void *b) {
   str1[i] = '\0';
   str2[i] = '\0';
  
-  return strcmp(str1, str2);
+  return strcasecmp(str1, str2);
 }
 
 /* Realoca espaco para o vetor caso seja necessario. */

@@ -173,4 +173,31 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
   return indSecun;
 }
 
+IndDesc * removeDesc(IndDesc *indice, char *imagem) {
+	int i = 0;
+	
+	/* Calcula o descritor da imagem. */
+	char d = CalculaDescritor(imagem); 
+	
+	/* Ultimo elemento do vetor. Jah reduz o tamanho em um. */
+	int tam = --(indice->tamanho); 
+	Descritor temp;
+	
+	/* Encontra o indice que contem a imagem com esse descritor. */
+	indice = trocaIndDesc(indice, d);
+	
+	/* Como o indice nao estah ordenado por pk, a busca precisa ser sequencial. */
+	while (strcmp(indice->vetor[i].pk, pk)) i++;
+	
+	if (i > tam) return indice; /* Elemento nao existe. */
+	
+	/* Copio o ultimo elemento para a posicao atual. */
+	strcpy(indice->vetor[i].pk, indice->vetor[tam].pk);
+	indice->vetor[i].valorDescritor = indice->vetor[tam].valorDescritor;
+	indice->vetor[i].imagem = indice->vetor[tam].imagem;
+	indice->vetor[i].similaridade = indice->vetor[tam].similaridade;
+	
+	return indice;
+	
+}
 

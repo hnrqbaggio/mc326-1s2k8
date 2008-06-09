@@ -82,7 +82,6 @@ IndSec * insereSk(IndSec *indice, FILE *bigFile, char *pk, char *campo, availLis
 /**
  * @brief Grava as informacoes do indice secundario no disco.
  * @param indice O indice secundario.
- * @return N�o tem.
 */
 void gravaIndSk(IndSec *indice);
 

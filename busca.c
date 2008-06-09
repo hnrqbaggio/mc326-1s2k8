@@ -100,7 +100,7 @@ void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *
 		strcpy(temp.pk, resposta->vetor[i].pk);
 		
 		/*Abre o indice relativo a pk a ser buscada*/
-  		maiuscula(temp.pk);
+
   		indPrim = trocaIndPrim(indPrim, temp.pk);
 		
 		result = (Pk *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(temp), compare);

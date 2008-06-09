@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include "hash.h"
 #include "avail.h"
+#include "menu.h" 
 
 /*** Funcoes de manipulacao da base de dados ***/
 

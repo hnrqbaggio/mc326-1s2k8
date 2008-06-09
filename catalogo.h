@@ -6,39 +6,48 @@
 #include <string.h>
 #include <ctype.h>
 
-/* Definicoes de tamanhos de campos e do tamanho do registro */
-#define TAM_TITULO 200
-#define TAM_TIPO 100
-#define TAM_AUTOR 125
-#define TAM_ANO 4
-#define TAM_VALOR 12
-#define TAM_IMAGEM 9
-#define TAM_REG (TAM_TITULO+TAM_TIPO+TAM_AUTOR+TAM_ANO+TAM_VALOR+TAM_IMAGEM)
-
-/* Defines para os nomes dos arquivos.*/
-#define ARQ_BASE ("/tmp/base00.dat")       /* Base de dados */
-#define ARQ_HTML ("/tmp/base24.html")      /* Html para saida dos resultados de busca */
-#define ARQ_PK ("primario.pi")         /* Arquivo que contem os registros do indice primario */
-#define ARQ_AVAIL_BASE ("base24.av")  /* Avail list da base de dados */
-
-/* 
- * Constante para fazer reallocs mais eficientes.  a primeira alocacao
- * sera feita com esse valor, e dobrando sempre que atingir o maximo 
+/** @{
+ * @name Definicoes de tamanhos de campos e do tamanho do registro 
  */
-#define VETOR_MIN 20
+
+#define TAM_TITULO 200  /**< Tamanho do campo titulo da obra. */
+#define TAM_TIPO 100	/**< Tamanho do campo tipo da obra. */
+#define TAM_AUTOR 125	/**< Tamanho do campo autor da obra. */
+#define TAM_ANO 4       /**< Tamanho do campo ano da obra. */
+#define TAM_VALOR 12    /**< Tamanho do campo valor da obra. */
+#define TAM_IMAGEM 9	/**< Tamanho do campo imagem da obra. */
+#define TAM_REG (TAM_TITULO+TAM_TIPO+TAM_AUTOR+TAM_ANO+TAM_VALOR+TAM_IMAGEM)/**< Tamanho total de um registro. */
+
+/** @} */
+
+/** @{
+ * @name Definicoes par os nomes dos arquivos
+ */
+
+#define ARQ_BASE ("/tmp/base00.dat")       /**< Base de dados. */
+#define ARQ_HTML ("/tmp/base24.html")      /**< Html para saida dos resultados de busca. */
+#define ARQ_PK ("primario.pi")         /**< Arquivo que contem os registros do indice primario. */
+#define ARQ_AVAIL_BASE ("base24.av")  /**< Avail list da base de dados. */
+/** @} */
+
+
+/** @{
+ * @name Constante para fazer reallocs mais eficientes.
+ */
+
+#define VETOR_MIN 20 /**<a primeira alocacao sera feita com esse valor, e dobrando sempre que atingir o maximo  */
 
 /* Define para a mascara usada para ler e gravar inteiros. */
 #define FORMATO_INT ("%08d")
 #define TAM_NUMERO 8
 
-/* Constantes usadas como parametros na funcao geraHtml */
-#define ALL 0  /* Adiciona tanto o cabecalho quanto o fim do
-		* html. usado quando eh uma consulta de um registro
-		* especifico. */
-#define HEAD 1 /* Deve ser inserido um cabecalho no html */
-#define END 2  /* Deve fechar as tags do html: </table></body></html> */
-#define MEIO 3 /* Diferencia os registros que nao sao nem inicio nem
-		* fim da listagem, logo, devem apenas ser inseridos */
+/** @{
+ * @name Constante usadas como parametros na funcao geraHtml.
+ */
+#define ALL 0  /**< Adiciona tanto o cabecalho quanto o fim do html. usado quando eh uma consulta de um registro especifico. */
+#define HEAD 1 /**< Deve ser inserido um cabecalho no html */
+#define END 2  /**< Deve fechar as tags do html: </table></body></html> */
+#define MEIO 3 /**< Diferencia os registros que nao sao nem inicio nem fim da listagem, logo, devem apenas ser inseridos */
 
 /* 
  * TAD que usaremos para representar uma obra.

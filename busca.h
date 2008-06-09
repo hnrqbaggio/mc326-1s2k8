@@ -1,3 +1,7 @@
+** @file busca.h
+ * @brief Esta biblioteca implementa as funcionalidades 
+ * de busca na base de dados.
+ */
 #ifndef _BUSCA_H
 #define _BUSCA_H
 
@@ -6,19 +10,15 @@
 #include "sk.h"
 
 /**
- * Esta biblioteca implementa as funcionalidades de busca na base de
- * dados.
+ * @brief Realiza uma busca por palavra passada por paremetro nos indices secundarios, busca as PKs correspondentes a SK da palavra nos indices secundarios,busca os nrr das PKs e gera um arquivo html com o dado das obras.
+ * 
+ * @param chave A chave de busca.
+ * @param prim O indice primario (pose ser atualizado durante a operacao, devido ao hash).
+ * @param sec O indice secundario (tambem pode ser atualizado).
+ * @param base O ponteiro para a base de dados.
+ * @param tipoCampo O tipo do campo a ser buscado.
  */
 
-/**
- * Funcao que busca palavra passada por parametro nos indices secundarios.
- * Ela busca as PKs correspondentes a SK da palavra nos indices secundarios,
- * busca os nrr das PKs encontradas no indice primario e gera um arquivo html
- * com os dados das obras encontradas.
- * Recebe como parametros a palavra a ser buscada, o indice primario,
- * o indice secundario onde sera realizada a busca, a base de dados e um inteiro
- * que define o tipo do campo.
-*/
-int buscaSk(char *, TIndice *, IndSec *, FILE *, const int);
+int buscaSk(char *chave, TIndice *indPrim, IndSec *indSecun, FILE *base, const int tipoCampo);
 
 #endif

@@ -12,6 +12,15 @@
 #include "descritor.h"
 #include "menu.h"
 
+/**
+ * @brief Chama a funcao de busca para um determinado indice secundario, 
+ * exibindo mensdagens para o usuario. Eh um pequeno adapter para evitar 
+ * repeticao de codocgo no main.
+ * 
+ * @param primario O indice primario atual.
+ * @param secundario O indice secundario onde sera feita a busca,
+ * @base A base de dados.
+ */
 void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base);
 
 /**

@@ -1,5 +1,5 @@
 /* MC326 - Estrutura de Arquivos
- * Catalogo de Obras de Arte
+ * TP2 - Catalogo de Obras de Arte
  * Grupo 24 */
 
 /* 
@@ -10,59 +10,52 @@
  */
 
 #include <stdio.h>
+#include "catalogo.h"
 #include "leitura.h"
+#include "sk.h"
 #include "menu.h"
 #include "remove.h"
+#include "avail.h"
 #include "busca.h"
 
 int main(int argc, char **argv){
 
-  int ent, option, end;
-  TObra obra, obra2, *consultaObra;
-  char nome[TAM_NOME_ARQ+10];
+  int ent, option, end, resultado;
+  TObra obra, obra2, consultaObra;
+  char temp[TAM_TITULO];
  
   /* Ponteiro pra base de dados. */
   FILE *arq;
-  
   /* Ponteiro utilizado para abrir os arquivos de indice secundario*/
-  FILE *bigfile;
+  FILE *fsk;
 
   /* Variavais de indice primario e sua avail list da base de dados. */
-  IndPrim *ind;
-  Pk *elem;
+  TIndice *ind;
+  ElementoIndice *elem;
   availList availBase = FIM_DE_LISTA;
 
   /* Variaveis de indice secundario e respectivas avail lists. */
   IndSec *secTitulo, *secAutor, *secTipo, *secAno;
   availList availTitulo, availTipo, availAno, availAutor;
-  
-  	/* Indice de descritores. */
-	IndDesc *indDescritor;
 
   /*Abre a availList da base, a base e o indice primario*/
   availBase = openAvail(ARQ_AVAIL_BASE);
   arq = abreCatalogo(ARQ_BASE);
-  ind = iniciaPk(arq, ind);
-  
-  /* Atribui valores convenientes os campos dos indices e aloca espaco pros mesmos. */
-  secTitulo = inicializaSecundario(ARQ_IS_TITULO);
-  secTipo   = inicializaSecundario(ARQ_IS_TIPO);
-  secAutor  = inicializaSecundario(ARQ_IS_AUTOR);
-  secAno    = inicializaSecundario(ARQ_IS_ANO);
-   
+  ind = carregaIndice(arq, ind, &availBase);
+
+  /*Abre os indices secundarios*/
+  secTitulo =  geraSk(ind, arq, &availTitulo, TITULO);
+  secTipo =  geraSk(ind, arq, &availTipo, TIPO);
+  secAutor =  geraSk(ind, arq, &availAutor, AUTOR);
+  secAno =  geraSk(ind, arq, &availAno, ANO);
+
   /* Carrega as avail lists dos arquivos. */
   availTitulo = openAvail(ARQ_AVAIL_TITULO);
-  availTipo   = openAvail(ARQ_AVAIL_TIPO);
-  availAutor  = openAvail(ARQ_AVAIL_AUTOR);
-  availAno    = openAvail(ARQ_AVAIL_ANO);
-  
-  	indDescritor = inicializaDescritor();
-  
-	/*Abre os indices secundarios*/
-  	constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
-	constroiIndDesc(indDescritor, ind, arq);
-	
-  elem = (Pk *) malloc(sizeof(Pk));
+  availTipo = openAvail(ARQ_AVAIL_TIPO);
+  availAutor = openAvail(ARQ_AVAIL_AUTOR);
+  availAno = openAvail(ARQ_AVAIL_ANO);
+
+  elem = (ElementoIndice *) malloc(sizeof(ElementoIndice));
 
   /*Entrada do programa*/
   printf("|------------------------------------|\n");
@@ -76,58 +69,42 @@ int main(int argc, char **argv){
 		
     switch (ent) {
     case 1:/*Inserir nova obra*/
-    
       /*Looping de insercao*/
       do {
         /*leitura da obra a ser inserida e gravacao no indice primario*/
-        obra = *(leObra(ind, &obra));
+        if(leObra(ind, &obra)) {/*Insercao feita com sucesso na PK*/
+          
+          /*Grava a obra inserida na base de dados*/
+          end = gravaObra(obra, arq, &availBase);
+          
+          /*Insercao nos indices secundarios*/
+          /*titulo*/
+          fsk = fopen(ARQ_IS_TITULO,"r+");
+          strcpy(obra2.titulo, obra.titulo);
+          secTitulo = insereSk(secTitulo, fsk, obra2.titulo, obra.titulo, &availTitulo);
+          fclose(fsk);
+          /*tipo*/
+          fsk = fopen(ARQ_IS_TIPO,"r+");
+          secTipo = insereSk(secTipo, fsk, obra2.titulo, obra.tipo, &availTipo);
+          fclose(fsk);
+          /*autor*/
+          fsk = fopen(ARQ_IS_AUTOR,"r+");
+          secAutor = insereSk(secAutor, fsk, obra2.titulo, obra.autor, &availAutor);
+          fclose(fsk);
+          /*ano*/
+          fsk = fopen(ARQ_IS_ANO,"r+");
+          secAno = insereSk(secAno, fsk, obra2.titulo, obra.ano, &availAno);
+          fclose(fsk);
+          
+          /*Atualizo o nrr na pk*/
+          ind->vetor[ind->tamanho-1].nrr = end;
+          /*Notificacao de insere*/
+          option = geraNotificaInsere();
         
-         /*Grava a obra inserida na base de dados*/
-        end = gravaObra(obra, arq, &availBase, ind);
-        
-        /*Obra2 sera inserida na base. obra sera usada na insereSk*/
-        strcpy(obra2.titulo, obra.titulo);
-        /*Passo todas as strings para maiuscula para nao ocorrer conflito nas pesquisas*/
-        maiuscula(obra2.titulo);
-        maiuscula(obra.titulo);
-        maiuscula(obra.tipo);
-        maiuscula(obra.autor);
-        maiuscula(obra.ano);
-        
-        /*Insercao nos indices secundarios*/
-        /*titulo*/
-        sprintf(nome, "%s%s", secTitulo->tipoCampo, EXTENSAO_PK);
-        bigfile = fopen(nome,"r+");
-
-        secTitulo = insereSk(secTitulo, bigfile, obra2.titulo, obra.titulo, &availTitulo);
-        fclose(bigfile);
-        
-        /* tipo */
-        sprintf(nome, "%s%s", secTipo->tipoCampo, EXTENSAO_PK);
-        bigfile = fopen(nome,"r+");
-
-        secTipo = insereSk(secTipo, bigfile, obra2.titulo, obra.tipo, &availTipo);
-        fclose(bigfile);
-        
-        /* autor */
-        sprintf(nome, "%s%s", secAutor->tipoCampo, EXTENSAO_PK);
-        bigfile = fopen(nome,"r+");
-
-        secAutor = insereSk(secAutor, bigfile, obra2.titulo, obra.autor, &availAutor);
-        fclose(bigfile);
-        
-        /* ano */
-        sprintf(nome, "%s%s", secAno->tipoCampo, EXTENSAO_PK);
-        bigfile = fopen(nome,"r+");
-
-        secAno = insereSk(secAno, bigfile, obra2.titulo, obra.ano, &availAno);
-        fclose(bigfile);
-
-        /* Notificacao de insere */
-        option = geraNotificaInsere();
-
+        } else {/*Obra ja existente no catalogo*/
+          option = geraNotificaErroInsere();
+        }
       } while (option == 1);
-
       /*Ordeno o indice*/
       ordenaIndice(ind);
       break;
@@ -138,23 +115,33 @@ int main(int argc, char **argv){
         option = geraMenuBusca();
 
         switch (option) {
-        		
         /*Somente uma palavra por vez, por enquanto*/
-        
         case 1:/*Busca pelo titulo*/
-				buscaSecudario(ind, secTitulo, arq);
+          printf("Digite uma palavra:\n");
+          scanf("%s", temp);
+          buscaSk(temp, ind, secTitulo, arq, TITULO);
+          LimpaBuffer();
           break;
 
         case 2:/*Busca pelo tipo*/
-				buscaSecudario(ind, secTipo, arq);
+          printf("Digite uma palavra:\n");
+          scanf("%s", temp);
+          buscaSk(temp, ind, secTipo, arq, TIPO);
+          LimpaBuffer();
           break;
 
         case 3:/*Busca pelo autor*/
-				buscaSecudario(ind, secAutor, arq);
+          printf("Digite uma palavra:\n");
+          scanf("%s", temp);
+          buscaSk(temp, ind, secAutor, arq, AUTOR);
+          LimpaBuffer();
           break;
 
         case 4:/*Busca por ano*/
-				buscaSecudario(ind, secAno, arq);
+          printf("Digite uma palavra:\n");
+          scanf("%s", temp);
+          buscaSk(temp, ind, secAno, arq, ANO);
+          LimpaBuffer();
           break;
 
         case 5:/*Busca por PK*/
@@ -162,18 +149,9 @@ int main(int argc, char **argv){
           preencher(elem->pk, sizeof(elem->pk));
           elem->nrr = -1;
 
-          consultaObra = consulta(elem, arq, ind);
-          
-          /*Libera consultaObra, que e alocado dentro da funcao consulta*/
-          free(consultaObra);
-          break;
-          
-			case 6: /* Busca por conteudo. */
-				printf("Digite o nome da imagem: ");
-				scanf("%s", nome);
-				buscaPorConteudo(nome, indDescritor, ind, arq);
-        		break;
-        		 
+          consulta(elem, arq, ind, &consultaObra);
+          LimpaBuffer();
+          break; 
         case 0:/*Menu anterior*/
           break;
 
@@ -181,6 +159,7 @@ int main(int argc, char **argv){
           printf("\n*** Opcao invalida *** \n");
           break;
         }
+        
       } while (option != 0);
       break;
 
@@ -190,48 +169,95 @@ int main(int argc, char **argv){
       break;
 
     case 4: /* Remocao */
-      leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
-      preencher(elem->pk, sizeof(elem->pk));
-      elem->nrr = -1;
+      /******BUSCA**********/
+      option = geraMenuBusca();
+      switch (option) {
+        /*Somente uma palavra por vez, por enquanto*/
+      case 1:/*Busca pelo titulo*/
+        printf("Digite uma palavra:\n");
+        scanf("%s", temp);
+        resultado = buscaSk(temp, ind, secTitulo, arq, TITULO);
+        LimpaBuffer();
+        break;
 
-      /*Faz a pesquisa da pk e mostra no html*/
-      consultaObra = consulta(elem, arq, ind);
-     
-      /*Se encontrou obra de arte*/
-      if(consultaObra != NULL) {
-        
-        /*Remove do indice primario e da base de dados*/
-        ind = removePk(elem->pk, ind, arq, &availBase);
+      case 2:/*Busca pelo tipo*/
+        printf("Digite uma palavra:\n");
+        scanf("%s", temp);
+        resultado = buscaSk(temp, ind, secTipo, arq, TIPO);
+        LimpaBuffer();
+        break;
 
-        /*Remove todas as Sks */
-        secTitulo = removeSk(consultaObra->titulo, secTitulo, elem->pk, &availTitulo);
-        secTipo   = removeSk(consultaObra->tipo,   secTipo,   elem->pk, &availTipo);
-        secAutor  = removeSk(consultaObra->autor,  secAutor,  elem->pk, &availAutor);
-        secAno    = removeSk(consultaObra->ano,    secAno,    elem->pk, &availAno);
+      case 3:/*Busca pelo autor*/
+        printf("Digite uma palavra:\n");
+        scanf("%s", temp);
+        resultado = buscaSk(temp, ind, secAutor, arq, AUTOR);
+        LimpaBuffer();
+        break;
+
+      case 4:/*Busca por ano*/
+        printf("Digite uma palavra:\n");
+        scanf("%s", temp);
+        resultado = buscaSk(temp, ind, secAno, arq, ANO);
+        LimpaBuffer();
+        break;
+
+      case 5:/*Busca por PK*/
+        leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
+        preencher(elem->pk, sizeof(elem->pk));
+        elem->nrr = -1;
+        resultado = consulta(elem, arq, ind, &consultaObra);
+        LimpaBuffer();
+        break; 
+
+      case 0:
+        resultado = 0;
+        break;
+
+      default:
+        printf("\n*** Opcao invalida *** \n");
+        resultado = 0;
+        break;
       }
-      /*Libera consultaObra, que e alocado dentro da funcao consulta*/
-      free(consultaObra);
+      if(resultado) {/*Se a busca retornou algo*/
+        leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da obra a ser removida: ");
+        preencher(elem->pk, sizeof(elem->pk));
+        elem->nrr = -1;
+  
+        /*Faz a pesquisa da pk e mostra no html*/
+        if(consulta(elem, arq, ind, &consultaObra) == 1) {
+          
+          /*Somente se consulta retornou verdadeiro*/
+          ind = removePk(elem->pk, ind, arq, &availBase);
+  
+          /*Remove todas as Sks */
+          strcpy(temp, consultaObra.titulo);
+          secTitulo = removeSk(temp, secTitulo, elem->pk, TITULO, &availTitulo);
+  
+          strcpy(temp, consultaObra.tipo);
+          secTipo = removeSk(temp, secTipo, elem->pk, TIPO, &availTipo);
+  
+          strcpy(temp, consultaObra.autor);
+          secAutor = removeSk(temp, secAutor, elem->pk, AUTOR, &availAutor);
+  
+          strcpy(temp, consultaObra.ano);
+          secAno = removeSk(temp, secAno, elem->pk, ANO, &availAno);
+        
+          geraNotificaRemocao();
+        }
+      }
+      LimpaBuffer();
       break;
 
     case 0:/*Sair do programa*/
-    
       /*fecha todos os arquivos abertos e libera memoria para sair do programa*/
       fechaCatalogo(arq);
-      gravaPk(ind);
+      gravaIndice(ind);
 
-      /* Troco os indices secundarios para o de indice de valor 0, pois este deve ter
-       * o tamanho do arquivo de indices secundarios atualizado, jah que eh o primeiro
-       * a ser carregado no programa. */
-      trocaIndSec(secTitulo, "\0");
-      trocaIndSec(secTipo, "\0");
-      trocaIndSec(secAutor, "\0");
-      trocaIndSec(secAno, "\0");
-      
-      /*Grava os indice secundarios*/
-      gravaIndSk(secTitulo);
-      gravaIndSk(secTipo);
-      gravaIndSk(secAutor);
-      gravaIndSk(secAno);
+      /* Grava os indices nos arquivos. */
+      gravaIndSk(secTitulo, TITULO);
+      gravaIndSk(secTipo, TIPO);
+      gravaIndSk(secAutor, AUTOR);
+      gravaIndSk(secAno, ANO);
 
       /* Grava as avail lists. */
       gravaAvail(availBase, ARQ_AVAIL_BASE);
@@ -239,10 +265,6 @@ int main(int argc, char **argv){
       gravaAvail(availTipo, ARQ_AVAIL_TIPO);
       gravaAvail(availAutor, ARQ_AVAIL_AUTOR);
       gravaAvail(availAno, ARQ_AVAIL_ANO);
-      
-      /*Libera os indices e seus vetores*/
-      liberaIndices(ind, secTitulo,secTipo, secAutor, secAno);
-      liberaDesc(indDescritor);
 
       free(elem);
       break;

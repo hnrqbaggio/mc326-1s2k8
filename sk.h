@@ -1,7 +1,6 @@
-/** \file sk.h
- *  \brief Biblioteca que implementa as funcoes
- *         de manipulacao dos indices secundarios.
- */
+/** @file sk.h
+ * @brief Biblioteca relativa aos indices secundarios.
+*/
 
 #ifndef _SK_H
 #define _SK_H
@@ -10,100 +9,145 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "tipos.h"
-#include "hash.h"
+#include "catalogo.h"
 
-/** @brief Inicializa um indice secundario,
- * alocando memoria para a sua propria estrutura
- * e tamabem para o vetor de SKs. Tambem inicializa
- * os demais campos do indice com valores apropriados.
- * 
- * @param campo Uma string que determina o campo da obra
- * ao qual o indice se refere.
- * 
- * return O Indice alocado com valores iniciais.
+/** @{
+ * @name Nomes dos arquivos de indices secundarios.
  */
-IndSec * inicializaSecundario(char *campo);
+#define ARQ_IS_TITULO ("titulo.si")
+#define ARQ_IS_TIPO ("tipo.si")
+#define ARQ_IS_AUTOR ("autor.si")
+#define ARQ_IS_ANO ("ano.si")
+/** @} */
 
-/** @brief Constroi todos os indices secundarios de uma vez.*/
-/** 
- * Essa operacao eh feita de uma soh vez para economizar acessos 
- * ao disco, percorrendo a base de dados no maximo uma unica vez.
- * 
- * Tenta carregar o arquivo zero de cada indice e se algum falhar, 
- * constroi todos a partir da base de dados.
- * 
- * @param indPrimario Eh o indice primario. 
- * Eh atualizado caso o hash de alguma chave a ser inserida/carregada 
- * seja diferente do seu.
- * @param base O ponteiro para o arquivo da base de dados.
- * @param indTitulo indice secundario de titulos.
- * @param indTipo indice secundario de tipos.
- * @param indAutor indice secundario de autores.
- * @param indAno indice secundario de anos.
- * @param avTitulo Avail List do indice de titulos.
- * @param avTipo Avail List do indice de tipos.
- * @param avAutor Avail List do indice de autores.
- * @param avAno Avail List do indice de ano.
+/** @{
+ * @name Nomes dos arquivos das avail lists.
  */
-void constroiSecundarios(IndPrim *indPrimario, FILE *base, IndSec *indTitulo, IndSec *indTipo, IndSec *indAutor, IndSec *indAno, availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno);
-/** @brief Troca o indice secundario atual por outro 
- *  no disco de acordo com o valor hash da string.
+#define ARQ_AVAIL_TITULO ("titulo.av")
+#define ARQ_AVAIL_TIPO ("tipo.av")
+#define ARQ_AVAIL_AUTOR ("autor.av")
+#define ARQ_AVAIL_ANO ("ano.av")
+/** @} */
+
+/** @{
+ * @name Constantes usadas para determinar o tipo do campo para o indice
+ */
+#define TITULO 0
+#define TIPO 1
+#define AUTOR 2
+#define ANO 3
+/** @} */
+
+/** Constante usada para indicar o fim de uma lista invertida. */
+#define FIM_DE_LISTA -1
+
+/**
+ * @brief Estrutura que representa um chave secundaria.
+*/
+typedef struct {
+  char key[TAM_TITULO+1]; /**< Vetor que contem a string que eh a chave propriamente. */
+  int next; /**< Proxima chave no indice. */
+  int lenght; /**< Tamanho da string. */
+} Sk;
+
+/**
+ * @brief Estrutura que representa um indice secundario.
+ */
+typedef struct {
+  Sk *vetor; /**< Vetor dinamico de chaves secundarias. */
+  int tamanho; /**< Numero de elementos validos no vetor. */
+  int alocado; /**< Tamanho alocado para o vetor. */
+  int tamDisco; /**< Tamanho do arquivo em disco de PKs. */
+} IndSec;
+
+
+/**
+ * @brief Constroi um indice secundario.
  * 
- *  @param indice O Indice secundario.
- *  @param chave A chave secundaria cujo hash se deseja calcular.
- *  return O indice secundario atualizado. */
-IndSec * trocaIndSec(IndSec *indice, char *chave);
+ * Se existe o arquivo de indice, ele carrega parte de estrutura pra memoria 
+ * e deixa a outra no disco. Caso nao exista o indice, ele ira constri-lo 
+ * a partir da base de dados. Para isso, ela utiliza as funcoes auxiliares 
+ * carregaSk e criaSk.
+ * 
+ * @param indPrim Indice primario.
+ * @param base Base de dados.
+ * @param avail Avail list da base de dados.
+ * @param tipoCampo Constante que indica o tipo de campo cujo indice sera gerado.
+ * @return Indice secundario.
+ */
+IndSec * geraSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo);
 
 /**
  * @brief Carrega um indice secundario a partir do arquivo em disco.
- * @param indice O ponteiro para o indice secundario vazio.
- * @param bigFile O BigFile associado ao campo da obra ao qual 
- * 					o indice se refere, formado pela lista invertida
- * 					de chaves primarias cujos registros contem a SK.
- * @return O ponteiro para o indice contendo os registros.
+ * 
+ * Armazena a parte que ficara na RAM em um vetor de SKs e retorna o
+ * ponteiro para a estrutura de indices secundarios.
+ *
+ * @param arqSk Arquivo de indice secundario.
+ * @param avail Avail list do arquivo.
+ * @return Indice secundario.
  */
-IndSec * carregaSk(IndSec *indice, FILE *bigFile);
+IndSec * carregaSk(FILE *arqSk, availList *avail);
 
 /**
- * @brief Insere as SKs de uma string relativa a um campo da obra
- * num indice secundario. Atualiza a lista invertida no BigFile.
+ * @brief Cria o indice secundario a partir da base de dados, carregando as
+ * informacoes de cada registro.
  *
- * @param indice O indice secundario.
- * @param bigFile Um ponteiro para o BigFile do indice.
- * @param pk A chave primaria do registro.
- * @param campo A string do campo que ira gerar as chaves.
- * @param avail Um ponteiro para a Avail List do indice.
- *
- * @return O Indice com a nova chave inserida.
+ * Essa funcao aloca espaco pro vetor de SKs. Ha uma funcao especifica
+ * para liberar esse espaco.
+ * 
+ * @param indPrim Indice primario.
+ * @param base Base de dados.
+ * @param avail Avail list da base de dados.
+ * @param tipoCampo Constante que indica o tipo de campo cujo indice sera gerado.
+ * @return Indice Secundario.
  */
-IndSec * insereSk(IndSec *indice, FILE *bigFile, char *pk, char *campo, availList *avail);
+IndSec * criaSk(TIndice *indPrim, FILE *base, availList *avail, const int tipoCampo);
 
 /**
- * @brief Grava as informacoes do indice secundario no disco.
- * @param indice O indice secundario.
- * @return N�o tem.
+ * @brief Insere uma SK no vetor que contem o indice secundario pra um
+ * determinado campo, e atualiza a lista invertida no disco.
+ *
+ * @param indSecun Indice secundario.
+ * @param fsk Arquivo de indice secundario.
+ * @param pk String com a chave primaria do registro.
+ * @param campo String com a palavra (token).
+ * @param Avail List do arquivo de indice.
+ * @return Indice secundario.
+ */
+IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail);
+
+/**
+ * @brief Grava o indice secundário da RAM para o arquivo no final deste, 
+ * e o tamanho do arquivo que sempre esta em disco.
+ * 
+ * Libera a memoria utilizada nesses e fecha o arquivo de SK.
+ *
+ * @param sec Indice secundario. 
+ * @param tipoCampo Constante que define o tipo do indice.
+ * @return void. 
 */
-void gravaIndSk(IndSec *indice);
-
-/** @brief Funcao usada para realocar espaco para o vetor da SKs do indice caso seja necessario. */
-/** 
- * Ela ira verificar se o numero de elementos eh
- * sufuciente para o espaco alocado para o vetor e reservar mais caso
- * seja necessario.
- *
- * @param indice O Indice a ser realocado.
- *
- * @return O Indice, com seu vetor realocado ou nao. 
- */
-IndSec * realocaIndSec(IndSec *indice);
+void gravaIndSk(IndSec *sec, const int tipoCampo);
 
 /**
- * @brief Funcao que compara duas chaves secundarias.
- * @param a Um ponteiro para void que sera comparado (com um cast para Sk*).
- * @param b O outro ponteiro usado na comparacao (tambem com cast).
- * @return Um inteiro que vale -1 se o campo key da chave a eh 
- * alfabeticamente menor que o da chave b, 1 se for maior, ou 0 se forem iguais.
+ * @brief Funcao usada para realocar espaco para o vetor da SK caso seja necessario. 
+ * 
+ * Ela ira verificar se o numero de elementos eh sufuciente para o espaco alocado 
+ * para o vetor e reservar mais caso seja necessario.
+ *
+ * @param sec Indice secundario.
+ * @return sec Indice secundario. 
+ */
+IndSec * realocaIndSec(IndSec *sec);
+
+/**
+ *@brief Funcao usada para comparacao de sks. Usadas por qsort e bsearch.
+ * 
+ * Mesmo padrao que a funcao compare, contida em 'catalogo.h'.
+ * 
+ * @param a Parametro a ser comparado.
+ * @param b Parametro a ser comparado.
+ * @return int Retorna se os parametros sao iguais ou nao.
 */
 int compareSk(const void *a, const void *b);
 

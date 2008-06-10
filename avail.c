@@ -1,5 +1,6 @@
 #include "avail.h"
 
+
 int openAvail(const char *nomeArqAvail){
   int leitura;
   FILE *fav;
@@ -22,5 +23,4 @@ void gravaAvail(availList avail, const char *nomeArq) {
   fav = fopen(nomeArq, "w"); /* Sobrescreve o arq antigo. */
   fprintf(fav, FORMATO_INT, avail);
   fclose(fav);
-  
 }

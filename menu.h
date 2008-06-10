@@ -1,29 +1,38 @@
-#include <stdio.h>
-#include "constantes.h"
+/** @file menu.h
+ * @brief Biblioteca que implementa as funcoes de geracao de menu para interacao com o usuario. 
+ */
 
-/**
-  * Funcao que gera menu principal para que usuario escolha a opcao desejada:
-  * inserir, buscar, mostrar todas as obras, sair.
-  * O retorno é a opcao escolhinda
+#include <stdio.h>
+
+
+/** @brief Funcao que gera menu principal para que usuario escolha a opcao desejada.
+ * 
+ * @return int A opcao escolhida.
 */
 int geraMenu ();
 
-/**
-  * Funcao que gera menu de busca para que usuario escolha o tipo de busca a ser realizada:
-  * titulo, tipo, autor, ano e as opcoes de voltar ao menu anterior e sair do programa.
-  * A opcao de remocao sera dada ao usuario apos ele consultar uma obra do catalogo.
-  * O retorno é a opcao escolhinda
+/** @brief Funcao que gera menu de busca para que usuario escolha o tipo de busca a ser realizada.
+ * 
+ * @return int A opcao escolhida.
 */
 int geraMenuBusca ();
 
-/**
-  * Funcao que exibe notificacao de obra inserida e
-  * verifica se o usuario deseja inserir novamente uma obra.
-  * O retorno é 1 ou 0, de acordo se o usuario quer ou nao
-  * inserir uma nova obra.
+/** @brief Funcao que exibe notificacao de obra inserida e
+ * verifica se o usuario deseja inserir novamente uma obra.
+ * 
+ * @return int 1 para usuario inserir nova obra, 0 para nao inserir.
 */
 int geraNotificaInsere ();
 
-void printSearchSuccess();
+/** @brief Funcao que exibe notificacao de obra nao inserida pois
+ * ja esta catalogada e informa a opcao de insercao.
+ * 
+ * @return int 1 para usuario inserir nova obra, 0 para nao inserir.
+ */
+int geraNotificaErroInsere ();
 
-void printSearchFailed();
+/** @brief Funcao que exibe notificacao de remocao concluida.
+ * 
+ * @return void.
+ */
+void geraNotificaRemocao();

@@ -1,59 +1,16 @@
+/** @file leitura.h
+ * @brief Biblioteca que implementa as funcoes relacionadas ao tratamento da entrada do usuario e 
+ * insercao de obra de arte na base de dados. 
+ */
+
 #ifndef _LEITURA_H
 #define _LEITURA_H
 
 #include <stdio.h>
+#include <stdio_ext.h>
 #include <string.h>
-#include "catalogo.h"
-#include "sk.h"
-
-/*__________Funcoes de leitura das entradas do usuario__________*/
-/** 
- * Funcao responsavel pela leitura e tratamento da entrada do usuario.
- * Recebe o indice primario para verificar se a obra ja existe e atualizar este.
- * Retorna a obra a ser inserida na base.
- */
-TObra * leObra(IndPrim *, TObra *);
-
-/*_________Funcoes de leitura das entradas do usuario_________*/
-/** 
- * Essa funcao principal para insercao de uma nova obra. Utiliza
- * funcoes auxiliares que tratam tipos diferentes de dados e possiveis
- * entradas invalidas. Ao final de uma entrada do usuario, ele grava
- * os dados na base e atualiza o vetor de busca na memoria.
- */
-void insereObra(FILE *, IndPrim *);
 
 /**
- * Esta funcao realiza a leitura dos campos do tipo texto: Titulo,
- * Tipo e Autor.  
- *
- * Seus parametros sao um ponteiro para o campo, o
- * tamanho do mesmo, e uma mensagem que sera exibida na tela,
- * indicando qual campo esta sendo lido no momento. 
- */
-void leTexto(char *, int, char *);
-
-/**
- * Esta funcao eh analoga a leTexto, difeindo somente pelo fato de
- * fazer a leitura dos campos numericos.
- */
-void leNumeros(char *, int, char *);
-
-/**
- * Tambem eh analoga as duas anteriores, sendo usada para ler a
- * entrada do campo Imagem.
- */
-void leImagem(char *, int, char *);
-
-/**
- * Preenche uma string com espacos em branco. os paramentros sao o
- * ponteiro da string e o tamanho da mesma.  Sera usada para completar
- * os campos da estrutura que representa a obra e assim manter o
- * tamanho dos campos fixos quando forem salvos na base.
- */
-void preencher(char *, int);
-
-/** 
  * Mensagem de erro enviada ao usuario caso uma entrada seja grande
  * demais para o campo da obra, ou esteja fora do padrao
  * estabelecido. 
@@ -63,15 +20,51 @@ void preencher(char *, int);
 /** 
  * Pseudo-funcao usada para limpar o buffer do teclado e descartar o
  * excesso de dados digitado pelo usuario numa entrada.  
- * Nota: A funcao __fpurge eh incompativel com Windows (Testado no LMS).
+ * Nota: A funcao __fpurge pode ser incompativel com Windows (Testado no LMS).
  */
-#ifdef IS_WINDOWS
-	#define LimpaBuffer() (fflush(stdin))
-#else
-	#include <stdio_ext.h>
-	#define LimpaBuffer() (__fpurge(stdin))
-#endif
+#define LimpaBuffer() (__fpurge(stdin))
 
+/** @brief Funcao responsavel pela leitura e tratamento da entrada do usuario.
+ * 
+ * @param ind Indice primario, para verificar se a obra ja existe e atualizar este.
+ * @param obra Obra a ser retornada para insercao dos indices secundarios.
+ * @return int Inteiro: se a insercao foi feita com sucesso (1) ou  nao (0).
+ */
+int leObra(TIndice *ind, TObra *obra);
 
+/** @brief Leitura dos campos do tipo texto: Titulo,Tipo e Autor.  
+ *
+ * @param campo Onde sera armazenado a entrada do usuario.
+ * @param tamanho Tamanho do campo a ser lido.
+ * @param msg Mensagem de erro de acordo com o campo.
+ * @return void. 
+ */
+void leTexto(char *campo, int tamanho, char *msg);
+
+/** @brief Leitura dos campos numericos: Ano e Valor.
+ * 
+ * @param campo Onde sera armazenado a entrada do usuario.
+ * @param tamanho Tamanho do campo a ser lido.
+ * @param msg Mensagem de erro de acordo com o campo.
+ * @return void.
+ */
+void leNumeros(char *campo, int tamanho, char *msg);
+
+/** @brief Leitura do nome da Imagem.
+ * 
+ * @param campo Onde sera armazenado a entrada do usuario.
+ * @param tamanho Tamanho do campo a ser lido.
+ * @param msg Mensagem de erro de acordo com o campo.
+ * @return void.
+ */
+void leImagem(char *campo, int tamanho, char *msg);
+
+/** @brief Preenche uma string com espacos em branco. 
+ * 
+ * @param campo String a ser preenchida.
+ * @param tamanho Tamanho do campo.
+ * @return void.
+ */
+void preencher(char *campo, int tamanho);
 
 #endif

@@ -1,11 +1,12 @@
+#include "catalogo.h"
 #include "leitura.h"
 
 /*Funcao de leitura da obra de arte a ser inserida*/
-TObra * leObra (IndPrim *ind, TObra *obra) {
-
-  Pk *chave = (Pk *) malloc(sizeof(Pk));
-  Pk *result = NULL;
-			
+int leObra (TIndice *ind, TObra *obra) {
+	
+  ElementoIndice *chave = (ElementoIndice *) malloc(sizeof(ElementoIndice));
+  ElementoIndice *result = NULL;
+	
   printf("\nEntre com os dados de uma obra.\n");
 
   /*Leitura dos dados da obra*/
@@ -14,19 +15,12 @@ TObra * leObra (IndPrim *ind, TObra *obra) {
   preencher(obra->titulo, sizeof(obra->titulo));
 
   /*Verifica se ja existe a obra no catalogo*/
-  
   strcpy(chave->pk, obra->titulo);
-
-	maiuscula(chave->pk);
-	/*Abro o indice primario relativo a obra a ser inserida*/
-	ind = trocaIndPrim(ind, chave->pk);
-  
-  /*Busco no indice que ja esta aberto*/ 
   chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
-  result = (Pk *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(Pk), compare);
-    
-  if (result) { /* registro ja existente */
-    printf("Obra ja catalogada. Insercao nao concluida.\n");
+  result = (ElementoIndice *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(ElementoIndice), compare);
+	
+  if (result) { /* Registro ja existente. Retorna falso */
+    return 0;
 
   } else { 
     leTexto(obra->tipo, sizeof(obra->tipo), "Tipo (ate 100 caracteres): ");
@@ -47,14 +41,14 @@ TObra * leObra (IndPrim *ind, TObra *obra) {
 		
     /* verifica se o indice precisa de mais espaco. */
     (ind->tamanho)++;
-    ind = realocaIndPrim(ind);
+    ind = realocaIndice(ind);
 
     /* atualizacao do indice */	
     ind->vetor[ind->tamanho-1] = *chave;
   }
-	
+	/*Insercao realizada com exito na pk*/
   free(chave);
-  return obra;
+  return 1;
 }
 
 /* Funcao para a leitura dos campos de texto */

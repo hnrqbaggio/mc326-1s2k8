@@ -42,10 +42,8 @@
 /** @{
  * @name Constantes para gravacao de campos numericos.
  */
-/** Define para a mascara usada para ler e gravar inteiros. */
-#define FORMATO_INT ("%08d")
-/** Define para o numero de digitos dos inteiros. */
-#define TAM_NUMERO 8
+#define FORMATO_INT ("%08d") /**< Mascara usada para ler e gravar inteiros. */
+#define TAM_NUMERO 8 /**< Numero de digitos dos inteiros. */
 /** @} */
 
 /** @{

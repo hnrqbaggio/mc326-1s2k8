@@ -24,7 +24,7 @@
  * Cada um deles tera um sufixo numerico que indica o valor da funcao
  * de espalhamanto das chaves do inidice contido no arquivo.
  */
-#define ARQ_PK ("/tmp/mc326/primario")             
+#define ARQ_PK ("primario")             
 
 
 /** @{
@@ -32,10 +32,10 @@
  * Como nos indices primarios, cada arquivo tera um sufixo que 
  * indicara o valor da funcao hash para as chaves no indice.
  */
-#define ARQ_IS_TITULO ("/tmp/mc326/titulo") 	/**< Avail list do indice de titulos */
-#define ARQ_IS_TIPO ("/tmp/mc326/tipo")		/**< Avail list da indice de tipos. */
-#define ARQ_IS_AUTOR ("/tmp/mc326/autor")		/**< Avail list da indice de autores. */
-#define ARQ_IS_ANO ("/tmp/mc326/ano")			/**< Avail list da indice de anos.  */
+#define ARQ_IS_TITULO ("titulo") 	/**< Avail list do indice de titulos */
+#define ARQ_IS_TIPO ("tipo")		/**< Avail list da indice de tipos. */
+#define ARQ_IS_AUTOR ("autor")		/**< Avail list da indice de autores. */
+#define ARQ_IS_ANO ("ano")	        /**< Avail list da indice de anos.  */
 /** @}*/
 
 /** 
@@ -43,16 +43,16 @@
  * Assim como nos demais indices, cada arquivo tera um sufixo que 
  * indicara o valor da funcao hash para as chaves no indice.
  */
-#define ARQ_DESCRITOR ("/tmp/mc326/descritor")
+#define ARQ_DESCRITOR ("descritor")
 
 /** @{
  * @name Nomes dos arquivos de avail list. 
  */
-#define ARQ_AVAIL_BASE   ("/tmp/mc326/base24.av")  /**< Avail list da base de dados. */
-#define ARQ_AVAIL_TITULO ("/tmp/mc326/titulo.av")	/**< Avail list do indice de titulos. */
-#define ARQ_AVAIL_TIPO   ("/tmp/mc326/tipo.av")		/**< Avail list do indice de tipos */
-#define ARQ_AVAIL_AUTOR  ("/tmp/mc326/autor.av")	/**< Avail list do indice de autores */
-#define ARQ_AVAIL_ANO    ("/tmp/mc326/ano.av")		/**< Avail list do indice de anos. */
+#define ARQ_AVAIL_BASE   ("base24.av")  /**< Avail list da base de dados. */
+#define ARQ_AVAIL_TITULO ("titulo.av")	/**< Avail list do indice de titulos. */
+#define ARQ_AVAIL_TIPO   ("tipo.av")    /**< Avail list do indice de tipos */
+#define ARQ_AVAIL_AUTOR  ("autor.av")	/**< Avail list do indice de autores */
+#define ARQ_AVAIL_ANO    ("ano.av")	/**< Avail list do indice de anos. */
 /** @} */
 
 /** @{
@@ -67,10 +67,10 @@
  * @name Demais constantes para nomes de arquivos.
  */
 /** Base de dados */
-#define ARQ_BASE ("/tmp/mc326/base00.dat")
+#define ARQ_BASE ("base00.dat")
 
 /** Html para saida dos resultados de busca */
-#define ARQ_HTML ("/tmp/mc326/base24.html")
+#define ARQ_HTML ("base24.html")
 /** @} */
 
 /** @{

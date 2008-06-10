@@ -69,7 +69,7 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 				maiuscula(indPrim->vetor[i].pk);
 				
 				/* Calcula o descritor da imagem lida da base. */
-				sprintf(imagem, "%s%s", "/tmp/mc326/img/", obra.imagem);
+				sprintf(imagem, "%s%s", "img/", obra.imagem);
 				valor = CalculaDescritor(imagem);
 				
 				/* Verifica se qual indice de descritores ela pertence. */
@@ -201,7 +201,7 @@ IndDesc * filtraInd(IndDesc *indice, char* imgRef) {
 		/* Cado o hash do XOR seja menor que dois, insere o descritor no indice filtrado. */
 		if (hashDescritor(temp) <= 2) {
 			
-			sprintf(imagem, "%s%s", "/tmp/mc326/img/", indice->vetor[i].imagem );
+			sprintf(imagem, "%s%s", "img/", indice->vetor[i].imagem );
 			
 			simil = ComputaSimilaridade(imagem, imgRef);
 			insereDesc(filtrado, indice->vetor[i].pk, indice->vetor[i].valorDescritor, indice->vetor[i].imagem, simil);		

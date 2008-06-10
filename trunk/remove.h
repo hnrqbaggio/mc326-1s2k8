@@ -5,7 +5,6 @@
 #include <string.h>
 #include "catalogo.h"
 #include "sk.h"
-#include "descritor.h"
 
 /**
  * Biblioteca q trata a remocao de registros da base de dados e das implicacoes dessa remocao nos indices.
@@ -18,8 +17,5 @@ IndPrim * removePk(char *, IndPrim *, FILE *, availList *);
 /* Funcao q remove uma entrada de um indice secundario.
 * Parametros: uma string com a SK, um ponteiro pro indice secundario, a string da pk e a avail list. */
 IndSec * removeSk(char *, IndSec *, char *, availList *);
-
-/* Remove do indice um descritor com a chave primaria igual a pk*/
-IndDesc * removeDesc(IndDesc *indice, char *pk);
 
 #endif

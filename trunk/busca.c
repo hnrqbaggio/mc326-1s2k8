@@ -83,52 +83,55 @@ void buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE *base) {
 
 void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *base) {
 	
-	int i;
-	IndDesc * resposta;
-	Pk temp, *result;
-	FILE *saida;
-	TObra reg;
-	
-	saida = fopen(ARQ_HTML, "w");
+  int i, n;
+  IndDesc * resposta;
+  Pk temp, *result;
+  FILE *saida;
+  TObra reg;
+  
+  saida = fopen(ARQ_HTML, "w");
 
-	resposta = filtraInd(indice, arqImagem);
+  resposta = filtraInd(indice, arqImagem);
 	
-	/*Inicio do HTML*/
-	headHtml(saida);
+  /*Inicio do HTML*/
+  headHtml(saida);
 	
-	for (i = resposta->tamanho; i >=0; --i) {
-		strcpy(temp.pk, resposta->vetor[i].pk);
-		
-		/*Abre o indice relativo a pk a ser buscada*/
+  printf("No maximo quantas imagens? ");
+  scanf("%d", &n);
 
-  		indPrim = trocaIndPrim(indPrim, temp.pk);
+  for (i = resposta->tamanho; i >= 0 && n >= 0; --i, n--) {
+    strcpy(temp.pk, resposta->vetor[i].pk);
 		
-		result = (Pk *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(temp), compare);
+    /*Abre o indice relativo a pk a ser buscada*/
+    maiuscula(temp.pk);
+    indPrim = trocaIndPrim(indPrim, temp.pk);
 		
-		if (result) {
+    result = (Pk *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(temp), compare);
+		
+    if (result) {
 		    
-		    fseek(base, TAM_REG * (result->nrr), SEEK_SET);
+      fseek(base, TAM_REG * (result->nrr), SEEK_SET);
 		
-		    /* leitura do registro */
-		    fgets(reg.titulo, TAM_TITULO + 1, base);
-		    fgets(reg.tipo, TAM_TIPO + 1, base);
-		    fgets(reg.autor, TAM_AUTOR + 1, base); 
-		    fgets(reg.ano, TAM_ANO + 1, base);
-		    fgets(reg.valor, TAM_VALOR + 1, base);
-		    fgets(reg.imagem, TAM_IMAGEM + 1, base);
+      /* leitura do registro */
+      fgets(reg.titulo, TAM_TITULO + 1, base);
+      fgets(reg.tipo, TAM_TIPO + 1, base);
+      fgets(reg.autor, TAM_AUTOR + 1, base); 
+      fgets(reg.ano, TAM_ANO + 1, base);
+      fgets(reg.valor, TAM_VALOR + 1, base);
+      fgets(reg.imagem, TAM_IMAGEM + 1, base);
 		
-		    /* passagem do resultado pra função que gera a saida em html */
-		    Html(saida, reg, resposta->vetor[i].similaridade);
+      /* passagem do resultado pra função que gera a saida em html */
+      Html(saida, reg, resposta->vetor[i].similaridade);
 		    
-		}	
+    }	
 
-	}
+  }
 
-	/*Fim do HTML*/
-	endHtml(saida);
-	fclose(saida);
+  /*Fim do HTML*/
+  endHtml(saida);
+  fclose(saida);
 
-	printSearchSuccess();
+  printSearchSuccess();
 }
 
 FILE * Html(FILE *b, TObra valores, double similaridade) {

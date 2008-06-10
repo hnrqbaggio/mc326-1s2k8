@@ -79,7 +79,7 @@ typedef struct {
 } TIndice;
 
 /**
- * Este inteiro será usado para representar a cabeca de uma avail
+ * @brief Este inteiro será usado para representar a cabeca de uma avail
  * list, que sera um alista invertida de posicoes livres no disco.
  */
 typedef int availList;

@@ -1,5 +1,5 @@
 /** @file remove.h
- * @brief Biblioteca q trata a remocao de registros da base de dados e das implicacoes dessa remocao nos indices.
+ * @brief Biblioteca que trata a remocao de registros da base de dados e das implicacoes dessa remocao nos indices.
 */
 
 #ifndef _REMOVE_H

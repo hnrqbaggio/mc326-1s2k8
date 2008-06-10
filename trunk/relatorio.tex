@@ -1,4 +1,4 @@
-\title{\textbf{TP4 - RelatÛrio}}
+\title{\textbf{TP4 - Relat√≥rio}}
 \author{\textbf{Grupo 24} \\
  Henrique Baggio - 071139 \\
  Claudio Neto - 070488 \\
@@ -9,99 +9,156 @@
 
 \maketitle
 
-\section{IntroduÁ„o}
-Neste trabalho, admitimos que os arquivos de indices usados no TP3 s„o grandes
-demais para ficar inteiros na memoria. O objetivo È, ent„o, dividir cada
-indice em v·rios arquivos e distribuir as chaves entre os arquivos,
+\section{Introdu√ß√£o}
+Neste trabalho, admitimos que os arquivos de indices usados no TP3 s√£o grandes
+demais para ficar inteiros na memoria. O objetivo √©, ent√£o, dividir cada
+indice em v√°rios arquivos e distribuir as chaves entre os arquivos,
 carregando o arquivo correspondente a uma chave no momento que for
 necessario.
 
 \section{Objetivo}
-Para distribuir as chaves pelos arquivos da maneira mais uniforme possÌvel,
-o programa deveria usar uma funÁ„o de espalhamento, que realiza uma operaÁ„o
+Para distribuir as chaves pelos arquivos da maneira mais uniforme poss√≠vel,
+o programa deveria usar uma fun√ß√£o de espalhamento, que realiza uma opera√ß√£o
 sobre uma chave para determinar em qual arquivo de indice ela deve ser armazenada.
 
-Nesta vers„o, o programa tambÈm deveria ser capaz de realizar uma busca baseada
-no conte˙do das imagens presentes na base de dados.
+Nesta vers√£o, o programa tamb√©m deveria ser capaz de realizar uma busca baseada
+no conte√∫do das imagens presentes na base de dados.
 
 \section{Funcionalidades}
-Do ponto de vista do usu·rio, a ˙nica funcionalidade nova nesta vers„o È a
-busca por conte˙do, que analisa a semelhanÁa entre as imagens baseda num
+Do ponto de vista do usu√°rio, a √∫nica funcionalidade nova nesta vers√£o √© a
+busca por conte√∫do, que analisa a semelhan√ßa entre as imagens baseda num
 descritor criado para cada uma.
 
-As funcionalidades da vers„o 3.0 foram mantidas, exceto a listagem geral de
+As funcionalidades da vers√£o 3.0 foram mantidas, exceto a listagem geral de
 todas as obras da base de dados.
 
-Em relaÁ„o ‡ estrutura do programa, surgiu a distribuiÁ„o dos indices em
+Em rela√ß√£o √† estrutura do programa, surgiu a distribui√ß√£o dos indices em
 diversos arquivos e o espalhamento das chaves dos mesmos pelos arquivos usando
-uma funÁ„o de hash.
+uma fun√ß√£o de hash.
 
-\section{Detalhes de ImplementaÁ„o}
-\subsection{Õndices}
-Assim como na vers„o 3.0, durante a sua execuÁ„o, o programa mantÈm na memÛria
-o indice prim·rio, os quator indices secund·rios e, a partir desta vers„o, um
+\section{Detalhes de Implementa√ß√£o}
+\subsection{√çndices}
+Assim como na vers√£o 3.0, durante a sua execu√ß√£o, o programa mant√©m na mem√≥ria
+o indice prim√°rio, os quator indices secund√°rios e, a partir desta vers√£o, um
 indice de descritores das imagens da base.
 
-A principal diferenÁa est· no fato de que agora, antes de realizar alguma
-operÁ„o sobre uma chave, o programa deve verificar a qual parte do indice esta
-chave pertence. Para isto, ele calcula o valor da \text{FunÁ„o de Hash} da chave
-e carrega para a memÛria o arquivo correspontente ao valor encontrado, caso seja
+A principal diferen√ßa est√° no fato de que agora, antes de realizar alguma
+oper√ß√£o sobre uma chave, o programa deve verificar a qual parte do indice esta
+chave pertence. Para isto, ele calcula o valor da \text{Fun√ß√£o de Hash} da chave
+e carrega para a mem√≥ria o arquivo correspontente ao valor encontrado, caso seja
 diferente do valor do indice atual.
 
-No disco, os arquivos de um mesmo Ìndice tem um nome formado pelo tipo de campo
-da obra ao qual se referem, e um sufixo numÈrico que indica o valor da FunÁ„o
+No disco, os arquivos de um mesmo √≠ndice tem um nome formado pelo tipo de campo
+da obra ao qual se referem, e um sufixo num√©rico que indica o valor da Fun√ß√£o
 Hash das chaves do arquivo.
 
-H· uma mundaÁa em relaÁ„o aos indices secund·rios: Antes, a estrutura de listas
-invertidas de chaves primarias correspontentes a uma chave secund·ria ficava
-armazenada no mesmo arquivo do indice. Agora, como h· v·rios arquivos de
+H√° uma munda√ßa em rela√ß√£o aos indices secund√°rios: Antes, a estrutura de listas
+invertidas de chaves primarias correspontentes a uma chave secund√°ria ficava
+armazenada no mesmo arquivo do indice. Agora, como h√° v√°rios arquivos de
 vetores de chaves secundarias, optou-se por manter toda a estrutura de listas
 invertidas num mesmo (e grande) arquivo, denomindado \textbf{BigFile}. Assim,
-todas as listas invertidas de um mesmo indice est„o num ˙nico BigFile, que possui uma
-˙nica \textbf{Avail List}.
+todas as listas invertidas de um mesmo indice est√£o num √∫nico BigFile, que possui uma
+√∫nica \textbf{Avail List}.
 
-Neste TP, surgiu o Ìndice de descritores das imagens. S„o estruturas que
+Neste TP, surgiu o √≠ndice de descritores das imagens. S√£o estruturas que
 contem, para cada obra, a sua chave primaria, o seu descritor e o identificador
-da imagem. Optamos por armazenar os identificadores para diminuir o n˙mero de
-acessos ‡ base de dados durante a \textsf{busca por conte˙do}. Este Ìndice usa
-uma funÁ„o de espalhamanto diferente dos demais, baseada no descritor da imagem.
+da imagem. Optamos por armazenar os identificadores para diminuir o n√∫mero de
+acessos √† base de dados durante a \textsf{busca por conte√∫do}. Este √≠ndice usa
+uma fun√ß√£o de espalhamanto diferente dos demais, baseada no descritor da imagem.
 
-\subsection{Busca por Conte˙do}
-A busca por conte˙do retorna uma lista de imagens semelhantes a uma imagem dada
-pelo usu·rio, baseando-se no descritor. A lista de imagens È ordenada de acordo
-com a similaridade, um n˙mero real entre 0 e 1, inclusive, que indice o quanto
-a imagem È parecida com a imagem de referencia. O resultado È informado um
+\subsection{Busca por Conte√∫do}
+A busca por conte√∫do retorna uma lista de imagens semelhantes a uma imagem dada
+pelo usu√°rio, baseando-se no descritor. A lista de imagens √© ordenada de acordo
+com a similaridade, um n√∫mero real entre 0 e 1, inclusive, que indice o quanto
+a imagem √© parecida com a imagem de referencia. O resultado √© informado um
 HTML, podendo o usuario ver os dados de cada obra, a imagem da mesma e o valor
 da similaridade.
 
-As funÁıes que manipulam as imagens est„o numa biblioteca chamada libimg, que È
+As fun√ß√µes que manipulam as imagens est√£o numa biblioteca chamada libimg, que √©
 capaz de carregar, calcular o descritor e a similaridade de imagens no formato
-JPEG, GIF e PNG. Ela n„o foi implementada pelo nosso grupo, mas sim
+JPEG, GIF e PNG. Ela n√£o foi implementada pelo nosso grupo, mas sim
 fornecida pelo professor da disciplina.
 
-\subsection{Melhorias no cÛdigo}
-Houve mudanÁas na implementaÁ„o dos tipos de dados dos Ìndices prim·rio e
-secund·rio. Agora, eles armazenas informaÁıes como o valor do hash das suas
+\subsection{Melhorias no c√≥digo}
+Houve mudan√ßas na implementa√ß√£o dos tipos de dados dos √≠ndices prim√°rio e
+secund√°rio. Agora, eles armazenas informa√ß√µes como o valor do hash das suas
 chaves, o tamanho da base de dados ou do BigFile, e o tipo de campo ao qual 
-se fererem (somente os secund·rios).
+se fererem (somente os secund√°rios).
 
-Encapsular estas informaÁıes permitiu reduzir o n˙mero de par‚metros nas
-funÁıes que manipulam estes Ìndices, tornando o cÛdigo mais claro e de f·cil
-manutenÁ„o.
+Encapsular estas informa√ß√µes permitiu reduzir o n√∫mero de par√¢metros nas
+fun√ß√µes que manipulam estes √≠ndices, tornando o c√≥digo mais claro e de f√°cil
+manuten√ß√£o.
 
-Outra mudanÁas foi a criaÁ„o de uma biblioteca de constantes e uma de tipos de
-dados, armazenando os elementos semelhantes num ˙nico local, melhorando a
-manutenÁ„o do cÛdigo.
+Outra mudan√ßas foi a cria√ß√£o de uma biblioteca de constantes e uma de tipos de
+dados, armazenando os elementos semelhantes num √∫nico local, melhorando a
+manuten√ß√£o do c√≥digo.
 
-Criamos uma funÁ„o que carrega ou cria todos os Ìndices secund·rios de uma sÛ
-vez, para evitar ter que percorrer a base de dados quatro vezes. Agora h· uma
-˙nica passagem pela base em caso de criaÁ„o dos Ìndices.
+Criamos uma fun√ß√£o que carrega ou cria todos os √≠ndices secund√°rios de uma s√≥
+vez, para evitar ter que percorrer a base de dados quatro vezes. Agora h√° uma
+√∫nica passagem pela base em caso de cria√ß√£o dos √≠ndices.
 
-A documentaÁ„o das funÁıes e tipos de dados tambÈm foi melhorada, e usamos o
-Doxygen para a criaÁ„o autom·tica de arquivos de referÍncia do programa.
+A documenta√ß√£o das fun√ß√µes e tipos de dados tamb√©m foi melhorada, e usamos o
+Doxygen para a cria√ß√£o autom√°tica de arquivos de refer√™ncia do programa.
+
+\subsection{As Fun√ß√µes de Hash}
+O programa possui duas fun√ß√µes de hash: Uma usada para espalhar as chaves dos √≠ndices 
+prim√°rios e secund√°rios e outra para os descritores.
+
+A primeira, chamada \textit{hashFunction}, recebe uma string e calcula o produto de cada caractere pela sua posi√ß√£o no vetor, contando a partir de 1, para n√£o perder o primeiro caractere. O n√∫mero obtido eh dividido por uma constante H e a fun√ß√£o retorna o resto dessa divis√£o.
+
+Esta fun√ß√£o mostrou-se eficiente para distribuir as chaves atrav√©s dos indices e, devido a sua f√≥rmula, chaves que diferem apenas de um caractere ou que s√£o anagramas, s√£o mapeadas para posi√ß√µes diferentes da Hash Table. Observando os arquivos de √≠ndices produzidos pelo programa, vemos que estes tem um tamano em bytes bem uniforme, o que mostra que a fun√ß√£o se comportou bem, como se esperava.
+
+Outro detalhe, √© que a fun√ß√£o ignora espa√ßos, para que as chaves prim√°rias n√£o fossem mapeadas para valores mal distribu√≠dos. Esse detalhe em nada afeta os √≠ndices prim√°rios, uma vez que as chaves destes s√£o palavras unit√°rias.
+
+A segunda fun√ß√£o de espalhamento, \textit{hashDescritor}, como o pr√≥prio nome indica, √© usada nos descritores e foi proposta pelo monitor da disciplina: Ela recebe um char e conta os bits ligados nesse descritor. O espa√ßo amostral dessa fun√ß√£o seriam valores de 0 a 8, por√©m h√° apenas um valor de descritor que seria mapeado para os extremos, no caso, um descritor com nenhum bit ligado (imagem totalmente preta) e um com todos os bits ligados (imagem branca). Temos ent√£o, na pr√°tica, apenas 7 posi√ß√µes para distribuir as chaves.
+
+Observando os arquivos de √≠ndices de descritores gerados pelo programa, percebemos uma frequ√™ncia muito mais alta de valores intermedi√°rios da fun√ß√£o hashDescritor, sendo os maiores arquivos aqueles que correspondem aos valores 4 e 3.
 
 \section{Manual de Uso}
+No inicio do programa surgem mensagens que informam ao usu√°rio se os √≠ndices est√£o sendo carregados ou criados, pois no caso de uma base de dados realmente grande, isso pode demorar um pouco.
+
+Em seguida, surge o menu principal, com os seguintes itens:
+
+\subsection{1 - Inserir nova obra}
+Inicia a opera√ß√£o de inser√ß√£o, solicitando ao usu√°rio os dados da nova obra de arte. Permanece inserindo at√© que o usu√°rio resolva voltar ao menu principal.
+
+\subsection{2 - Buscar obra}
+H√°, nesta vers√£o, os seguintes tipos de busca, na ordem em que aparecem no menu de busca.
+
+\subsubsection{Busca por titulo}
+Realiza a busca por palavra do titulo da obra, retornando no arquivo HTML todas as obras com essa palavra.
+
+\subsubsection{Busca por tipo}
+Faz a busca por palavra do tipo da obra, retornando todas as ocorr√™ncias.
+
+\subsubsection{Busca por autor}
+Busca obras usando uma palavra do nome do autor, retornando todas as obras cujo autor contenha o nome fornecido.
+
+\subsubsection{Busca por ano}
+Retorna todas as obras com o mesmo ano de publica√ß√£o.
+
+\subsubsection{Busca por titulo completo}
+Faz a busca usando o t√≠tulo completo da obra. Uma vez que esse t√≠tulo √© √∫nico, produz um √∫nico resultado.
+
+\subsubsection{Busca por conteudo}
+Realiza a busca das imagens semelhantes a uma imagem de refer√™ncia cujo nome √© fornecido pelo usu√°rio. Fornece uma lista semelhante √†s das demais buscas, mas com um campo adicional que indica a \textit{similaridade} entre a obra e a de refer√™ncia.
+
+\section{3 - Listar todas as obras}
+Realiza uma listagem geral de todas as obras da base de dados. Devido a divis√£o do √≠ndices em v√°rios arquivos, uma sa√≠da ordenada implicaria num grande n√∫mero de acessos ao disco. Como esta funcionalidade n√£o era mais obrigat√≥ria, preferiu-se manter a sa√≠da desordenada, servindo apenas como uma an√°lise superficial das obras na base.
+
+\subsection{4 - Remover registro}
+Ao remover um registro, o usu√°rio deve fazer uma busca e ent√£o entrar com o titulo completo da obra que deseja remover. Ap√≥s a opera√ß√£o, exibi-se no HTML os dados da obra.
+
 \section{Bugs}
+O √∫nico bug restante no trabalho est√° na fun√ß√£o da libimg que carrega imagens no formato GIF. H√° trechos de mem√≥ria que n√£o est√£o sendo desalocados. Infelizmente, n√£o conseguimos entender o funcionamento da fun√ß√£o para poder consert√°-la, e tivemos que deixar como estava.
+
+Outros problemas que surgiram durante o desenvolvimento foram corrgidos de forma satisfat√≥ria.
+
 \section{Dificuldades}
+A maior dificuldade desse TP foi adaptar a libimg ao programa. A biblioteca apresentava uma falha que gerava um leak muito grande, da ordem de centenas de MB, oq travava os computadores e atrasou o andamento do trabalho. Esse erro da biblioteca s√≥ foi reconhecido dois dias ap√≥s o in√≠cio do uso da mesma. Praticamente todo o trabalho dessa vers√£o esteve na parte ds busca por conte√∫do, que demorou mais do que o previsto devido ao tempo gasto com a libimg.
+
+Outros problemas como imagens com defeito na base de dados causavam paradas abruptas no programa, em situa√ß√µes que nem mesmo o uso do \textit{gdb} pode ajudar.
+
+Por fim, os problemas foram resolvidos, a biblioteca foi editada, e o trabalho final n√£o tem bugs conhecidos e tem um desempenho satisfat√≥rio.
 
 \end{document}

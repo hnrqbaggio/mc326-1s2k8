@@ -8,42 +8,60 @@
 #include "hash.h"
 #include "avail.h"
 
-/*** Funcoes de manipulacao da base de dados ***/
+/** Funcoes de manipulacao da base de dados **/
 
-/* 
- * Abre um arquivo que sera a base de dados do programa e retorna um
- * ponteiro pra esse arquivo.  A string passada como argumento eh o
- * nome do arquivo no disco.
+/**
+ * @brief Abre um arquivo que sera a base de dados. 
+ * 
+ * @param nome Uma string contendo o nome do arquivo.
+ * @return Um ponteiro para a base de dados.
  */
-FILE * abreCatalogo(char *);
+FILE * abreCatalogo(char * nome);
 
-/* Fecha o arquivo da base de dados bassado como parametro. */
-void fechaCatalogo(FILE *);
-
-/* 
- * Grava uma obra na base de dados. Os parametros sao a obra e o
- * ponteiro pro arquivo da base, a avail list da base e o indice primario,
- * pois contem o tamanho da base.
- * Retorna o nrr da obra inserida ou o tamanho da base.
+/**
+ * @brief Fecha o arquivo da base de dados.
+ * @param base O ponteiro para o arquivo da base de dados.
  */
-int gravaObra(TObra, FILE *, availList *, IndPrim *);
+void fechaCatalogo(FILE * base);
+
+/**
+ * @brief Grava uma obra na base de dados. 
+ * @param obra a ser inserida.
+ * @param base o ponteiro pro arquivo da base de dados.
+ * @param avBase A avail list da base de dados.
+ * @param primario O indice primario.
+ * @return O nrr da obra inserida ou o tamanho da base.
+ */
+int gravaObra(TObra obra, FILE * base, availList * avBase, IndPrim * primario);
 
 
 /*** Funcoes de manipulacao do indice ***/
-/* Carrega o indice do arquivo para a memoria. Cria o indice caso o
- * arquivo nao exista. 
+/** 
+ * @brief Carrega o indice primario do arquivo para a memoria. 
+ * Cria o indice caso o arquivo nao exista.
+ * 
+ * @param base A base de dados.
+ * @param indice O indice primario que será carregado.
+ * 
+ * @return Um ponteiro para o indice primario atualizado.
  */
-IndPrim * iniciaPk(FILE *, IndPrim *);
+IndPrim * iniciaPk(FILE * base, IndPrim * indice);
 
 /**
-  * Abre o arquivo de indice primario correspondente ao valor de hash 
-  * e carrega pra RAM. Fecha o arquivo e retorna o indice primario.
-  * O valor de hash e passado na propria estrutura de indice primario.
-*/
-IndPrim * abrePk(IndPrim *);
+  * @brief Abre o arquivo de indice primario correspondente ao valor de hash 
+  * e carrega pra RAM.
+  * 
+  * @param indice O indice primario.
+  * @return O indice atualizado.
+  */
+IndPrim * abrePk(IndPrim * indice);
 
-/* Realiza a ordenacao do indice passado como parametro. */
-void ordenaIndice(IndPrim *);
+/** 
+ * @brief Realiza a ordenacao de indice um indice primario.
+ * @param indice O indice a ser ordenado.
+ * @return O indice ordenado.
+ */
+void ordenaIndice(IndPrim * indice);
 
 /* Grava o indice da memoria para o arquivo. */
 IndPrim * gravaPk(IndPrim *);

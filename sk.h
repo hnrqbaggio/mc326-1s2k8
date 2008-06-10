@@ -44,7 +44,7 @@
 /**
  * @brief Estrutura que representa um chave secundaria.
 */
-typedef struct _sk{
+typedef struct {
   char key[TAM_TITULO+1]; /**< Vetor que contem a string que eh a chave propriamente. */
   int next; /**< Proxima chave no indice. */
   int lenght; /**< Tamanho da string. */
@@ -53,7 +53,7 @@ typedef struct _sk{
 /**
  * @brief Estrutura que representa um indice secundario.
  */
-typedef struct _vetorsk{
+typedef struct {
   Sk *vetor; /**< Vetor dinamico de chaves secundarias. */
   int tamanho; /**< Numero de elementos validos no vetor. */
   int alocado; /**< Tamanho alocado para o vetor. */

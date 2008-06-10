@@ -1,5 +1,5 @@
 /** @file avail.h
- * @brief Bliblioteca que implementa as funcoes de avail list. 
+ * @brief Biblioteca que implementa as funcoes de avail list. 
  * 
  * funcoes que facilitam na remocao e insercao de obras aproveitando o espaço
  * previamente alocado.
@@ -17,7 +17,6 @@
  * se refere.
  * return Um inteiro que eh o valor do noh cabeca da avail list 
  */
-
 int openAvail (const char *campo);
 
 /** @brief Grava o valor de uma avail list no disco. 
@@ -25,7 +24,6 @@ int openAvail (const char *campo);
  * @param campo O tipo de campo da obra ao qual a avail list se
  * se refere.
  */
-
 void gravaAvail(availList avail, const char *campo );
 
 #endif

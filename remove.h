@@ -1,3 +1,7 @@
+/** @file remove.h
+ * @brief Biblioteca q trata a remocao de registros da base de dados e das implicacoes dessa remocao nos indices.
+*/
+
 #ifndef _REMOVE_H
 #define _REMOVE_H
 
@@ -6,16 +10,25 @@
 #include "catalogo.h"
 #include "sk.h"
 
-/**
- * Biblioteca q trata a remocao de registros da base de dados e das implicacoes dessa remocao nos indices.
- */
+/** @brief Funcao que remove um registro do indice secundario e da base de dados usando a avail list da base.
+ * 
+ * @param chave String com a PK do registro a ser removido.
+ * @param indPrim Indice primario.
+ * @param base Base de dados.
+ * @param avail Avail list da base.
+ * @return Indice primario atualizado.
+*/
+TIndice * removePk(char *chave, TIndice *indPrim, FILE *base, availList *avail);
 
-/* Funcao que remove um registro do indice secundario e da base de dados usando a avail list da base.
- * Parametros: uma string com a PK do registro, um ponteiro pro indice primario, outro pra base de dados, e um pra avail list. */
-TIndice * removePk(char *, TIndice *, FILE *, availList *);
-
-/* Funcao q remove uma entrada de um indice secundario.
-* Parametros: uma string com a SK, um ponteiro pro indice secundario, outro pro arquivo de indice, e um pra avail list. */
-IndSec * removeSk(char *, IndSec *, char *, const int, availList *);
+/** @brief Funcao q remove uma entrada de um indice secundario.
+ * 
+ * @param chave String com a SK.
+ * @param indSecun Indice secundario.
+ * @param pk Indice primario da obra removida.
+ * @param tipoCampo Tipo do campo do indice secundario.
+ * @param avail Avail list do indice secundario.
+ * @return Indice secundario atualizado.
+*/
+IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, const int tipoCampo, availList *avail);
 
 #endif

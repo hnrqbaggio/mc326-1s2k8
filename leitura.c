@@ -51,68 +51,6 @@ int leObra (TIndice *ind, TObra *obra) {
   return 1;
 }
 
-/*Funcao para inserir uma nova obra no catalogo*/
-void insereObra(FILE *arq, TIndice *ind) {
-  char option;
-  TObra obra;
-  ElementoIndice *chave = (ElementoIndice *) malloc(sizeof(ElementoIndice));
-  ElementoIndice *result = NULL;
- 
-  printf("\nEntre com os dados de uma obra.\n");
-
-  /*Leitura dos dados da obra*/
-  do 
-    {
-      /*Le os campos quem contem texto*/
-      leTexto(obra.titulo, sizeof(obra.titulo), "Nome da Obra (ate 200 caracteres): ");
-      preencher(obra.titulo, sizeof(obra.titulo));
-
-      strcpy(chave->pk, obra.titulo);
-      maiuscula(chave->pk);
-      chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
-      result = (ElementoIndice *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(ElementoIndice), compare);
-    
-      if (result) { /* registro ja existente */
-	printf("Obra ja catalogada. Insercao nao concluida.\n");
-
-      } else { 
-	leTexto(obra.tipo, sizeof(obra.tipo), "Tipo (ate 100 caracteres): ");
-	leTexto(obra.autor, sizeof(obra.autor), "Autor (ate 125 caracteres): ");
-
-	/*Campos com numeros*/
-	leNumeros(obra.ano, sizeof(obra.ano), "Ano de Publicacao (ate 4 digitos): ");
- 	leNumeros(obra.valor, sizeof(obra.valor), "Valor (ate 12 digitos): ");
-
-	/*Campo Imagem*/
-	leImagem(obra.imagem, sizeof(obra.imagem),"Identificador da Imagem (6 digitos + extensao): " );
- 
-	/*preenchendo com espacos e movendo o '\0' pro fim de cada campo*/ 
-	preencher(obra.tipo, sizeof(obra.tipo));
-	preencher(obra.autor, sizeof(obra.autor));
-	preencher(obra.ano, sizeof(obra.ano));
-	preencher(obra.valor, sizeof(obra.valor));
-
-	/*grava os dados no arquivo texto*/
-	/*gravaObra(obra, arq);*/
-
-	/* verifica se o indice precisa de mais espaco. */
-	(ind->tamanho)++;
-	ind = realocaIndice(ind);
-
-	/* atualizacao do indice */	
-	ind->vetor[ind->tamanho-1] = *chave; /* estruturas de mesmo tipo: atribuicao permitida.  */;
-      }
-
-      printf("\nDeseja entrar com os dados de uma nova obra? [s/n]: ");	    
-    } while(scanf(" %c", &option) == 1 && option != 'n');
-  
-  /* Ordenacao do indice atualizado */
-  ordenaIndice(ind);
-
-  /* Dar free no malloc da chave!!! */
-  free(chave);
-}
-
 /* Funcao para a leitura dos campos de texto */
 void leTexto(char *campo, int tamanho, char *msg){
   int valido = 1;

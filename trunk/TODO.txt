@@ -3,8 +3,6 @@ TODO LIST
 =========
 
 == TAREFAS GERAIS ==
-- Mudar os defines de nomes de arquivos!
-	tirar o /tmp/mc326
 - Numeros magicos
 	cacar e exterminar todos! =]
 - Colocar a função de busca por indice primario no arquivo busca.c, hoje tah no catalogo.c
@@ -18,7 +16,6 @@ TODO LIST
 - Alterar comentarios pra podermos usar o Doxygen - ATRASADO!
 - Terminar o relatorio. 
   Matao terminou o relatorio.
-  Baggio vai preparar o doxyfile pra branch TP3.
 
 (TP4)
 - Testar, testar muito e ver cada furo.
@@ -38,17 +35,10 @@ para ter ele pronto junto com o programa.
 
 
 == BAGGIO ==
- 
-(TP3)
-Doxyfile - Eh soh commitar pra branch o q usa no TP4.
 
 (TP4)
-- Atributos binarios - 
-      Corrigir pequenos erros.
-- Remoção nos indices de descritores.
-- Comecar relatorio - Vai ser em LATEX. =)
+- Terminar o Relatorio.
 
 (TP5)
-- Na terca a tarde eh pau na maquina. 
-  Ateh lah o IFWG tah gritando "Media 7!".
+- Começando hoje!
 

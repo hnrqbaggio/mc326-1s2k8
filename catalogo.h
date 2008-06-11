@@ -46,7 +46,7 @@ int gravaObra(TObra obra, FILE * base, availList * avBase, IndPrim * primario);
  * Cria o indice caso o arquivo nao exista.
  * 
  * @param base A base de dados.
- * @param indice O indice primario que ser� carregado.
+ * @param indice O indice primario que sera carregado.
  * 
  * @return Um ponteiro para o indice primario atualizado.
  */

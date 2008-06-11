@@ -15,7 +15,7 @@
 
 /** @brief Inicializa um indice secundario,
  * alocando memoria para a sua propria estrutura
- * e tamabem para o vetor de SKs. Tambem inicializa
+ * e tambem para o vetor de SKs. Tambem inicializa
  * os demais campos do indice com valores apropriados.
  * 
  * @param campo Uma string que determina o campo da obra
@@ -47,6 +47,7 @@ IndSec * inicializaSecundario(char *campo);
  * @param avAno Avail List do indice de ano.
  */
 void constroiSecundarios(IndPrim *indPrimario, FILE *base, IndSec *indTitulo, IndSec *indTipo, IndSec *indAutor, IndSec *indAno, availList *avTitulo, availList *avTipo, availList *avAutor, availList *avAno);
+
 /** @brief Troca o indice secundario atual por outro 
  *  no disco de acordo com o valor hash da string.
  * 
@@ -82,7 +83,7 @@ IndSec * insereSk(IndSec *indice, FILE *bigFile, char *pk, char *campo, availLis
 /**
  * @brief Grava as informacoes do indice secundario no disco.
  * @param indice O indice secundario.
- * @return N�o tem.
+ * @return void.
 */
 void gravaIndSk(IndSec *indice);
 

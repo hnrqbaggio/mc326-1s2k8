@@ -88,7 +88,7 @@ IndDesc * carregaDescritor(IndDesc *indice, FILE *arqIndice){
   char pk[TAM_TITULO+1], imagem[TAM_IMAGEM+1];
   char valorDesc;
 	
-  /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
+  /*Enquanto nao chega ao final do arquivo, leio pk, valor do descritor e nome da imagem*/
   while (fgets(pk, TAM_TITULO+1, arqIndice)) {
   	
     fscanf(arqIndice, "%c", &(valorDesc));

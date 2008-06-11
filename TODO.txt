@@ -29,6 +29,7 @@ para ter ele pronto junto com o programa.
 
 (TP4)
 - Mudar o termo "PK" nos menus.
+- Corrigindo pequenos erros herdados da versão 3.0
 
 (TP5)
 - Estudar B+.
@@ -37,8 +38,7 @@ para ter ele pronto junto com o programa.
 == BAGGIO ==
 
 (TP4)
-- Terminar o Relatorio.
-- Bug da imagem de referencia inexistente.
+- Remoção do indice de descritores.
 
 (TP5)
 - Comecando hoje!

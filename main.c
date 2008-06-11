@@ -36,8 +36,8 @@ int main(int argc, char **argv){
   IndSec *secTitulo, *secAutor, *secTipo, *secAno;
   availList availTitulo, availTipo, availAno, availAutor;
   
-  	/* Indice de descritores. */
-	IndDesc *indDescritor;
+  /* Indice de descritores. */
+  IndDesc *indDescritor;
 
   /*Abre a availList da base, a base e o indice primario*/
   availBase = openAvail(ARQ_AVAIL_BASE);
@@ -56,11 +56,11 @@ int main(int argc, char **argv){
   availAutor  = openAvail(ARQ_AVAIL_AUTOR);
   availAno    = openAvail(ARQ_AVAIL_ANO);
   
-  	indDescritor = inicializaDescritor();
+  indDescritor = inicializaDescritor();
   
-	/*Abre os indices secundarios*/
-  	constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
-	constroiIndDesc(indDescritor, ind, arq);
+  /*Abre os indices secundarios*/
+  constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
+  constroiIndDesc(indDescritor, ind, arq);
 	
   elem = (Pk *) malloc(sizeof(Pk));
 
@@ -82,7 +82,7 @@ int main(int argc, char **argv){
         /*leitura da obra a ser inserida e gravacao no indice primario*/
         obra = *(leObra(ind, &obra));
         
-         /*Grava a obra inserida na base de dados*/
+	/*Grava a obra inserida na base de dados*/
         end = gravaObra(obra, arq, &availBase, ind);
         
         /*Obra2 sera inserida na base. obra sera usada na insereSk*/
@@ -139,22 +139,22 @@ int main(int argc, char **argv){
 
         switch (option) {
         		
-        /*Somente uma palavra por vez, por enquanto*/
+	  /*Somente uma palavra por vez, por enquanto*/
         
         case 1:/*Busca pelo titulo*/
-				buscaSecudario(ind, secTitulo, arq);
+	  buscaSecudario(ind, secTitulo, arq);
           break;
 
         case 2:/*Busca pelo tipo*/
-				buscaSecudario(ind, secTipo, arq);
+	  buscaSecudario(ind, secTipo, arq);
           break;
 
         case 3:/*Busca pelo autor*/
-				buscaSecudario(ind, secAutor, arq);
+	  buscaSecudario(ind, secAutor, arq);
           break;
 
         case 4:/*Busca por ano*/
-				buscaSecudario(ind, secAno, arq);
+	  buscaSecudario(ind, secAno, arq);
           break;
 
         case 5:/*Busca por PK*/
@@ -168,11 +168,11 @@ int main(int argc, char **argv){
           free(consultaObra);
           break;
           
-			case 6: /* Busca por conteudo. */
-				printf("Digite o nome da imagem: ");
-				scanf("%s", nome);
-				buscaPorConteudo(nome, indDescritor, ind, arq);
-        		break;
+	case 6: /* Busca por conteudo. */
+	  printf("Digite o nome da imagem: ");
+	  scanf("%s", nome);
+	  buscaPorConteudo(nome, indDescritor, ind, arq);
+	  break;
         		 
         case 0:/*Menu anterior*/
           break;

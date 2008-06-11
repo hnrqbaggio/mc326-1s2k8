@@ -6,7 +6,7 @@
  *  \brief Arquivo que contem os tipo abstratos de dados usados no programa.
  */
 
-/*! \brief TAD que usaremos para representar uma obra de arte. */
+/*! \brief Estrutura usada para representar uma obra de arte. */
 typedef struct {
   char titulo[TAM_TITULO + 1];   /**< Titulo da obra de arte. */
   char tipo[TAM_TIPO + 1];       /**< Tipo da obra. */
@@ -16,13 +16,13 @@ typedef struct {
   char imagem[TAM_IMAGEM + 1];   /**< Imagem correspondente. */
 } TObra;
 
-/*! \brief TAD usado para representar uma chave primaria. */
+/*! \brief Estrutura usada para representar uma chave primaria. */
 typedef struct {
   char pk[TAM_TITULO + 1]; /**< String usada para armazenar a chave primaria propriamente dita. */
   int nrr;    					/**< Numero relativo do registro na base de dados. */
 } Pk;
 
-/*! \brief TAD que representa o indice primario. */
+/*! \brief Estrutura que representa o indice primario. */
 typedef struct {
   Pk * vetor;    /**< Vetor eh um vetor dinamico que ira armazenar os elementos de indice.*/
   int tamanho;   /**< Eh o numero de elementos validos, assim, indica tambem a proxima posicao livre do vetor. */
@@ -37,14 +37,14 @@ typedef struct {
  */
 typedef int availList;
 
-/*! \brief TAD que representa uma chave secundaria. */
+/*! \brief Estrutura que representa uma chave secundaria. */
 typedef struct {
   char key[TAM_TITULO+1]; 	/**< String que eh a chave propriamente dita. */
   int next; 					/**< Apontador para a proxima chave no indice. */
   int lenght;					/**< Tamanho da string que contem a chave. */
 } Sk;
 
-/*! \brief TAD que representa um indice secundario. */
+/*! \brief Estrutura que representa um indice secundario. */
 typedef struct {
   Sk *vetor; 								/**< Vetor dinamico de chaves secundarias. */
   int tamanho;								/**< Tamanho do vetor do indice. */
@@ -55,7 +55,7 @@ typedef struct {
 } IndSec;
 
 
-/*! \brief TAD de um descritor de imagem. */
+/*! \brief Estrutura de um descritor de imagem. */
 typedef struct {
 	char pk[TAM_TITULO+1]; 		/**< Chave primaria do registro ao qual o descritor pertence. */
 	char valorDescritor;			/**< Valor do descritor da imagem da \a Obra. */
@@ -63,7 +63,7 @@ typedef struct {
 	char imagem[TAM_IMAGEM+1];	/**< Imagem da Obra. */
 } Descritor;
 
-/*! \brief TAD de um indice de descritores. */
+/*! \brief Estrutura de um indice de descritores. */
 typedef struct {
 	Descritor *vetor;	/**< Vetor dinamico que contem os descritores do indice. */
 	int tamanho;		/**< Tamanho do vetor e consequantemente do indice. */

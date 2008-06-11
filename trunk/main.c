@@ -241,8 +241,7 @@ int main(int argc, char **argv){
       gravaAvail(availAno, ARQ_AVAIL_ANO);
       
       /*Libera os indices e seus vetores*/
-      liberaIndices(ind, secTitulo,secTipo, secAutor, secAno);
-      liberaDesc(indDescritor);
+      liberaIndices(ind, secTitulo,secTipo, secAutor, secAno, indDescritor);
 
       free(elem);
       break;

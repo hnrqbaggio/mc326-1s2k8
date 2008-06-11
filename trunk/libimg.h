@@ -1,3 +1,8 @@
+/** @file libimg.h
+ * @brief Biblioteca fornecida.
+*/
+
+
 /* victor matheus de araujo oliveira
    Ra072589
    grupo 10

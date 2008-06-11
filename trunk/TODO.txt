@@ -12,11 +12,6 @@ TODO LIST
 
 == BELO ==
 
-(TP3)
-- Alterar comentarios pra podermos usar o Doxygen - ATRASADO!
-- Terminar o relatorio. 
-  Matao terminou o relatorio.
-
 (TP4)
 - Testar, testar muito e ver cada furo.
 

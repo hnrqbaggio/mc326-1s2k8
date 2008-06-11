@@ -1,5 +1,5 @@
 /** @file busca.h
- * @brief Esta biblioteca implementa as funcionalidades 
+ * @brief Biblioteca implementa as funcionalidades 
  * de busca na base de dados.
  */
 

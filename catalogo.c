@@ -449,7 +449,7 @@ void maiuscula(char *chave) {
 
 /*Funcao que libera os mallocs/reallocs utilizados*/
 void liberaIndices(IndPrim * indPrim, IndSec *indTitulo,
-IndSec *indTipo, IndSec *indAutor, IndSec *indAno) {
+IndSec *indTipo, IndSec *indAutor, IndSec *indAno, IndDesc *indDescritor) {
 	
 	/*Libero os vetores alocados em cada indice*/
 	free(indPrim->vetor);
@@ -457,6 +457,7 @@ IndSec *indTipo, IndSec *indAutor, IndSec *indAno) {
 	free(indTipo->vetor);
 	free(indAutor->vetor);
 	free(indAno->vetor);
+	free(indDescritor->vetor);
 	
 	/*Libero os indices*/
 	free(indPrim);
@@ -464,6 +465,7 @@ IndSec *indTipo, IndSec *indAutor, IndSec *indAno) {
 	free(indTipo);
 	free(indAutor);
 	free(indAno);
+	free(indDescritor);
 	
 	return;
 }

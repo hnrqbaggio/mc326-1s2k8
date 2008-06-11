@@ -267,11 +267,14 @@ Imagem* Imagem_le(char* nome_arq)
 
   for (i = 0; i < strlen(nome_arq) - 3; i++) imagem[i] = nome_arq[i];
   
-  imagem[i++] = '.';
+  /* Eh preciso inserir o ponto no nome da imagem. */
+  if(nome_arq[i-1] != '.')	  imagem[i++] = '.';
+  
   imagem[i++] = ext[0];
   imagem[i++] = ext[1];
   imagem[i++] = ext[2];
   imagem[i++] = ext[3];
+
   
   if (strcmp(strlwr(ext),"png")==0){
     return le_png(imagem);

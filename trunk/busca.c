@@ -86,8 +86,21 @@ void buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *
   int i, n;
   IndDesc * resposta;
   Pk temp, *result;
-  FILE *saida;
+  FILE *saida, *teste;
   TObra reg;
+  
+  /* Verifica se a imagem de referencia existe, para evitar que o programa capote. */
+  
+  if((teste = fopen(arqImagem, "r")) == NULL) {
+  	printf("\nA imagem fornecida não pode ser carregada.\n");
+  	printf("Verifique se o nome está correto.\n");
+  	
+  	
+  	return; /* Sai da funcao sem fazer nada. */
+  }
+  
+  /* A imagem existe. Libera o arquivo. */
+  fclose(teste);
   
   saida = fopen(ARQ_HTML, "w");
 

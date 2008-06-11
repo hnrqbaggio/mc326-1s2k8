@@ -154,14 +154,14 @@ FILE * headHtml(FILE *b);
  * @param b Arquivo html.
  * @return Arquivo html.
  */
-FILE * endHtml(FILE *);
+FILE * endHtml(FILE *b);
 
 /** @brief Transforma para maiuscula a string passada como parametro.
  * 
  * @param chave String a ser mudada para maiuscula.
  * @return void.
 */
-void maiuscula(char *);
+void maiuscula(char *chave);
 
 /** 
  * @brief Funcao de comparacao para as funcoes qsort e bsearch da stdlib.h.

@@ -18,7 +18,8 @@
 int main(int argc, char **argv){
 
   int ent, option, end;
-  TObra obra, obra2, *consultaObra;
+  TObra obra, obra2;
+  resultadosBusca *remove = NULL;
   char nome[TAM_NOME_ARQ+10];
  
   /* Ponteiro pra base de dados. */
@@ -158,20 +159,11 @@ int main(int argc, char **argv){
           break;
 
         case 5:/*Busca por PK*/
-          leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
-          preencher(elem->pk, sizeof(elem->pk));
-          elem->nrr = -1;
-
-          consultaObra = consulta(elem, arq, ind);
-          
-          /*Libera consultaObra, que e alocado dentro da funcao consulta*/
-          free(consultaObra);
+	  buscaPrimario(ind, arq);
           break;
           
 	case 6: /* Busca por conteudo. */
-	  printf("Digite o nome da imagem: ");
-	  scanf("%s", nome);
-	  buscaPorConteudo(nome, indDescritor, ind, arq);
+	  buscaDescritor(indDescritor, ind, arq);
 	  break;
         		 
         case 0:/*Menu anterior*/
@@ -186,7 +178,7 @@ int main(int argc, char **argv){
 
     case 3:
       /*Mostra a base inteira em ordem ASCII, no html*/
-      listaBase(arq, ind);
+      /*listaBase(arq, ind);*/
       break;
 
     case 4: /* Remocao */
@@ -195,22 +187,24 @@ int main(int argc, char **argv){
       elem->nrr = -1;
 
       /*Faz a pesquisa da pk e mostra no html*/
-      consultaObra = consulta(elem, arq, ind);
+      remove = buscaPk(elem, arq, ind, remove);
      
       /*Se encontrou obra de arte*/
-      if(consultaObra != NULL) {
+      if(remove != NULL) {
         
         /*Remove do indice primario e da base de dados*/
         ind = removePk(elem->pk, ind, arq, &availBase);
 
         /*Remove todas as Sks */
-        secTitulo = removeSk(consultaObra->titulo, secTitulo, elem->pk, &availTitulo);
-        secTipo   = removeSk(consultaObra->tipo,   secTipo,   elem->pk, &availTipo);
-        secAutor  = removeSk(consultaObra->autor,  secAutor,  elem->pk, &availAutor);
-        secAno    = removeSk(consultaObra->ano,    secAno,    elem->pk, &availAno);
+        secTitulo = removeSk(remove->obras[0].titulo, secTitulo, elem->pk, &availTitulo);
+        secTipo   = removeSk(remove->obras[0].tipo,   secTipo,   elem->pk, &availTipo);
+        secAutor  = removeSk(remove->obras[0].autor,  secAutor,  elem->pk, &availAutor);
+        secAno    = removeSk(remove->obras[0].ano,    secAno,    elem->pk, &availAno);
       }
-      /*Libera consultaObra, que e alocado dentro da funcao consulta*/
-      free(consultaObra);
+
+      /*Libera remove, que e alocado dentro da funcao consulta*/
+      liberaBusca(remove);
+
       break;
 
     case 0:/*Sair do programa*/

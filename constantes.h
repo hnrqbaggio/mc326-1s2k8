@@ -67,7 +67,7 @@
  * @name Demais constantes para nomes de arquivos.
  */
 /** Base de dados */
-#define ARQ_BASE ("base00.dat")
+#define ARQ_BASE ("base24.dat")
 
 /** Html para saida dos resultados de busca */
 #define ARQ_HTML ("base24.html")

@@ -71,4 +71,15 @@ typedef struct {
 	int valorHash;		/**< Valor da funcao de espalhamento dos descritores do indice. */
 } IndDesc;
 
+/* Vetor de obras usado retornado pelas funcoes de busca. */
+typedef struct {
+
+  TObra *obras; /* Vetor de obras de arte. */
+  double *similaridades; /* vetor com os valores de similaridade com uma obra de referencia */
+  int tamanho; /* Tamanho dos vetores. */
+  int alocado; /* Espaco alocado pros vetores, aumenta sobre demanda. */
+  char chave[TAM_TITULO]; /* Uma string que indica a chave que resultou nestes resultados. */
+
+} resultadosBusca;
+
 #endif /*TIPOS_H_*/

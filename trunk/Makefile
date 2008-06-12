@@ -38,7 +38,7 @@ clean:
 	rm -f *.o *~ tp4
 
 del:
-	rm -f /tmp/mc326/*.av /tmp/mc326/*.ch* /tmp/mc326/*.dsc
+	rm -f *.av *.ch* *.dsc
 
 ef: main.c avail.o hash.o leitura.o catalogo.o menu.o sk.o busca.o remove.o libimg.o descritor.o
 	gcc $(FLAGS) $(IMGFLAGS) -lefence main.c avail.o hash.o leitura.o sk.o catalogo.o menu.o busca.o remove.o descritor.o libimg.o -o tp4

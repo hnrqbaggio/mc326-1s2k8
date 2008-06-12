@@ -20,14 +20,14 @@ void fechaCatalogo(FILE *arq) {
  * parametros a struct TObra e o arquivo de saida, a avail da base de dados e
  * o indice primario, que contem o tamanho da base.
  * Retorna o endereco da obra inserida ou o tamanho da base.
-*/
+ */
 int gravaObra(TObra obra, FILE *arq, availList *avail, IndPrim * indice ){
   
   int end, prox = 0;
   
   /*Caso e o final do arquivo*/
   if(*avail == -1) {
-  	fseek(arq, (indice->tamBase *(int)TAM_REG), SEEK_SET);
+    fseek(arq, (indice->tamBase *(int)TAM_REG), SEEK_SET);
   	
     fprintf(arq, "%s", obra.titulo);
     fprintf(arq, "%s", obra.tipo);
@@ -44,13 +44,13 @@ int gravaObra(TObra obra, FILE *arq, availList *avail, IndPrim * indice ){
     return indice->tamBase;
     
   } else { 
-  	/*Pega o valor da avail, e percorre a base com fseek para inserir na posicao.*/
-  	fseek(arq, (*avail*(int)TAM_REG), SEEK_SET);
+    /*Pega o valor da avail, e percorre a base com fseek para inserir na posicao.*/
+    fseek(arq, (*avail*(int)TAM_REG), SEEK_SET);
   	
-  	/*Leio o next da avail list*/
-  	fscanf(arq, FORMATO_INT, &prox);
+    /*Leio o next da avail list*/
+    fscanf(arq, FORMATO_INT, &prox);
   	
-  	end = *avail;
+    end = *avail;
     *avail = prox;
     
     /*Volta para sobrescrever o antigo next da avail*/
@@ -97,8 +97,8 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
 
   if (arq_ind != NULL) { /* existe o arquivo */
 
-	/*Pego o tamanho da base*/
-	fscanf(arq_ind, FORMATO_INT, &(indice->tamBase));
+    /*Pego o tamanho da base*/
+    fscanf(arq_ind, FORMATO_INT, &(indice->tamBase));
 		
     while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arq_ind)) {
       (*tam)++;
@@ -113,21 +113,21 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
     	
     	
       
-		maiuscula(pkAux);
-		/*Abre o indice relativo a pkAux*/
-		indice = trocaIndPrim(indice, pkAux);
+      maiuscula(pkAux);
+      /*Abre o indice relativo a pkAux*/
+      indice = trocaIndPrim(indice, pkAux);
 		  
-		/*Copio a pk para o indice primario*/
-		strcpy(indice->vetor[(*tam)].pk, pkAux);
-		indice->vetor[*tam].nrr = position;
-		(*tam)++;
-		indice->tamBase++;
-		indice = realocaIndPrim(indice);
+      /*Copio a pk para o indice primario*/
+      strcpy(indice->vetor[(*tam)].pk, pkAux);
+      indice->vetor[*tam].nrr = position;
+      (*tam)++;
+      indice->tamBase++;
+      indice = realocaIndPrim(indice);
 		
-		/* Posiciona o cursor do arquivo no campo Titulo do proximo registro. */
-		/* Usamos apenar tamanho e nao tamanho-1 pois iniciamos o nrr em zero. */
-		offset = TAM_REG * (++position);
-		fseek(base, offset, SEEK_SET);
+      /* Posiciona o cursor do arquivo no campo Titulo do proximo registro. */
+      /* Usamos apenar tamanho e nao tamanho-1 pois iniciamos o nrr em zero. */
+      offset = TAM_REG * (++position);
+      fseek(base, offset, SEEK_SET);
     }
 
     /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
@@ -152,8 +152,8 @@ IndPrim * gravaPk(IndPrim *indice) {
 
   ind = fopen(nome, "w");
 	
-	/* Gravo o tamanho da base. */
-  	fprintf(ind, FORMATO_INT, indice->tamBase);
+  /* Gravo o tamanho da base. */
+  fprintf(ind, FORMATO_INT, indice->tamBase);
   	
   for (i = 0; i < indice->tamanho; i++) {
     fprintf(ind, "%s", indice->vetor[i].pk);  /* grava a chave primaria   */
@@ -163,116 +163,6 @@ IndPrim * gravaPk(IndPrim *indice) {
   fclose(ind);
   
   return indice;
-}
-
-/* Consulta de uma obra na base. 
-   Chave já vem preenchido. */
-TObra * consulta(Pk *chave, FILE *base, IndPrim *indice) {
-  
-  Pk *temp;
-  int retorno;
-  TObra * reg = (TObra *) malloc(sizeof(TObra));
-  
-  /*Abro o indice relativo a pk a ser buscada*/
-  maiuscula(chave->pk);
-  indice = trocaIndPrim(indice, chave->pk);
-  
-  temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
-
-  if (temp) { /* registro encontrado */
-    FILE *saida;
-
-    saida = fopen(ARQ_HTML, "w");
-    /*Inicio do HTML*/
-    headHtml(saida);
-    
-    retorno = 1;/*Encontrou PK. Consulta retorna 1*/
-    fseek(base, TAM_REG * (temp->nrr), SEEK_SET);
-
-    /* leitura do registro */
-    fgets(reg->titulo, TAM_TITULO + 1, base);
-    fgets(reg->tipo, TAM_TIPO + 1, base);
-    fgets(reg->autor, TAM_AUTOR + 1, base); 
-    fgets(reg->ano, TAM_ANO + 1, base);
-    fgets(reg->valor, TAM_VALOR + 1, base);
-    fgets(reg->imagem, TAM_IMAGEM + 1, base);
-
-    /* passagem do resultado pra função que gera a saida em html */
-    preencheHtml(saida, *reg);
-
-    if (saida) {
-      printf("\n--------------------------------------------------\n");
-      printf("Registro encontrado e saida gerada com sucesso.\n");
-      printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
-      printf("--------------------------------------------------\n");				
-    } else {
-      printf("\n--------------------\n");
-      printf("Erro ao gerar saida!\n");
-      printf("--------------------\n");
-    }
-		/*Fim do HTML*/
-    endHtml(saida);
-    
-    fclose(saida);
-		
-  } else {/*Registro nao encontrado*/
-    retorno = 0;
-    printf("\n-----------------------\n");
-    printf("Registro não encontrado.\n");
-    printf("-----------------------\n");
-    reg = NULL;
-  }
-
-  return reg;
-}
-
-/* 
- * Realiza a listagem as obras na base, e envia os resultados pra um
- * arquivo em html. 
- */
-void listaBase(FILE *base, IndPrim *indice) {
-  int i, j;
-  TObra reg;
-  FILE *saida;
-
-  saida = fopen(ARQ_HTML, "w");
-
-  /*Inicio do HTML*/
-  headHtml(saida);
-  
-  /*Percorre todos os arquivos de indice primario*/
-	for(j=0; j<= H; j++) {
-		/*Gravo indice primario*/
-		gravaPk(indice);
-	  	
-	  	indice->valorHash = j;
-		indice->tamanho = 0;
-		abrePk(indice);
-	  	
-	  	/*Percorre o indice*/
-	  	for (i = 0; i < indice->tamanho; i++) {
-			fseek(base, TAM_REG*(indice->vetor[i].nrr), SEEK_SET);
-		
-		   /* leitura do registro */
-		   fgets(reg.titulo, TAM_TITULO+1, base);
-		   fgets(reg.tipo, TAM_TIPO+1, base);
-		   fgets(reg.autor, TAM_AUTOR+1, base);
-		   fgets(reg.ano, TAM_ANO+1, base);
-		   fgets(reg.valor, TAM_VALOR+1, base);
-		   fgets(reg.imagem, TAM_IMAGEM+1, base);
-		
-		   preencheHtml(saida, reg);
-		}
-	}
-	
-  /*Final do HTML*/
-  endHtml(saida);
-  
-  printf("\n--------------------------------------------------\n");
-  printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
-  printf("--------------------------------------------------\n")	;
-
-  fclose(saida);
 }
 
 /* Funcao de comparacao */
@@ -328,56 +218,7 @@ FILE * endHtml(FILE *b) {
   fprintf(b, "%s", "</table></body></html>");
   return b;
 }
-/*Preenche o HTML*/
-FILE * preencheHtml(FILE *b, TObra valores) {
-  
-  char aux[TAM_IMAGEM + 2];
-  int j,i = 0;
-  int ponto = 0;
-  
-  /*Preenchimento da tabela*/
-  fprintf(b, "%s", "<tr height=\"8\"></tr>");
-  fprintf(b, "%s","<tr><td nowrap width=\"200\"><b>TITULO DA OBRA</b></td><td nowrap width=\"400\">");
-  fprintf(b, "%s", valores.titulo);	
-  fprintf(b, "%s","</td><td nowrap width=\"200\" align=\"center\"><b>IMAGEM</b></td></tr>");
-  fprintf(b, "%s","<tr><td><b>TIPO DA OBRA</b></td><td>");
-  fprintf(b, "%s", valores.tipo);
-  fprintf(b, "%s","</td><td rowspan=\"4\" align=\"center\">");	
 
-  /* 
-  * Este loop insere o ponto no nome do arquivo da imagem. Ele
-  * verifica se ateh as tres ultimas posicoes do vetor ha somente
-  * digitos numericos e insere o ponto assim que essa condicao
-  * torna-se falsa. 
-  */
-
-  for(i = 0, j = 0; i < TAM_IMAGEM; i++, j++)
-  {
-    aux[j] = valores.imagem[i];
-    if ( (valores.imagem[i] < '0' || valores.imagem[i] > '9') && ponto == 0)
-    {
-      aux[j] = '.';
-      --i;
-      ponto = 1;
-    }
-  }
-  aux[j] = '\0';
-
-  fprintf(b, "%s", "<a href=\"img/");
-  fprintf(b, "%s", aux);
-  fprintf(b, "%s", "\"><img src=\"img/");
-  fprintf(b, "%s", aux);
-  fprintf(b, "%s","\" \"width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a></td></tr>");
-  fprintf(b, "%s","<tr><td><b>AUTOR</b></td><td>");
-  fprintf(b, "%s", valores.autor);
-  fprintf(b, "%s","</td></tr><tr><td><b>ANO</b></td><td>");
-  fprintf(b, "%s", valores.ano);
-  fprintf(b, "%s","</td></tr><tr><td><b>VALOR</b></td><td>");
-  fprintf(b, "%s", valores.valor);
-  fprintf(b, "%s", "</td><tr>");
-  
-  return b;
-}
 
 /*Abre o arquivo correspondente ao valor de hash ja atualizado no proprio indice*/
 IndPrim * abrePk(IndPrim *indice) {
@@ -391,16 +232,16 @@ IndPrim * abrePk(IndPrim *indice) {
   arqInd = fopen(nome, "r");
   
   if (arqInd) {
-		/*Pego o tamanho da base*/
-		fscanf(arqInd, FORMATO_INT, &(indice->tamBase));
+    /*Pego o tamanho da base*/
+    fscanf(arqInd, FORMATO_INT, &(indice->tamBase));
 		
-	  /*Salvo no indice primario*/
-	  while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arqInd)) {
-	    (*tam)++;
-	    indice = realocaIndPrim(indice);
-	    fscanf(arqInd, FORMATO_INT, &(indice->vetor[*tam-1].nrr)); /* le o nrr do registro */
-	  }
-	  fclose(arqInd);
+    /*Salvo no indice primario*/
+    while(fgets(indice->vetor[(*tam)].pk, TAM_TITULO+1, arqInd)) {
+      (*tam)++;
+      indice = realocaIndPrim(indice);
+      fscanf(arqInd, FORMATO_INT, &(indice->vetor[*tam-1].nrr)); /* le o nrr do registro */
+    }
+    fclose(arqInd);
   
   }
   
@@ -411,61 +252,61 @@ IndPrim * abrePk(IndPrim *indice) {
 /*Troca os indices primarios*/
 IndPrim * trocaIndPrim(IndPrim * indice, char *chave) {
 	
-	int hashChave, tamBase;
+  int hashChave, tamBase;
 	
-	hashChave = hashFunction(chave);
+  hashChave = hashFunction(chave);
 	
-	/*Caso o hash e o mesmo do indice aberto*/
-	if (hashChave == indice->valorHash) return indice;
+  /*Caso o hash e o mesmo do indice aberto*/
+  if (hashChave == indice->valorHash) return indice;
 	
-	tamBase = indice->tamBase;
+  tamBase = indice->tamBase;
 	
-	/*Gravo indice primario*/
-	indice = gravaPk(indice);
+  /*Gravo indice primario*/
+  indice = gravaPk(indice);
 	
-	/*Troca o o valor do Hash*/
-	indice->valorHash = hashChave;
+  /*Troca o o valor do Hash*/
+  indice->valorHash = hashChave;
 	
-	/*Abro o novo indice*/
-	indice->tamanho = 0;
-	abrePk(indice);
+  /*Abro o novo indice*/
+  indice->tamanho = 0;
+  abrePk(indice);
 	
-	/*Atualizo o tamanho da base*/
-	indice->tamBase = tamBase;
+  /*Atualizo o tamanho da base*/
+  indice->tamBase = tamBase;
 	
-	return indice;
+  return indice;
 }
 
 /*Transforma para maiuscula a string passada como parametro*/
 void maiuscula(char *chave) {
 
-	int i;
+  int i;
 	
-	/* Copia os valores dos parametros, convertendo pra maiuscula */
-  	for (i = 0; i < strlen(chave); i++) chave[i] = toupper(chave[i]);
-  	chave[i] = '\0';
+  /* Copia os valores dos parametros, convertendo pra maiuscula */
+  for (i = 0; i < strlen(chave); i++) chave[i] = toupper(chave[i]);
+  chave[i] = '\0';
   	
 }
 
 /*Funcao que libera os mallocs/reallocs utilizados*/
 void liberaIndices(IndPrim * indPrim, IndSec *indTitulo,
-IndSec *indTipo, IndSec *indAutor, IndSec *indAno, IndDesc *indDescritor) {
+		   IndSec *indTipo, IndSec *indAutor, IndSec *indAno, IndDesc *indDescritor) {
 	
-	/*Libero os vetores alocados em cada indice*/
-	free(indPrim->vetor);
-	free(indTitulo->vetor);
-	free(indTipo->vetor);
-	free(indAutor->vetor);
-	free(indAno->vetor);
-	free(indDescritor->vetor);
+  /*Libero os vetores alocados em cada indice*/
+  free(indPrim->vetor);
+  free(indTitulo->vetor);
+  free(indTipo->vetor);
+  free(indAutor->vetor);
+  free(indAno->vetor);
+  free(indDescritor->vetor);
 	
-	/*Libero os indices*/
-	free(indPrim);
-	free(indTitulo);
-	free(indTipo);
-	free(indAutor);
-	free(indAno);
-	free(indDescritor);
+  /*Libero os indices*/
+  free(indPrim);
+  free(indTitulo);
+  free(indTipo);
+  free(indAutor);
+  free(indAno);
+  free(indDescritor);
 	
-	return;
+  return;
 }

@@ -11,6 +11,8 @@
 #include "sk.h"
 #include "descritor.h"
 #include "menu.h"
+#include "leitura.h"
+
 
 /**
  * @brief Chama a funcao de busca para um determinado indice secundario, 
@@ -21,7 +23,13 @@
  * @param secundario O indice secundario onde sera feita a busca,
  * @base A base de dados.
  */
-void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base);
+
+
+void buscaDescritor(IndDesc *, IndPrim *, FILE *);
+void buscaSecudario(IndPrim *, IndSec *, FILE *);
+void buscaPrimario(IndPrim *primario, FILE * base);
+
+resultadosBusca * buscaPk(Pk *, FILE *, IndPrim *, resultadosBusca *);
 
 /**
  * @brief Realiza uma busca por palavra inteira na base de dados, produzindo
@@ -32,7 +40,7 @@ void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base);
  * @param sec O indice secundario (tambem pode ser atualizado).
  * @param base O ponteiro para a base de dados.
  */
-void buscaSk(char *chave, IndPrim *prim, IndSec *sec, FILE *base);
+resultadosBusca * buscaSk(char *chave, IndPrim *prim, IndSec *sec, FILE *base);
 
 
 /**
@@ -44,6 +52,11 @@ void buscaSk(char *chave, IndPrim *prim, IndSec *sec, FILE *base);
  * @param prim O indice primario (tambem pode ser atualizado).
  * @param base O ponteiro para a base de dados.
  */
-void buscaPorConteudo(char *arqImagem, IndDesc *descr, IndPrim *prim, FILE *base);
+resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *descr, IndPrim *prim, FILE *base);
+
+
+void listaBase(FILE *base, IndPrim *indice);
+
+void liberaBusca(resultadosBusca *);
 
 #endif

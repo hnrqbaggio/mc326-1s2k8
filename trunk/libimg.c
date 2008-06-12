@@ -140,10 +140,11 @@ double ComputaSimilaridade(char* im1, char* im2)
 
 NHist NormalizaHistograma(Hist h)
 {
+ int i;
   double sr,sg,sb;
   NHist resposta;
   sr=sg=sb=0;
-  int i;
+ 
   for (i=0;i<256;i++)
     {
       sr+=h.r[i];

@@ -206,7 +206,7 @@ resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *in
     printf("\nA imagem fornecida nao pode ser carregada.\n");
     printf("Verifique se o nome esta correto.\n");
        
-    return NULL; /* Sai da funcao sem fazer nada. */
+    return busca; /* Sai da funcao sem fazer nada. */
   }
   
   /* A imagem existe. Libera o arquivo. */
@@ -217,7 +217,7 @@ resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *in
   printf("No maximo quantas imagens? ");
   scanf("%d", &n);
 
-  for (i = resposta->tamanho; i >= 0 && n >= 0; --i, n--) {
+  for (i = resposta->tamanho-1; i >= 0 && n >= 0; --i, n--) {
 
     strcpy(temp.pk, resposta->vetor[i].pk);
 
@@ -237,7 +237,7 @@ void gravaHtml(resultadosBusca *result) {
   FILE *b;
   char aux[TAM_IMAGEM + 2];
   int j,i = 0, k;
-  int ponto = 0;
+  int ponto;
 
   /* Verifica se  eh uma busca por conteudo. */
   int porConteudo = (result->similaridades[0] != -1) ? 1 : 0;
@@ -247,20 +247,21 @@ void gravaHtml(resultadosBusca *result) {
   /*Cabecalho do HTML */
   fprintf(b, "%s", "<html><head><title>Consulta do catalogo de obras de arte</title></head>");
 
+  /*Inicio da tabela de resposta. */
+  fprintf(b, "%s","<body><table border=\"1\" width=\"800\" font= 'Arial'><tr><th colspan ='3' align=\"center\"><font size='6' color='red'><b>Consulta do catalogo de obras de arte</b></th></tr>");
+
   /* Informacoes sobre a busca. */
+  fprintf(b, "<tr> <td colspan ='3' align=\"center\">");
 
   if(!porConteudo) {
     fprintf(b, "<p>Resultados da Busca por: %s", result->chave);
   } else {
     fprintf(b, "<p>Resultados da Semelhança com a imagem %s", result->chave);
-    fprintf(b, "<a href=\"%s\"><img src=\"%s\"", result->chave, result->chave);
+    fprintf(b, "<br><a href=\"%s\"><img src=\"%s\"", result->chave, result->chave);
     fprintf(b, " width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a>");
   }
 
-  fprintf(b, "%s%d", "<p>Número de resultados: ", result->tamanho);
-
-  /*Inicio da tabela de resposta. */
-  fprintf(b, "%s","<body><table border=\"1\" width=\"800\" font= 'Arial'><tr><th colspan ='3' align=\"center\"><font size='6' color='red'><b>Consulta do catalogo de obras de arte</b></th></tr>");
+  fprintf(b, "<p>Número de resultados: %d.</td></tr>", result->tamanho);
 
   for (k = 0; k < result->tamanho; k++) {
   
@@ -280,10 +281,11 @@ void gravaHtml(resultadosBusca *result) {
      * torna-se falsa. 
      */
 
+    ponto = 0;
     for(i = 0, j = 0; i < TAM_IMAGEM; i++, j++)
       {
-	aux[j] = result->obras[i].imagem[i];
-	if ( (result->obras[i].imagem[i] < '0' || result->obras[i].imagem[i] > '9') && ponto == 0)
+	aux[j] = result->obras[k].imagem[i];
+	if ( (result->obras[k].imagem[i] < '0' || result->obras[k].imagem[i] > '9') && ponto == 0)
 	  {
 	    aux[j] = '.';
 	    --i;
@@ -298,15 +300,15 @@ void gravaHtml(resultadosBusca *result) {
     fprintf(b, "%s", aux);
     fprintf(b, "\" \"width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a></td></tr>");
     fprintf(b, "<tr><td><b>AUTOR</b></td><td>");
-    fprintf(b, "%s", result->obras[i].autor);
+    fprintf(b, "%s", result->obras[k].autor);
     fprintf(b, "</td></tr><tr><td><b>ANO</b></td><td>");
-    fprintf(b, "%s", result->obras[i].ano);
+    fprintf(b, "%s", result->obras[k].ano);
     fprintf(b, "</td></tr><tr><td><b>VALOR</b></td><td>");
-    fprintf(b, "%s", result->obras[i].valor);
+    fprintf(b, "%s", result->obras[k].valor);
   
     if (porConteudo) {
       fprintf(b, "</td></tr><tr><td><b>Similaridade</b></td><td>");
-      fprintf(b, "%f", result->similaridades[k]);
+      fprintf(b, "%0.3f", result->similaridades[k]);
     }
   
     fprintf(b, "%s", "</td><tr>");
@@ -314,7 +316,7 @@ void gravaHtml(resultadosBusca *result) {
   }
 
   /* Imprime o fim do arquivo HTML. */
-  fprintf(b, "%s", "</table></body></html>");
+  fprintf(b, "</table></body></html>");
 
   fclose(b);
 

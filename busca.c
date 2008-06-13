@@ -14,7 +14,7 @@ void buscaPrimario(IndPrim *primario, FILE* base) {
 
   busca = buscaPk(temp, base, primario, NULL);
 
-  if(busca->tamanho) {
+  if(busca && busca->tamanho) {
 
     gravaHtml(busca);
     printSearchSuccess();
@@ -23,7 +23,7 @@ void buscaPrimario(IndPrim *primario, FILE* base) {
     printSearchFailed();
   }
 
-  liberaBusca(busca);
+  if (busca) liberaBusca(busca);
 	
 }
 
@@ -43,7 +43,7 @@ void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base) {
 
   busca = buscaSk(temp, primario, secundario, base);
 
-  if(busca->tamanho) {
+  if(busca && busca->tamanho) {
 
     gravaHtml(busca);
     printSearchSuccess();
@@ -52,7 +52,7 @@ void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base) {
     printSearchFailed();
   }
 
-  liberaBusca(busca);
+  if (busca) liberaBusca(busca);
 	
 }
 
@@ -248,20 +248,22 @@ void gravaHtml(resultadosBusca *result) {
   fprintf(b, "%s", "<html><head><title>Consulta do catalogo de obras de arte</title></head>");
 
   /*Inicio da tabela de resposta. */
-  fprintf(b, "%s","<body><table border=\"1\" width=\"800\" font= 'Arial'><tr><th colspan ='3' align=\"center\"><font size='6' color='red'><b>Consulta do catalogo de obras de arte</b></th></tr>");
+  fprintf(b, "%s","<body> <table border=\"1\" width=\"800\"><tr><th colspan ='3' align=\"center\"><font size='6' color='red'><b>Consulta do catalogo de obras de arte</b></th></tr>");
+
+  fprintf(b, "<tr height=\"8\"></tr>");
 
   /* Informacoes sobre a busca. */
-  fprintf(b, "<tr> <td colspan ='3' align=\"center\">");
+  fprintf(b, "<tr> <td colspan ='3'>");
 
   if(!porConteudo) {
-    fprintf(b, "<p>Resultados da Busca por: %s", result->chave);
+    fprintf(b, "<p>Resultados da Busca por: <b>%s</b>", result->chave);
   } else {
-    fprintf(b, "<p>Resultados da Semelhança com a imagem %s", result->chave);
+    fprintf(b, "<p>Resultados da Semelhança com a imagem <b>%s</b>", result->chave);
     fprintf(b, "<br><a href=\"%s\"><img src=\"%s\"", result->chave, result->chave);
     fprintf(b, " width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a>");
   }
 
-  fprintf(b, "<p>Número de resultados: %d.</td></tr>", result->tamanho);
+  fprintf(b, "<br>Número de resultados: <b>%d</b></td></tr>", result->tamanho);
 
   for (k = 0; k < result->tamanho; k++) {
   
@@ -294,11 +296,8 @@ void gravaHtml(resultadosBusca *result) {
       }
     aux[j] = '\0';
 
-    fprintf(b, "<a href=\"img/");
-    fprintf(b, "%s", aux);
-    fprintf(b, "\"><img src=\"img/");
-    fprintf(b, "%s", aux);
-    fprintf(b, "\" \"width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a></td></tr>");
+    fprintf(b, "<a href=\"img/%s\"><img src=\"img/%s\" ", aux, aux);
+    fprintf(b, "\"width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a></td></tr>");
     fprintf(b, "<tr><td><b>AUTOR</b></td><td>");
     fprintf(b, "%s", result->obras[k].autor);
     fprintf(b, "</td></tr><tr><td><b>ANO</b></td><td>");
@@ -308,7 +307,7 @@ void gravaHtml(resultadosBusca *result) {
   
     if (porConteudo) {
       fprintf(b, "</td></tr><tr><td><b>Similaridade</b></td><td>");
-      fprintf(b, "%0.3f", result->similaridades[k]);
+      fprintf(b, "%0.1f%%", result->similaridades[k] * 100); /* Imprime a similaridade em porcentagem. */
     }
   
     fprintf(b, "%s", "</td><tr>");

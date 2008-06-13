@@ -74,7 +74,7 @@ typedef struct {
 /* Vetor de obras usado retornado pelas funcoes de busca. */
 typedef struct {
 
-  TObra *obras; /* Vetor de obras de arte. */
+  Pk *obras; /* Vetor de obras chaves primarias. */
   double *similaridades; /* vetor com os valores de similaridade com uma obra de referencia */
   int tamanho; /* Tamanho dos vetores. */
   int alocado; /* Espaco alocado pros vetores, aumenta sobre demanda. */

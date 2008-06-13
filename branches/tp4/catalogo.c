@@ -203,22 +203,6 @@ IndPrim * realocaIndPrim(IndPrim *ind) {
   return ind;
 }
 
-/*Gera cabecalho do HTML*/
-FILE * headHtml(FILE *b) {
-  /* Inicio do arquivo HTML. Insere o cabecalho da tabela. */
-  fprintf(b, "%s", "<html><head><title>Consulta do catalogo de obras de arte</title></head>");
-  fprintf(b, "%s","<body><table border=\"1\" width=\"800\" font= 'Arial'><tr><th colspan ='3' align=\"center\"><font size='6' color='red'><b>Consulta do catalogo de obras de arte</b></th></tr>");
-
-  return b;
-}
-
-/*Gera o final do HTML*/
-FILE * endHtml(FILE *b) {
-  
-  fprintf(b, "%s", "</table></body></html>");
-  return b;
-}
-
 
 /*Abre o arquivo correspondente ao valor de hash ja atualizado no proprio indice*/
 IndPrim * abrePk(IndPrim *indice) {
@@ -309,4 +293,17 @@ void liberaIndices(IndPrim * indPrim, IndSec *indTitulo,
   free(indDescritor);
 	
   return;
+}
+
+void leRegistro(TObra *obra, int nrr, FILE *base) {
+	
+	fseek(base, TAM_REG * nrr, SEEK_SET);
+	
+	/* Le cada campo da obra. */
+    fgets(obra->titulo, TAM_TITULO + 1, base);
+    fgets(obra->tipo,   TAM_TIPO + 1,   base);
+    fgets(obra->autor,  TAM_AUTOR + 1,  base); 
+    fgets(obra->ano,    TAM_ANO + 1,    base);
+    fgets(obra->valor,  TAM_VALOR + 1,  base);
+    fgets(obra->imagem, TAM_IMAGEM + 1, base);
 }

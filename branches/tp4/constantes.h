@@ -70,7 +70,7 @@
 #define ARQ_BASE ("base24.dat")
 
 /** Html para saida dos resultados de busca */
-#define ARQ_HTML ("base24.html")
+#define ARQ_HTML ("resultados.html")
 /** @} */
 
 /** @{

@@ -18,7 +18,7 @@
 int main(int argc, char **argv){
 
   int ent, option, end;
-  TObra obra, obra2;
+  TObra obra, obra2, *rem;
   resultadosBusca *remove = NULL;
   char nome[TAM_NOME_ARQ+10];
  
@@ -178,12 +178,7 @@ int main(int argc, char **argv){
       } while (option != 0);
       break;
 
-    case 3:
-      /*Mostra a base inteira em ordem ASCII, no html*/
-      /*listaBase(arq, ind);*/
-      break;
-
-    case 4: /* Remocao */
+    case 3: /* Remocao */
       leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
       preencher(elem->pk, sizeof(elem->pk));
       elem->nrr = -1;
@@ -194,14 +189,16 @@ int main(int argc, char **argv){
       /*Se encontrou obra de arte*/
       if(remove != NULL) {
         
+        leRegistro(rem, remove->obras[0].nrr, arq);
+        
         /*Remove do indice primario e da base de dados*/
-        ind = removePk(elem->pk, ind, arq, &availBase);
+        ind = removePk(rem->titulo, ind, arq, &availBase);
 
         /*Remove todas as Sks */
-        secTitulo = removeSk(remove->obras[0].titulo, secTitulo, elem->pk, &availTitulo);
-        secTipo   = removeSk(remove->obras[0].tipo,   secTipo,   elem->pk, &availTipo);
-        secAutor  = removeSk(remove->obras[0].autor,  secAutor,  elem->pk, &availAutor);
-        secAno    = removeSk(remove->obras[0].ano,    secAno,    elem->pk, &availAno);
+        secTitulo = removeSk(rem->titulo, secTitulo, rem->titulo, &availTitulo);
+        secTipo   = removeSk(rem->tipo,   secTipo,   rem->titulo, &availTipo);
+        secAutor  = removeSk(rem->autor,  secAutor,  rem->titulo, &availAutor);
+        secAno    = removeSk(rem->ano,    secAno,    rem->titulo, &availAno);
 
 	/* Remove do indice de descritores. */
 	indDescritor = removeDesc(elem->pk, indDescritor);

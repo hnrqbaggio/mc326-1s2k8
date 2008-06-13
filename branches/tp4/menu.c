@@ -4,12 +4,11 @@ int geraMenu() {
 	
 	int ent;
 
-   printf("\n*****************************\n");
-   printf("* 1 - Inserir nova obra     *\n");
-	printf("* 2 - Buscar obra           *\n");
-	printf("* 3 - Listar todas as obras *\n");
-	printf("* 4 - Remover registro      *\n");
-	printf("* 0 - Sair                  *\n");
+   	printf("\n*****************************\n");
+   	printf("*   1 - Inserir nova obra   *\n");
+	printf("*   2 - Buscar obra         *\n");
+	printf("*   3 - Remover registro    *\n");
+	printf("*   0 - Sair                *\n");
 	printf("*****************************\n");
 	printf("Entre com umas das opcoes acima: ");
 	scanf("%d", &ent);
@@ -49,9 +48,9 @@ int geraNotificaInsere() {
 }
 
 void printSearchSuccess() {
-	 printf("\n--------------------------------------------------\n");
-    printf("A consulta esta disponivel no arquivo %s.\n", ARQ_HTML);
-    printf("--------------------------------------------------\n");
+	 printf("\n-----------------------------------------------------\n");
+    printf("A consulta esta disponivel no arquivo %s\n", ARQ_HTML);
+    printf("-----------------------------------------------------\n");
 }
 
 void printSearchFailed() {

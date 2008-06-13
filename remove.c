@@ -173,4 +173,27 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
   return indSecun;
 }
 
+/* Funcao que remove um elemento do vetor de descritores baseada na
+ * sua PK.  Como o vetor nao esta ordenado, a busca deve ser
+ * seuquencial, mas mesmo assim, tem-se, no pior caso, uma operacao em
+ * tempo O(n).
+ */
+IndDesc * removeDesc(char *pk, IndDesc *descritores) {
+  int i;
+
+  /* Percorre o vetor ate achar a PK do descritor a ser removido. */
+  for (i = 0; strcmp(descritores->vetor[i].pk, pk) != 0 && i < descritores->tamanho; i++);
+
+  for (++i; i < descritores->tamanho; i++) {
+    strcpy(descritores->vetor[i].pk, descritores->vetor[i+1].pk);
+    strcpy(descritores->vetor[i].imagem, descritores->vetor[i+1].imagem);
+    descritores->vetor[i].valorDescritor = descritores->vetor[i+1].valorDescritor;
+  }
+  
+  (descritores->tamanho)--;
+
+  return descritores;
+
+}
+
 

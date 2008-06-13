@@ -61,6 +61,8 @@ int main(int argc, char **argv){
   
   /*Abre os indices secundarios*/
   constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
+
+  /* Abre o indice de descritores. */
   constroiIndDesc(indDescritor, ind, arq);
 	
   elem = (Pk *) malloc(sizeof(Pk));
@@ -200,6 +202,9 @@ int main(int argc, char **argv){
         secTipo   = removeSk(remove->obras[0].tipo,   secTipo,   elem->pk, &availTipo);
         secAutor  = removeSk(remove->obras[0].autor,  secAutor,  elem->pk, &availAutor);
         secAno    = removeSk(remove->obras[0].ano,    secAno,    elem->pk, &availAno);
+
+	/* Remove do indice de descritores. */
+	indDescritor = removeDesc(elem->pk, indDescritor);
       }
 
       /*Libera remove, que e alocado dentro da funcao consulta*/

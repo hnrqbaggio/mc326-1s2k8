@@ -1,6 +1,6 @@
 #include "busca.h"
 
-void gravaHtml(resultadosBusca *);
+void gravaHtml(resultadosBusca *, FILE *);
 
 
 /*Esta funcao unifica o processo de busca por PK e criacao de arquivo
@@ -16,7 +16,7 @@ void buscaPrimario(IndPrim *primario, FILE* base) {
 
   if(busca && busca->tamanho) {
 
-    gravaHtml(busca);
+    gravaHtml(busca, base);
     printSearchSuccess();
 
   } else {
@@ -45,7 +45,7 @@ void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base) {
 
   if(busca && busca->tamanho) {
 
-    gravaHtml(busca);
+    gravaHtml(busca, base);
     printSearchSuccess();
 
   } else {
@@ -72,7 +72,7 @@ void buscaDescritor(IndDesc *descritores, IndPrim *primario, FILE *base) {
   if(busca) {
     if(busca->tamanho) {
 
-      gravaHtml(busca);
+      gravaHtml(busca, base);
       printSearchSuccess();
 
     } else {
@@ -90,18 +90,16 @@ void buscaDescritor(IndDesc *descritores, IndPrim *primario, FILE *base) {
 resultadosBusca * buscaPk(Pk *chave, FILE *base, IndPrim *indice, resultadosBusca *result) {
   
   Pk *temp;
-  int tam, imprime = 0; /* Usado para saber se deve imprimir mensagens pro usuario*/
+  int tam;
 
   /* criando a estrutura de resposta. */
   /* quando a funcao eh usada diretamente. */
   if(!result) {
 
-    imprime = 1;
-
     result = (resultadosBusca *) malloc(sizeof(resultadosBusca));
     result->alocado = VETOR_MIN;
     result->tamanho = 0;
-    result->obras = (TObra *) malloc(sizeof(TObra) * result->alocado);
+    result->obras = (Pk *) malloc(sizeof(Pk) * result->alocado);
     result->similaridades = (double *) malloc(sizeof(double)  * result->alocado);
     strcpy(result->chave, chave->pk);
     
@@ -112,7 +110,7 @@ resultadosBusca * buscaPk(Pk *chave, FILE *base, IndPrim *indice, resultadosBusc
 
     result->alocado *= 2;
 
-    result->obras = (TObra *) realloc(result->obras, sizeof(TObra) * result->alocado);
+    result->obras = (Pk *) realloc(result->obras, sizeof(Pk) * result->alocado);
     result->similaridades = (double *) realloc(result->similaridades, sizeof(double) * result->alocado);
   }
 
@@ -124,16 +122,8 @@ resultadosBusca * buscaPk(Pk *chave, FILE *base, IndPrim *indice, resultadosBusc
 
   if (temp) { /* registro encontrado */
     tam = result->tamanho;
-
-    fseek(base, TAM_REG * (temp->nrr), SEEK_SET);
-
-    /* leitura do registro */
-    fgets(result->obras[tam].titulo, TAM_TITULO + 1, base);
-    fgets(result->obras[tam].tipo, TAM_TIPO + 1, base);
-    fgets(result->obras[tam].autor, TAM_AUTOR + 1, base); 
-    fgets(result->obras[tam].ano, TAM_ANO + 1, base);
-    fgets(result->obras[tam].valor, TAM_VALOR + 1, base);
-    fgets(result->obras[tam].imagem, TAM_IMAGEM + 1, base);
+	strcpy(result->obras[tam].pk, temp->pk);
+	result->obras[tam].nrr = temp->nrr;
     
     (result->tamanho)++; /* Atualiza o tamanho dos vetores. */
 
@@ -232,9 +222,10 @@ resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *in
   return busca;
 }
 
-void gravaHtml(resultadosBusca *result) {
+void gravaHtml(resultadosBusca *result, FILE * base) {
   
   FILE *b;
+  TObra temp;
   char aux[TAM_IMAGEM + 2];
   int j,i = 0, k;
   int ponto;
@@ -266,14 +257,17 @@ void gravaHtml(resultadosBusca *result) {
   fprintf(b, "<br>Número de resultados: <b>%d</b></td></tr>", result->tamanho);
 
   for (k = 0; k < result->tamanho; k++) {
+  	
+  	/* leitura do registro na base de dados. */
+	leRegistro(&temp, result->obras[k].nrr, base);
   
     /*Preenchimento da tabela*/
     fprintf(b, "<tr height=\"8\"></tr>");
     fprintf(b, "<tr><td nowrap width=\"200\"><b>TITULO DA OBRA</b></td><td nowrap width=\"400\">");
-    fprintf(b, "%s", result->obras[k].titulo);	
+    fprintf(b, "%s", temp.titulo);	
     fprintf(b, "</td><td nowrap width=\"200\" align=\"center\"><b>IMAGEM</b></td></tr>");
     fprintf(b, "<tr><td><b>TIPO DA OBRA</b></td><td>");
-    fprintf(b, "%s", result->obras[k].tipo);
+    fprintf(b, "%s", temp.tipo);
     fprintf(b, "</td><td rowspan=\"4\" align=\"center\">");	
 
     /* 
@@ -286,8 +280,8 @@ void gravaHtml(resultadosBusca *result) {
     ponto = 0;
     for(i = 0, j = 0; i < TAM_IMAGEM; i++, j++)
       {
-	aux[j] = result->obras[k].imagem[i];
-	if ( (result->obras[k].imagem[i] < '0' || result->obras[k].imagem[i] > '9') && ponto == 0)
+	aux[j] = temp.imagem[i];
+	if ( (temp.imagem[i] < '0' || temp.imagem[i] > '9') && ponto == 0)
 	  {
 	    aux[j] = '.';
 	    --i;
@@ -299,11 +293,11 @@ void gravaHtml(resultadosBusca *result) {
     fprintf(b, "<a href=\"img/%s\"><img src=\"img/%s\" ", aux, aux);
     fprintf(b, "\"width=\"180\" height=\"110\" alt=\"Clique na imagem para visualizar em tamanho original\"></a></td></tr>");
     fprintf(b, "<tr><td><b>AUTOR</b></td><td>");
-    fprintf(b, "%s", result->obras[k].autor);
+    fprintf(b, "%s", temp.autor);
     fprintf(b, "</td></tr><tr><td><b>ANO</b></td><td>");
-    fprintf(b, "%s", result->obras[k].ano);
+    fprintf(b, "%s", temp.ano);
     fprintf(b, "</td></tr><tr><td><b>VALOR</b></td><td>");
-    fprintf(b, "%s", result->obras[k].valor);
+    fprintf(b, "%s", temp.valor);
   
     if (porConteudo) {
       fprintf(b, "</td></tr><tr><td><b>Similaridade</b></td><td>");
@@ -329,4 +323,38 @@ void liberaBusca(resultadosBusca *result) {
   free(result->similaridades);
   free(result);
 
+}
+
+/* Esta funcao lista todas as obras na base. Eh problema, pq gera um
+   vetor com todas as obras da base. Precisa de ajustes. */
+void listaBase(FILE *base, IndPrim *indice) {
+  int i, j;
+  resultadosBusca *busca = NULL;
+
+  for (i = 0; i < H; i++) {
+
+    gravaPk(indice);
+
+    indice->valorHash = i;
+    indice->tamanho = 0;
+
+    abrePk(indice);
+    
+    for (j = 0; j < indice->tamanho; j++) {
+      busca = buscaPk(&(indice->vetor[j]), base, indice, busca);
+    }
+  }
+
+  if (busca) {
+
+    strcpy(busca->chave, "Todas as obras.");
+    gravaHtml(busca, base);
+    printSearchSuccess();
+    liberaBusca(busca);
+
+  } else {
+
+    printSearchFailed();
+
+  }
 }

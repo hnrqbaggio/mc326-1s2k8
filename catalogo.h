@@ -110,52 +110,6 @@ IndPrim * trocaIndPrim(IndPrim *, char *);
 void liberaIndices(IndPrim *indPrim, IndSec *indTitulo, IndSec *indTipo,
 IndSec *indAutor, IndSec *indAno, IndDesc *indDescritor);
 
-/** 
- * @brief Realiza uma consulta na base usando a chave primaria.
- * 
- * @param chave String a ser buscado no indice primario.
- * @param base Base de dados.
- * @param indice Indice primario.
- * @return A obra de dados encontrada ou NULL caso nao a busca nao encontre resultados. 
- */
-TObra * consulta(Pk *chave, FILE *base, IndPrim *indice);
-
-/** 
- * @brief Lista todos os registros da base de dados. 
- * 
- * Percorre o vetor do indice primario e para cada 
- * elemento dele, pega os dados na base. Os resultados sao 
- * passados pra funcao que gera o HTML. Faz essa operacao 
- * para cada arquivo de indice primario.
- * 
- * @param base Base de dados.
- * @param indice Indice primario.
- * @return void
- */
-void listaBase(FILE *base, IndPrim *indice);
-
-/** @brief Insere uma obra na tabela de obras de arte do arquivo HTML.
- * 
- * @param b Arquivo html.
- * @param valores Obra de arte a ser mostrada no arquivo.
- * @return Arquivo html.
- */
-FILE * preencheHtml(FILE *b, TObra valores);
-
-/** @brief Gera cabecalho do arquivo html.
- * 
- * @param b Arquivo html.
- * @return Arquivo html.
- */
-FILE * headHtml(FILE *b);
-
-/** @brief Gera o final do html.
- * 
- * @param b Arquivo html.
- * @return Arquivo html.
- */
-FILE * endHtml(FILE *b);
-
 /** @brief Transforma para maiuscula a string passada como parametro.
  * 
  * @param chave String a ser mudada para maiuscula.
@@ -181,5 +135,7 @@ void maiuscula(char *chave);
  * @return int Retorna se os parametros sao iguais ou nao.
  */
 int compare(const void *a, const void *b);
+
+void leRegistro(TObra *obra, int nrr, FILE *base);
 
 #endif

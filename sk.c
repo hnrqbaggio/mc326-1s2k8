@@ -86,17 +86,8 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 			/*Percorre os indices primarios*/
 			for (i = 0; i < indPrim->tamanho; ++i) {
 				
-				/* Posiciona o cursos pra leitura da obra. */
-				fseek(base, indPrim->vetor[i].nrr * TAM_REG, SEEK_SET);
-				
-				/* Le o registro inteiro de uma vez. */
-				fgets(obra.titulo, TAM_TITULO + 1, base);
-				fgets(obra.tipo,   TAM_TIPO + 1,   base);
-				fgets(obra.autor,  TAM_AUTOR + 1,  base);
-				fgets(obra.ano,    TAM_ANO + 1,    base);
-				fgets(obra.valor,  TAM_VALOR + 1,  base);
-				fgets(obra.imagem, TAM_IMAGEM + 1, base);
-				
+				/* Le o registro. */
+				leRegistro(&obra, indPrim->vetor[i].nrr, base);				
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/

@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include "constantes.h"
 
+void menuBoasVindas();
+
+void menuInicio();
+
 /** @brief Funcao que gera menu principal para que usuario escolha a opcao desejada.
  * 
  * @return int A opcao escolhida.

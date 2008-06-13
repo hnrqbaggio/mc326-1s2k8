@@ -40,9 +40,13 @@ int main(int argc, char **argv){
   /* Indice de descritores. */
   IndDesc *indDescritor;
 
+	menuInicio();
+
   /*Abre a availList da base, a base e o indice primario*/
   availBase = openAvail(ARQ_AVAIL_BASE);
   arq = abreCatalogo(ARQ_BASE);
+  
+  
   ind = iniciaPk(arq, ind);
   
   /* Atribui valores convenientes os campos dos indices e aloca espaco pros mesmos. */
@@ -67,10 +71,7 @@ int main(int argc, char **argv){
 	
   elem = (Pk *) malloc(sizeof(Pk));
 
-  /*Entrada do programa*/
-  printf("|------------------------------------|\n");
-  printf("|Catalogo de Obras de Arte - Grupo 24|\n");
-  printf("|------------------------------------|\n");
+	menuBoasVindas();
 
   /*Looping do menu do programa*/
   do {

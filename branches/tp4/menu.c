@@ -1,15 +1,25 @@
 #include "menu.h"
 
+void menuBoasVindas(){
+  printf("\n===========================================\n");
+  printf("= Catalogo de Obras de Artes - Versao 4.0 =\n");
+  printf("===========================================\n");
+}
+
+void menuInicio() {
+	printf("\n== Iniciando Catalogo de Obras de Arte. ==\n");
+}
+
 int geraMenu() {
 	
 	int ent;
 
-   	printf("\n*****************************\n");
-   	printf("*   1 - Inserir nova obra   *\n");
-	printf("*   2 - Buscar obra         *\n");
-	printf("*   3 - Remover registro    *\n");
-	printf("*   0 - Sair                *\n");
-	printf("*****************************\n");
+   	printf("\n=============================\n");
+   	printf("=   1 - Inserir nova obra   =\n");
+	printf("=   2 - Buscar obra         =\n");
+	printf("=   3 - Remover registro    =\n");
+	printf("=   0 - Sair                =\n");
+	printf("=============================\n");
 	printf("Entre com umas das opcoes acima: ");
 	scanf("%d", &ent);
 	
@@ -20,15 +30,15 @@ int geraMenuBusca() {
 	
 	int ent;
 	
-	printf("\n*******************************\n");
-	printf("* 1 - Buscar pelo titulo      *\n");
-	printf("* 2 - Buscar pelo tipo        *\n");
-	printf("* 3 - Buscar pelo autor       *\n");
-	printf("* 4 - Buscar pelo ano         *\n");
-  	printf("* 5 - Buscar pela PK da obra  *\n");
-  	printf("* 6 - Buscar por conteudo     *\n");
-  	printf("* 0 - Voltar ao menu anterior *\n");
-	printf("*******************************\n");
+	printf("\n===============================\n");
+	printf("= 1 - Buscar pelo titulo      =\n");
+	printf("= 2 - Buscar pelo tipo        =\n");
+	printf("= 3 - Buscar pelo autor       =\n");
+	printf("= 4 - Buscar pelo ano         =\n");
+  	printf("= 5 - Buscar pela PK da obra  =\n");
+  	printf("= 6 - Buscar por conteudo     =\n");
+  	printf("= 0 - Voltar ao menu anterior =\n");
+	printf("===============================\n");
 	printf("Entre com umas das opcoes acima: ");
 	scanf("%d", &ent);
 	
@@ -38,9 +48,9 @@ int geraMenuBusca() {
 int geraNotificaInsere() {
   char ent2;
 	
-  printf("\n****************************\n");
-  printf("* Obra inserida com exito. *");
-  printf("****************************\n");
+  printf("\n------------------------\n");
+  printf("Obra inserida com exito.\n");
+  printf("------------------------\n");
   printf("Deseja inserir uma nova obra? [s/n]: ");
   scanf("%c", &ent2);
 

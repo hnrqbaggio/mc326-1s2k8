@@ -96,7 +96,8 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
   tam = &(indice->tamanho);
 
   if (arq_ind != NULL) { /* existe o arquivo */
-
+  	
+	fprintf(stdout, "Carregando indice primario... ");
     /*Pego o tamanho da base*/
     fscanf(arq_ind, FORMATO_INT, &(indice->tamBase));
 		
@@ -109,10 +110,10 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
     
   } else { /* vai ter que gerar a partir da base */
    
+   fprintf(stdout, "Construindo indice primario... ");
+   
     while(fgets(pkAux, TAM_TITULO+1, base)) {
     	
-    	
-      
       maiuscula(pkAux);
       /*Abre o indice relativo a pkAux*/
       indice = trocaIndPrim(indice, pkAux);
@@ -133,8 +134,11 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
     /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
     qsort(indice->vetor, *tam, sizeof(Pk), compare);
   }
- 
+
+	fprintf(stdout, "OK\n");
+  
   return indice;
+
 }
 
 /*  Realiza a ordenacao do indice usando qsort. */

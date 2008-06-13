@@ -39,7 +39,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 	
 	if (arqTitulo && arqTipo && arqAutor && arqAno) { /* Se existem todos os arquivos. */
 		
-		fprintf(stdout, "Carregando indices secundários. ");
+		fprintf(stdout, "Carregando indices secundários... ");
 		
 		/* Carrega chaves do arquivo. */
 		titulo = carregaSk(titulo, arqTitulo);
@@ -60,7 +60,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 		
 	} else { /* Vai precisar criar todos a partir da base de dados. */
 		
-		fprintf(stdout, "Gerando indices secundários. ");
+		fprintf(stdout, "Gerando indices secundários... ");
 		
 		sprintf(nomeTitulo, "%s%s", titulo->tipoCampo, EXTENSAO_PK);
 		sprintf(nomeTipo,   "%s%s", tipo->tipoCampo,   EXTENSAO_PK);
@@ -114,7 +114,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 
 	}
 	
-	fprintf(stdout, "OK.\n");
+	fprintf(stdout, "OK\n");
 	
 }
 
@@ -212,7 +212,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
   int tam, offset, temp;
 
   /* Quebra a string em varios tokens */
-  token = strtok(campo, " ");
+  token = strtok(campo, " ,.-");
 
   while (token) { /* Realiza a insercao para cada novo token existente na string. */
 
@@ -286,7 +286,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
     }
     
     sk = sk2;
-    token = strtok(NULL, " "); /* Pega um novo token na string, pra fazer uma nova SK. */
+    token = strtok(NULL, " ,.-"); /* Pega um novo token na string, pra fazer uma nova SK. */
   }
 
   /*Ordena o vetor de SKs*/

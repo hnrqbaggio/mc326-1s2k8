@@ -24,6 +24,7 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 	
 	if (arqDesc) {
 		
+		fprintf(stdout, "Carregando indices de descritores das imagens... ");
 		/* Carrega os descritores a partir do arquivo. */
 		indDesc = carregaDescritor(indDesc, arqDesc);
 		
@@ -32,9 +33,11 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 		
 		fclose(arqDesc);
 		
+		fprintf(stdout, "OK\n");
+		
 	} else {
 		
-		fprintf(stdout, "Carregando indices de descritores das imagens.\n");
+		fprintf(stdout, "Criando indices de descritores das imagens.\n");
 		fprintf(stdout, "Isso pode demorar um pouco, dependendo do tamanho da sua base de dados.\n");
 		
 		cont = 0;
@@ -54,7 +57,7 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 				
 				/* Le o registro. */
 				leRegistro(&obra, indPrim->vetor[i].nrr, base);
-				fprintf(stdout, "Processando registro %d -> Imagem %s.\n", ++cont, obra.imagem);
+				fprintf(stdout, "Processando registro %d -> Imagem %s\n", ++cont, obra.imagem);
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/

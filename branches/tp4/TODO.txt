@@ -2,13 +2,16 @@
 TODO LIST
 =========
 
+== PREVISÕES DE ENTREGAS ==
+
+(TP4)
+- SABADO, 14.
+
+
 == TAREFAS GERAIS ==
 - Numeros magicos
-	cacar e exterminar todos! =]
-- Colocar a funcao de busca por indice primario no arquivo busca.c, hoje tah no catalogo.c
-- To preocupado com o tamanho do MAIN... 
-	Tah mto foda de adapta-lo a alguma mudanca.
-	Vi umas alternativas... Se der tempo pesquiso.
+  	  cacar e exterminar todos! =]
+- Se der tempo, melhorar o HTML
 
 == BELO ==
 
@@ -33,8 +36,8 @@ para ter ele pronto junto com o programa.
 == BAGGIO ==
 
 (TP4)
-- Remoção do indice de descritores.
+- Documentar as novas funcoes de busca e o novo tipo de dados nelas usado.
 
 (TP5)
-- Comecando hoje!
+- Comecando.
 

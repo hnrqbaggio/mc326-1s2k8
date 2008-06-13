@@ -65,7 +65,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
    
    /*Jogo a chave para maiuscula para nao ocorrer conflito com o BIG FILE*/
    maiuscula(chave);
-  token = strtok(chave, " ");
+  token = strtok(chave, " ,.-");
 
 
   while (token) {
@@ -166,7 +166,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
 
     }
     /* Pega o proximo token na string. */
-    token = strtok(NULL, " ");
+    token = strtok(NULL, " ,.-");
   }
 
   fclose(arq);

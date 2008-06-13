@@ -217,7 +217,7 @@ resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *in
   printf("No maximo quantas imagens? ");
   scanf("%d", &n);
 
-  for (i = resposta->tamanho-1; i >= 0 && n >= 0; --i, n--) {
+  for (i = resposta->tamanho-1; i >= 0 && n > 0; --i, n--) {
 
     strcpy(temp.pk, resposta->vetor[i].pk);
 
@@ -268,10 +268,10 @@ void gravaHtml(resultadosBusca *result) {
     /*Preenchimento da tabela*/
     fprintf(b, "<tr height=\"8\"></tr>");
     fprintf(b, "<tr><td nowrap width=\"200\"><b>TITULO DA OBRA</b></td><td nowrap width=\"400\">");
-    fprintf(b, "%s", result->obras[i].titulo);	
+    fprintf(b, "%s", result->obras[k].titulo);	
     fprintf(b, "</td><td nowrap width=\"200\" align=\"center\"><b>IMAGEM</b></td></tr>");
     fprintf(b, "<tr><td><b>TIPO DA OBRA</b></td><td>");
-    fprintf(b, "%s", result->obras[i].tipo);
+    fprintf(b, "%s", result->obras[k].tipo);
     fprintf(b, "</td><td rowspan=\"4\" align=\"center\">");	
 
     /* 

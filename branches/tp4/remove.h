@@ -30,4 +30,6 @@ IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail);
 */
 IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail);
 
+IndDesc * removeDesc(char *pk, IndDesc *descritores);
+
 #endif

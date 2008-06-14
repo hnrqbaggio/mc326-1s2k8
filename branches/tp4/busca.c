@@ -12,7 +12,7 @@ void buscaPrimario(IndPrim *primario, FILE* base) {
 	
   leTexto(temp->pk, sizeof(temp->pk), "Digite a PK da Obra: ");
 
-  busca = buscaPk(temp, base, primario, NULL);
+  busca = buscaPk(temp, primario, base, NULL);
 
   if(busca && busca->tamanho) {
 
@@ -28,9 +28,9 @@ void buscaPrimario(IndPrim *primario, FILE* base) {
 }
 
 
-/*Esta funcao unifica o processo de busca po4 SK e criacao de arquivo
+/* Esta funcao unifica o processo de busca por SK e criacao de arquivo
   de saida. Um "adapter" para o main. */
-void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base) {
+void buscaSecudario(IndPrim * primario, IndSec * secundario, FILE * base) {
 	
   char temp[TAM_TITULO+1];
   resultadosBusca *busca;
@@ -41,7 +41,7 @@ void buscaSecudario(IndPrim *primario, IndSec *secundario, FILE* base) {
   maiuscula(temp);
   secundario = trocaIndSec(secundario, temp);
 
-  busca = buscaSk(temp, primario, secundario, base);
+  busca = buscaSk(temp, secundario, primario, base);
 
   if(busca && busca->tamanho) {
 
@@ -85,32 +85,31 @@ void buscaDescritor(IndDesc *descritores, IndPrim *primario, FILE *base) {
 }
 
 
-/* Consulta de uma obra na base. 
-   Aloca espaco para o vetor de resposta. Esse espaco eh liberado nas funcoes de HTML. */
-resultadosBusca * buscaPk(Pk *chave, FILE *base, IndPrim *indice, resultadosBusca *result) {
+/* Faz a busca de uma PK no indice primario. 
+   Aloca espaco para o vetor de resposta. 
+   Esse espaco eh liberado por uma funcao especifica. */
+resultadosBusca * buscaPk(Pk * chave, IndPrim * indice, FILE * base, resultadosBusca * result) {
   
   Pk *temp;
-  int tam;
 
-  /* criando a estrutura de resposta. */
-  /* quando a funcao eh usada diretamente. */
+  /* Criando a estrutura de resposta. */
+  /* Quando a funcao eh usada diretamente. */
   if(!result) {
 
     result = (resultadosBusca *) malloc(sizeof(resultadosBusca));
     result->alocado = VETOR_MIN;
     result->tamanho = 0;
-    result->obras = (Pk *) malloc(sizeof(Pk) * result->alocado);
+    result->nrrs = (int *) malloc(sizeof(int) * result->alocado);
     result->similaridades = (double *) malloc(sizeof(double)  * result->alocado);
     strcpy(result->chave, chave->pk);
     
     /* Desativa a similaridade. Se ela for necessaria, sera ativada no lugar certo. */
     result->similaridades[0] = -1;
 
-  } else if (result->tamanho == result->alocado) {
+  } else if (result->tamanho == result->alocado) { /* Verificando se precisa alocar mais memoria. */
 
     result->alocado *= 2;
-
-    result->obras = (Pk *) realloc(result->obras, sizeof(Pk) * result->alocado);
+    result->nrrs = (int *) realloc(result->nrrs, sizeof(int) * result->alocado);
     result->similaridades = (double *) realloc(result->similaridades, sizeof(double) * result->alocado);
   }
 
@@ -120,28 +119,30 @@ resultadosBusca * buscaPk(Pk *chave, FILE *base, IndPrim *indice, resultadosBusc
   
   temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
 
-  if (temp) { /* registro encontrado */
-    tam = result->tamanho;
-	strcpy(result->obras[tam].pk, temp->pk);
-	result->obras[tam].nrr = temp->nrr;
-    
-    (result->tamanho)++; /* Atualiza o tamanho dos vetores. */
-
+  if (temp) { /* Registro encontrado */
+	result->nrrs[result->tamanho] = temp->nrr; 	/* Armazena o NRR no buffer de resposta. */
+    (result->tamanho)++; 						/* Atualiza o tamanho dos vetores. */
   }
-
+	
+	/* Retorna a estrutura contendo as posicoes dos 
+	 * elementos encontrados atraves do indice primario. */
   return result;
 }
 
+/* 
+ * Faz a busca das PKs associadas a uma SK no indice secundario, 
+ * e passa para a funcao que faz a busca no indice primario. 
+ */
+resultadosBusca * buscaSk(char *chave, IndSec *indSecun, IndPrim *indPrim, FILE *base) {
+  int offset; /* Inteiro para os seeks no BigFile. */
 
-resultadosBusca * buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE *base) {
-  int offset;
-
-  Sk temp, *result;
+	/* Chaves auxiliares. */
+  Sk temp, *result; 
   Pk temp2;
 
-  resultadosBusca *busca = NULL;
+  resultadosBusca *busca = NULL; /* Estrutura que ira armazenar os resultados da busca. */
   
-  FILE *fsk;
+  FILE *fsk; /* Ponteiro para o BigFile. */
   
   char nomeArq[TAM_NOME_ARQ+10];
   
@@ -159,7 +160,7 @@ resultadosBusca * buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE 
     
     temp2.nrr = result->next;
     
-    while (temp2.nrr != -1) {
+    while (temp2.nrr != -1) { /* Percorre o BigFile lendo as PKs de cada resultado. */
       
       offset = temp2.nrr * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
       fseek(fsk, offset, SEEK_SET);
@@ -167,7 +168,8 @@ resultadosBusca * buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE 
       fgets(temp2.pk, TAM_TITULO+1, fsk);
       fscanf(fsk, FORMATO_INT, &(temp2.nrr));
       
-      busca = buscaPk(&temp2, base, indPrim, busca);
+      /* Busca a PK obtida no indice primario. */
+      busca = buscaPk(&temp2, indPrim, base, busca);
       
     }
     
@@ -177,7 +179,7 @@ resultadosBusca * buscaSk(char *chave, IndPrim *indPrim, IndSec *indSecun, FILE 
     strcpy(busca->chave, chave);
  
   }
-
+	/* Retorna a estrutura que armazena temporariamente os NRRs de cada resultado. */
   return busca;
 }
 
@@ -211,7 +213,7 @@ resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *in
 
     strcpy(temp.pk, resposta->vetor[i].pk);
 
-    busca = buscaPk(&temp, base, indPrim, busca);
+    busca = buscaPk(&temp, indPrim, base, busca);
     busca->similaridades[busca->tamanho-1] = resposta->vetor[i].similaridade;
 
   }
@@ -259,7 +261,7 @@ void gravaHtml(resultadosBusca *result, FILE * base) {
   for (k = 0; k < result->tamanho; k++) {
   	
   	/* leitura do registro na base de dados. */
-	leRegistro(&temp, result->obras[k].nrr, base);
+	leRegistro(&temp, result->nrrs[k], base);
   
     /*Preenchimento da tabela*/
     fprintf(b, "<tr height=\"8\"></tr>");
@@ -319,42 +321,8 @@ void gravaHtml(resultadosBusca *result, FILE * base) {
  * Tera efeitos indesejavies se usada em um ponteiro que nao foi usado para uma busca. */
 void liberaBusca(resultadosBusca *result) {
 
-  free(result->obras);
+  free(result->nrrs);
   free(result->similaridades);
   free(result);
 
-}
-
-/* Esta funcao lista todas as obras na base. Eh problema, pq gera um
-   vetor com todas as obras da base. Precisa de ajustes. */
-void listaBase(FILE *base, IndPrim *indice) {
-  int i, j;
-  resultadosBusca *busca = NULL;
-
-  for (i = 0; i < H; i++) {
-
-    gravaPk(indice);
-
-    indice->valorHash = i;
-    indice->tamanho = 0;
-
-    abrePk(indice);
-    
-    for (j = 0; j < indice->tamanho; j++) {
-      busca = buscaPk(&(indice->vetor[j]), base, indice, busca);
-    }
-  }
-
-  if (busca) {
-
-    strcpy(busca->chave, "Todas as obras.");
-    gravaHtml(busca, base);
-    printSearchSuccess();
-    liberaBusca(busca);
-
-  } else {
-
-    printSearchFailed();
-
-  }
 }

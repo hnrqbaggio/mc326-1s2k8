@@ -30,6 +30,16 @@ IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail);
 */
 IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail);
 
+
+/**
+ * @brief Realiza a remocao no indice de descritores.
+ * 
+ * @param pk A chave primaria do descritor a ser removido.
+ * @param descritores o indice que sera buscado, 
+ * pode ser atualizado devido ao hash.
+ * 
+ * @return o indice atualizado.
+ * */
 IndDesc * removeDesc(char *pk, IndDesc *descritores);
 
 #endif

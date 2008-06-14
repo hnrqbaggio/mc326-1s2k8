@@ -185,12 +185,12 @@ int main(int argc, char **argv){
       elem->nrr = -1;
 
       /*Faz a pesquisa da pk e mostra no html*/
-      remove = buscaPk(elem, arq, ind, remove);
+      remove = buscaPk(elem, ind, arq, remove);
      
       /*Se encontrou obra de arte*/
       if(remove != NULL) {
         
-        leRegistro(rem, remove->obras[0].nrr, arq);
+        leRegistro(rem, remove->nrrs[0], arq);
         
         /*Remove do indice primario e da base de dados*/
         ind = removePk(rem->titulo, ind, arq, &availBase);

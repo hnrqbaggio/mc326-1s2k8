@@ -94,7 +94,7 @@ IndPrim * realocaIndPrim(IndPrim *ind);
  * indice correspondente.
  * @return Indice primario.
 */
-IndPrim * trocaIndPrim(IndPrim *, char *);
+IndPrim * trocaIndPrim(IndPrim * indice, char * chave);
 
 /**
  * @brief Libera os indices e vetores alocados na utilizacao do programa.

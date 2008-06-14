@@ -71,15 +71,18 @@ typedef struct {
 	int valorHash;		/**< Valor da funcao de espalhamento dos descritores do indice. */
 } IndDesc;
 
-/* Vetor de obras usado retornado pelas funcoes de busca. */
+/** 
+ * @brief Estrutura para armazanar temporariamente as informacoes 
+ * sobre os resultados de uma busca. 
+ * Ela guarda o nrr de cada registro na base de dados, que obtem atraves
+ * de uma pesquisa no indice primario. 
+ */
 typedef struct {
-
-  Pk *obras; /* Vetor de obras chaves primarias. */
-  double *similaridades; /* vetor com os valores de similaridade com uma obra de referencia */
-  int tamanho; /* Tamanho dos vetores. */
-  int alocado; /* Espaco alocado pros vetores, aumenta sobre demanda. */
-  char chave[TAM_TITULO]; /* Uma string que indica a chave que resultou nestes resultados. */
-
+  int *nrrs; 				/**< Vetor de NRRs dos registros. */
+  double *similaridades; 	/**< Vetor com os valores de similaridade com uma obra de referencia */
+  int tamanho; 				/**< Tamanho dos vetores. */
+  int alocado; 				/**< Espaco alocado pros vetores, aumenta sobre demanda. */
+  char chave[TAM_TITULO]; 	/**< Uma string que indica a chave que resultou nestes resultados. */
 } resultadosBusca;
 
 #endif /*TIPOS_H_*/

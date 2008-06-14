@@ -74,7 +74,9 @@ typedef struct {
 /** 
  * @brief Estrutura para armazanar temporariamente as informacoes 
  * sobre os resultados de uma busca. 
- * Ela guarda o nrr de cada registro na base de dados, que obtem atraves
+ * 
+ * Ela representa um buffer de resultados da busca, guardando o 
+ * nrr de cada registro na base de dados, que obtem atraves
  * de uma pesquisa no indice primario. 
  */
 typedef struct {

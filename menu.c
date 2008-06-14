@@ -30,15 +30,15 @@ int geraMenuBusca() {
 	
 	int ent;
 	
-	printf("\n===============================\n");
-	printf("= 1 - Buscar pelo titulo      =\n");
-	printf("= 2 - Buscar pelo tipo        =\n");
-	printf("= 3 - Buscar pelo autor       =\n");
-	printf("= 4 - Buscar pelo ano         =\n");
-  	printf("= 5 - Buscar pela PK da obra  =\n");
-  	printf("= 6 - Buscar por conteudo     =\n");
-  	printf("= 0 - Voltar ao menu anterior =\n");
-	printf("===============================\n");
+	printf("\n==================================\n");
+	printf("= 1 - Buscar pelo titulo         =\n");
+	printf("= 2 - Buscar pelo tipo           =\n");
+	printf("= 3 - Buscar pelo autor          =\n");
+	printf("= 4 - Buscar pelo ano            =\n");
+  	printf("= 5 - Buscar por titulo completo =\n");
+  	printf("= 6 - Buscar por conteudo        =\n");
+  	printf("= 0 - Voltar ao menu anterior    =\n");
+	printf("==================================\n");
 	printf("Entre com umas das opcoes acima: ");
 	scanf("%d", &ent);
 	
@@ -48,9 +48,6 @@ int geraMenuBusca() {
 int geraNotificaInsere() {
   char ent2;
 	
-  printf("\n------------------------\n");
-  printf("Obra inserida com exito.\n");
-  printf("------------------------\n");
   printf("Deseja inserir uma nova obra? [s/n]: ");
   scanf("%c", &ent2);
 
@@ -64,7 +61,7 @@ void printSearchSuccess() {
 }
 
 void printSearchFailed() {
-	 printf("\n-------------------------------\n");
+    printf("\n-------------------------------\n");
     printf("Nenhum registro foi encontrado.\n");
     printf("-------------------------------\n");
 }

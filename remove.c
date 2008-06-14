@@ -106,6 +106,10 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
 
 	} else {
 
+  		/* Guarda um 'ponteiro' pra atual. */
+		ant = prox;
+		atual = result->next;
+		
 	  /* Atualiza o indice. */
 	  fim = indSecun->tamanho-1;
 
@@ -154,7 +158,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
 
 	  } else {
 
-	    /* Vai pro proxima posicao na lista e guarda um 'ponteiro' pra atual. */
+	    /* Vai pra proxima posicao na lista e guarda um 'ponteiro' pra atual. */
 	    ant = prox;
 	    fscanf(arq, FORMATO_INT, &prox);
 

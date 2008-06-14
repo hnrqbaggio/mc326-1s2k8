@@ -1,5 +1,18 @@
 #include "busca.h"
 
+/*
+ * Realiza a gravacao dos resultados de uma busca no arquivo HTML.
+ * 
+ * Ela recebe a estrutura que contem temporariamente os NRRs de cada registro 
+ * e com esses valores faz a leitura de cada registro na base de dados.
+ * 
+ * Apesar de ter acesso a Base, ela soh o faz a partir de dados que resultam 
+ * de uma busca pravia no indice primario, o que garante que os valores dos NRRs sao coerentes.
+ * 
+ * Essa funcao soh pode ser acessada pelos Adapters que fazem a interface 
+ * do main com as funcoes de busca, para evitar usos que possam nao estar vinculados 
+ * a uma busca no indice.
+ */
 void gravaHtml(resultadosBusca *, FILE *);
 
 

@@ -70,6 +70,7 @@ int main(int argc, char **argv){
   constroiIndDesc(indDescritor, ind, arq);
 	
   elem = (Pk *) malloc(sizeof(Pk));
+  rem = (TObra *) malloc(sizeof(TObra));
 
 	menuBoasVindas();
 
@@ -84,13 +85,16 @@ int main(int argc, char **argv){
       /*Looping de insercao*/
       do {
         /*leitura da obra a ser inserida e gravacao no indice primario*/
-        obra = *(leObra(ind, &obra));
+        if (leObra(ind, &obra));
+        
+        
         
 	/*Grava a obra inserida na base de dados*/
         end = gravaObra(obra, arq, &availBase, ind);
         
         /*Obra2 sera inserida na base. obra sera usada na insereSk*/
         strcpy(obra2.titulo, obra.titulo);
+        
         /*Passo todas as strings para maiuscula para nao ocorrer conflito nas pesquisas*/
         maiuscula(obra2.titulo);
         maiuscula(obra.titulo);
@@ -201,12 +205,13 @@ int main(int argc, char **argv){
         secAutor  = removeSk(rem->autor,  secAutor,  rem->titulo, &availAutor);
         secAno    = removeSk(rem->ano,    secAno,    rem->titulo, &availAno);
 
-	/* Remove do indice de descritores. */
-	indDescritor = removeDesc(elem->pk, indDescritor);
+		/* Remove do indice de descritores. */
+		indDescritor = removeDesc(elem->pk, indDescritor);
+	
+      	/*Libera remove, que e alocado dentro da funcao consulta*/
+      	liberaBusca(remove);
       }
 
-      /*Libera remove, que e alocado dentro da funcao consulta*/
-      liberaBusca(remove);
 
       break;
 

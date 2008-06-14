@@ -136,6 +136,14 @@ void maiuscula(char *chave);
  */
 int compare(const void *a, const void *b);
 
+/**
+ * @brief Esta funcao realiza a leitura de um registro com base no valor 
+ * do seu NRR obtido atraves do indice primario.
+ * 
+ * @param obra Um ponteiro para a estrutura onde serao armazenados os dados lidos.
+ * @param nrr O numero relativo do registro na base de dados.
+ * @param base A base de dados. 
+ */
 void leRegistro(TObra *obra, int nrr, FILE *base);
 
 #endif

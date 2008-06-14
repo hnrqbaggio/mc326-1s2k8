@@ -1,7 +1,7 @@
 #include "leitura.h"
 
 /*Funcao de leitura da obra de arte a ser inserida*/
-TObra * leObra (IndPrim *ind, TObra *obra) {
+int leObra (IndPrim *ind, TObra *obra) {
 
   Pk *chave = (Pk *) malloc(sizeof(Pk));
   Pk *result = NULL;
@@ -26,9 +26,11 @@ TObra * leObra (IndPrim *ind, TObra *obra) {
   result = (Pk *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(Pk), compare);
     
   if (result) { /* registro ja existente */
+  	
     printf("Obra ja catalogada. Insercao nao concluida.\n");
-
+    
   } else { 
+  	
     leTexto(obra->tipo, sizeof(obra->tipo), "Tipo (ate 100 caracteres): ");
     leTexto(obra->autor, sizeof(obra->autor), "Autor (ate 125 caracteres): ");
 
@@ -51,10 +53,15 @@ TObra * leObra (IndPrim *ind, TObra *obra) {
 
     /* atualizacao do indice */	
     ind->vetor[ind->tamanho-1] = *chave;
+    
+  printf("\n------------------------\n");
+  printf("Obra inserida com exito.\n");
+  printf("------------------------\n");
+  
   }
-	
-  free(chave);
-  return obra;
+	    
+	free(chave);
+    return (result)? 1 : 0; 
 }
 
 /* Funcao para a leitura dos campos de texto */

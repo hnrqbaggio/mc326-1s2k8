@@ -1,6 +1,6 @@
 /** @file remove.h
  * @brief Biblioteca que trata a remocao de registros da base de dados e das implicacoes dessa remocao nos indices.
-*/
+ */
 
 #ifndef _REMOVE_H
 #define _REMOVE_H
@@ -17,7 +17,7 @@
  * @param base Base de dados.
  * @param avail Avail list da base.
  * @return Indice primario atualizado.
-*/
+ */
 IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail);
 
 /** @brief Funcao q remove uma entrada de um indice secundario.
@@ -27,7 +27,19 @@ IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail);
  * @param pk Indice primario da obra removida.
  * @param avail Avail list do indice secundario.
  * @return Indice secundario atualizado.
-*/
+ */
 IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail);
+
+
+/**
+ * @brief Realiza a remocao no indice de descritores.
+ * 
+ * @param pk A chave primaria do descritor a ser removido.
+ * @param descritores o indice que sera buscado, 
+ * pode ser atualizado devido ao hash.
+ * 
+ * @return o indice atualizado.
+ * */
+IndDesc * removeDesc(char *pk, IndDesc *descritores);
 
 #endif

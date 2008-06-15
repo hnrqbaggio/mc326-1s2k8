@@ -57,29 +57,34 @@ typedef struct {
 
 /*! \brief Estrutura de um descritor de imagem. */
 typedef struct {
-	char pk[TAM_TITULO+1]; 		/**< Chave primaria do registro ao qual o descritor pertence. */
-	char valorDescritor;			/**< Valor do descritor da imagem da \a Obra. */
-	double similaridade;			/**< Valor da similaridade da imagem com uma imagem de referencia. Usado na operacao de busca por conteudo.*/
-	char imagem[TAM_IMAGEM+1];	/**< Imagem da Obra. */
+  char pk[TAM_TITULO+1]; 		/**< Chave primaria do registro ao qual o descritor pertence. */
+  char valorDescritor;			/**< Valor do descritor da imagem da \a Obra. */
+  double similaridade;			/**< Valor da similaridade da imagem com uma imagem de referencia. Usado na operacao de busca por conteudo.*/
+  char imagem[TAM_IMAGEM+1];	/**< Imagem da Obra. */
 } Descritor;
 
 /*! \brief Estrutura de um indice de descritores. */
 typedef struct {
-	Descritor *vetor;	/**< Vetor dinamico que contem os descritores do indice. */
-	int tamanho;		/**< Tamanho do vetor e consequantemente do indice. */
-	int alocado;		/**< Espaco alocado para o vetor do indice. Como nos demais indices, cresce dinamicamente com o tamanho do vetor. */
-	int valorHash;		/**< Valor da funcao de espalhamento dos descritores do indice. */
+  Descritor *vetor;	/**< Vetor dinamico que contem os descritores do indice. */
+  int tamanho;		/**< Tamanho do vetor e consequantemente do indice. */
+  int alocado;		/**< Espaco alocado para o vetor do indice. Como nos demais indices, cresce dinamicamente com o tamanho do vetor. */
+  int valorHash;		/**< Valor da funcao de espalhamento dos descritores do indice. */
 } IndDesc;
 
-/* Vetor de obras usado retornado pelas funcoes de busca. */
+/** 
+ * @brief Estrutura para armazanar temporariamente as informacoes 
+ * sobre os resultados de uma busca. 
+ * 
+ * Ela representa um buffer de resultados da busca, guardando o 
+ * nrr de cada registro na base de dados, que obtem atraves
+ * de uma pesquisa no indice primario. 
+ */
 typedef struct {
-
-  TObra *obras; /* Vetor de obras de arte. */
-  double *similaridades; /* vetor com os valores de similaridade com uma obra de referencia */
-  int tamanho; /* Tamanho dos vetores. */
-  int alocado; /* Espaco alocado pros vetores, aumenta sobre demanda. */
-  char chave[TAM_TITULO]; /* Uma string que indica a chave que resultou nestes resultados. */
-
+  int *nrrs; 				/**< Vetor de NRRs dos registros. */
+  double *similaridades; 	/**< Vetor com os valores de similaridade com uma obra de referencia */
+  int tamanho; 				/**< Tamanho dos vetores. */
+  int alocado; 				/**< Espaco alocado pros vetores, aumenta sobre demanda. */
+  char chave[TAM_TITULO]; 	/**< Uma string que indica a chave que resultou nestes resultados. */
 } resultadosBusca;
 
 #endif /*TIPOS_H_*/

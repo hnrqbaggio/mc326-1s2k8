@@ -24,6 +24,7 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 	
 	if (arqDesc) {
 		
+		fprintf(stdout, "Carregando indices de descritores das imagens... ");
 		/* Carrega os descritores a partir do arquivo. */
 		indDesc = carregaDescritor(indDesc, arqDesc);
 		
@@ -32,9 +33,11 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 		
 		fclose(arqDesc);
 		
+		fprintf(stdout, "OK\n");
+		
 	} else {
 		
-		fprintf(stdout, "Carregando indices de descritores das imagens.\n");
+		fprintf(stdout, "Criando indices de descritores das imagens.\n");
 		fprintf(stdout, "Isso pode demorar um pouco, dependendo do tamanho da sua base de dados.\n");
 		
 		cont = 0;
@@ -52,21 +55,13 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 			/*Percorre os indices primarios*/
 			for (i = 0; i < indPrim->tamanho; ++i) {
 				
-				/* Posiciona o cursos pra leitura da obra. */
-				fseek(base, indPrim->vetor[i].nrr * TAM_REG, SEEK_SET);
-				
-				/* Le o registro inteiro de uma vez. */
-				fgets(obra.titulo, TAM_TITULO + 1, base);
-				fgets(obra.tipo,   TAM_TIPO + 1,   base);
-				fgets(obra.autor,  TAM_AUTOR + 1,  base);
-				fgets(obra.ano,    TAM_ANO + 1,    base);
-				fgets(obra.valor,  TAM_VALOR + 1,  base);
-				fgets(obra.imagem, TAM_IMAGEM + 1, base);
-				fprintf(stdout, "Processando registro %d -> Imagem %s.\n", ++cont, obra.imagem);
+				/* Le o registro. */
+				leRegistro(&obra, indPrim->vetor[i].nrr, base);
+				fprintf(stdout, "Processando registro %d -> Imagem %s\n", ++cont, obra.imagem);
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/
-				maiuscula(indPrim->vetor[i].pk);
+				
 				
 				/* Calcula o descritor da imagem lida da base. */
 				sprintf(imagem, "%s%s", "img/", obra.imagem);

@@ -39,7 +39,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 	
 	if (arqTitulo && arqTipo && arqAutor && arqAno) { /* Se existem todos os arquivos. */
 		
-		fprintf(stdout, "Carregando indices secundários. ");
+		fprintf(stdout, "Carregando indices secundários... ");
 		
 		/* Carrega chaves do arquivo. */
 		titulo = carregaSk(titulo, arqTitulo);
@@ -60,7 +60,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 		
 	} else { /* Vai precisar criar todos a partir da base de dados. */
 		
-		fprintf(stdout, "Gerando indices secundários. ");
+		fprintf(stdout, "Gerando indices secundários... ");
 		
 		sprintf(nomeTitulo, "%s%s", titulo->tipoCampo, EXTENSAO_PK);
 		sprintf(nomeTipo,   "%s%s", tipo->tipoCampo,   EXTENSAO_PK);
@@ -86,24 +86,15 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 			/*Percorre os indices primarios*/
 			for (i = 0; i < indPrim->tamanho; ++i) {
 				
-				/* Posiciona o cursos pra leitura da obra. */
-				fseek(base, indPrim->vetor[i].nrr * TAM_REG, SEEK_SET);
-				
-				/* Le o registro inteiro de uma vez. */
-				fgets(obra.titulo, TAM_TITULO + 1, base);
-				fgets(obra.tipo,   TAM_TIPO + 1,   base);
-				fgets(obra.autor,  TAM_AUTOR + 1,  base);
-				fgets(obra.ano,    TAM_ANO + 1,    base);
-				fgets(obra.valor,  TAM_VALOR + 1,  base);
-				fgets(obra.imagem, TAM_IMAGEM + 1, base);
-				
+				/* Le o registro. */
+				leRegistro(&obra, indPrim->vetor[i].nrr, base);				
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/
-				maiuscula(obra.titulo);
-				maiuscula(obra.tipo);
-				maiuscula(obra.autor);
-				maiuscula(indPrim->vetor[i].pk);
+				
+				
+				
+				
 				strcpy(pkAux, indPrim->vetor[i].pk);
 				
 				/* Para cada indice, faz a inserção das chaves. */
@@ -123,7 +114,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 
 	}
 	
-	fprintf(stdout, "OK.\n");
+	fprintf(stdout, "OK\n");
 	
 }
 
@@ -221,7 +212,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
   int tam, offset, temp;
 
   /* Quebra a string em varios tokens */
-  token = strtok(campo, " ");
+  token = strtok(campo, " ,.-");
 
   while (token) { /* Realiza a insercao para cada novo token existente na string. */
 
@@ -295,7 +286,7 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
     }
     
     sk = sk2;
-    token = strtok(NULL, " "); /* Pega um novo token na string, pra fazer uma nova SK. */
+    token = strtok(NULL, " ,.-"); /* Pega um novo token na string, pra fazer uma nova SK. */
   }
 
   /*Ordena o vetor de SKs*/
@@ -388,15 +379,8 @@ int compareSk(const void *a, const void *b) {
   /* Calculo do tamanho das strings. */
   x = a2->lenght;
   y = b2->lenght;
-
-  /* Copia os valores dos parametros, convertendo pra maiuscula */
-  for (i = 0; i <= x; i++) a2->key[i] = toupper(a2->key[i]);
-  a2->key[i] = '\0';
-
-  for (i = 0; i <= y; i++) b2->key[i] = toupper(b2->key[i]);
-  b2->key[i] = '\0';
  
-  return strcmp(a2->key, b2->key);
+  return strcasecmp(a2->key, b2->key);
 
 }
 

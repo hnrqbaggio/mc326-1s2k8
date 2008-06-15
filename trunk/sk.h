@@ -84,7 +84,7 @@ IndSec * insereSk(IndSec *indice, FILE *bigFile, char *pk, char *campo, availLis
  * @brief Grava as informacoes do indice secundario no disco.
  * @param indice O indice secundario.
  * @return void.
-*/
+ */
 void gravaIndSk(IndSec *indice);
 
 /** @brief Funcao usada para realocar espaco para o vetor da SKs do indice caso seja necessario. */
@@ -105,7 +105,7 @@ IndSec * realocaIndSec(IndSec *indice);
  * @param b O outro ponteiro usado na comparacao (tambem com cast).
  * @return Um inteiro que vale -1 se o campo key da chave a eh 
  * alfabeticamente menor que o da chave b, 1 se for maior, ou 0 se forem iguais.
-*/
+ */
 int compareSk(const void *a, const void *b);
 
 #endif

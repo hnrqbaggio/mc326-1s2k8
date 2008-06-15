@@ -36,7 +36,7 @@ IndDesc * inicializaDescritor();
  * @param base O ponteiro para o arquivo da base de dados.
  * return void
 */
-void constroiIndDesc(IndDesc *, IndPrim *indPrim, FILE *base);
+void constroiIndDesc(IndDesc * indDesc, IndPrim * indPrim, FILE *base);
 
 /** 
  * @brief Troca o indice descritor atual por outro 
@@ -46,7 +46,7 @@ void constroiIndDesc(IndDesc *, IndPrim *indPrim, FILE *base);
  *  @param valor Descritor cujo hash se deseja calcular.
  *  return O indice secundario atualizado.
 */
-IndDesc * trocaIndDesc(IndDesc *ind, char valor);
+IndDesc * trocaIndDesc(IndDesc * indice, char valor);
 
 /**
  * @brief Carrega um indice descritor a partir do arquivo em disco.

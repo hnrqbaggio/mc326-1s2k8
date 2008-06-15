@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <ctype.h>
 #include "hash.h"
 #include "avail.h"
@@ -94,7 +95,7 @@ IndPrim * realocaIndPrim(IndPrim *ind);
  * indice correspondente.
  * @return Indice primario.
 */
-IndPrim * trocaIndPrim(IndPrim *, char *);
+IndPrim * trocaIndPrim(IndPrim * indice, char * chave);
 
 /**
  * @brief Libera os indices e vetores alocados na utilizacao do programa.
@@ -109,59 +110,6 @@ IndPrim * trocaIndPrim(IndPrim *, char *);
 */
 void liberaIndices(IndPrim *indPrim, IndSec *indTitulo, IndSec *indTipo,
 IndSec *indAutor, IndSec *indAno, IndDesc *indDescritor);
-
-/** 
- * @brief Realiza uma consulta na base usando a chave primaria.
- * 
- * @param chave String a ser buscado no indice primario.
- * @param base Base de dados.
- * @param indice Indice primario.
- * @return A obra de dados encontrada ou NULL caso nao a busca nao encontre resultados. 
- */
-TObra * consulta(Pk *chave, FILE *base, IndPrim *indice);
-
-/** 
- * @brief Lista todos os registros da base de dados. 
- * 
- * Percorre o vetor do indice primario e para cada 
- * elemento dele, pega os dados na base. Os resultados sao 
- * passados pra funcao que gera o HTML. Faz essa operacao 
- * para cada arquivo de indice primario.
- * 
- * @param base Base de dados.
- * @param indice Indice primario.
- * @return void
- */
-void listaBase(FILE *base, IndPrim *indice);
-
-/** @brief Insere uma obra na tabela de obras de arte do arquivo HTML.
- * 
- * @param b Arquivo html.
- * @param valores Obra de arte a ser mostrada no arquivo.
- * @return Arquivo html.
- */
-FILE * preencheHtml(FILE *b, TObra valores);
-
-/** @brief Gera cabecalho do arquivo html.
- * 
- * @param b Arquivo html.
- * @return Arquivo html.
- */
-FILE * headHtml(FILE *b);
-
-/** @brief Gera o final do html.
- * 
- * @param b Arquivo html.
- * @return Arquivo html.
- */
-FILE * endHtml(FILE *b);
-
-/** @brief Transforma para maiuscula a string passada como parametro.
- * 
- * @param chave String a ser mudada para maiuscula.
- * @return void.
-*/
-void maiuscula(char *chave);
 
 /** 
  * @brief Funcao de comparacao para as funcoes qsort e bsearch da stdlib.h.
@@ -181,5 +129,15 @@ void maiuscula(char *chave);
  * @return int Retorna se os parametros sao iguais ou nao.
  */
 int compare(const void *a, const void *b);
+
+/**
+ * @brief Esta funcao realiza a leitura de um registro com base no valor 
+ * do seu NRR obtido atraves do indice primario.
+ * 
+ * @param obra Um ponteiro para a estrutura onde serao armazenados os dados lidos.
+ * @param nrr O numero relativo do registro na base de dados.
+ * @param base A base de dados. 
+ */
+void leRegistro(TObra *obra, int nrr, FILE *base);
 
 #endif

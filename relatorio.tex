@@ -88,6 +88,7 @@ capaz de carregar, calcular o descritor e a similaridade de imagens no formato
 JPEG, GIF e PNG. Ela não foi implementada pelo nosso grupo, mas sim
 fornecida pelo professor da disciplina.
 
+\newpage 
 \subsection{Melhorias no código}
 Houve mudanças na implementação dos tipos de dados dos índices primário e
 secundário. Agora, eles armazenas informações como o valor do hash das suas
@@ -119,17 +120,23 @@ A Estrutura de Busca cridada para permitir as mudanças citadas acima está desc
 A documentação das funções e tipos de dados também foi melhorada, e usamos o
 Doxygen para a criação automática de arquivos de referência do programa.
 
+\newpage 
 \subsection{As Funções de Hash}
 O programa possui duas funções de hash: Uma usada para espalhar as chaves dos índices 
 primários e secundários e outra para os descritores.
+\\
 
 A primeira, chamada \textit{hashFunction}, recebe uma string e calcula o produto de cada caractere pela sua posição no vetor, contando a partir de 1, para não perder o primeiro caractere. O número obtido eh dividido por uma constante H e a função retorna o resto dessa divisão.
+\\
 
 Esta função mostrou-se eficiente para distribuir as chaves através dos indices e, devido a sua fórmula, chaves que diferem apenas de um caractere ou que são anagramas, são mapeadas para posições diferentes da Hash Table. Observando os arquivos de índices produzidos pelo programa, vemos que estes tem um tamano em bytes bem uniforme, o que mostra que a função se comportou bem, como se esperava.
+\\
 
 Outro detalhe, é que a função ignora espaços, para que as chaves primárias não fossem mapeadas para valores mal distribuídos. Esse detalhe em nada afeta os índices primários, uma vez que as chaves destes são palavras unitárias.
+\\
 
 A segunda função de espalhamento, \textit{hashDescritor}, como o próprio nome indica, é usada nos descritores e foi proposta pelo monitor da disciplina: Ela recebe um char e conta os bits ligados nesse descritor. O espaço amostral dessa função seriam valores de 0 a 8, porém há apenas um valor de descritor que seria mapeado para os extremos, no caso, um descritor com nenhum bit ligado (imagem totalmente preta) e um com todos os bits ligados (imagem branca). Temos então, na prática, apenas 7 posições para distribuir as chaves.
+\\
 
 Observando os arquivos de índices de descritores gerados pelo programa, percebemos uma frequência muito mais alta de valores intermediários da função hashDescritor, sendo os maiores arquivos aqueles que correspondem aos valores 4 e 3.
 
@@ -179,10 +186,10 @@ Outros problemas como imagens com defeito na base de dados causavam paradas abru
 Por fim, os problemas foram resolvidos, a biblioteca foi editada, e o trabalho final não tem bugs conhecidos e tem um desempenho satisfatório.
 
 \section{Informações Adicionais}
-\textbf{Documentação do Código Fonte}
+\subsection{\textbf{Documentação do Código Fonte}}
 Veja arquivos na pasta Docs/
 
-\textbf{Página do Projeto}
+\subsection{\textbf{Página do Projeto}}
 http://code.google.com/p/mc326-1s2k8/
 
 \end{document}

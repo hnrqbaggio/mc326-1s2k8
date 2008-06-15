@@ -57,18 +57,18 @@ typedef struct {
 
 /*! \brief Estrutura de um descritor de imagem. */
 typedef struct {
-	char pk[TAM_TITULO+1]; 		/**< Chave primaria do registro ao qual o descritor pertence. */
-	char valorDescritor;			/**< Valor do descritor da imagem da \a Obra. */
-	double similaridade;			/**< Valor da similaridade da imagem com uma imagem de referencia. Usado na operacao de busca por conteudo.*/
-	char imagem[TAM_IMAGEM+1];	/**< Imagem da Obra. */
+  char pk[TAM_TITULO+1]; 		/**< Chave primaria do registro ao qual o descritor pertence. */
+  char valorDescritor;			/**< Valor do descritor da imagem da \a Obra. */
+  double similaridade;			/**< Valor da similaridade da imagem com uma imagem de referencia. Usado na operacao de busca por conteudo.*/
+  char imagem[TAM_IMAGEM+1];	/**< Imagem da Obra. */
 } Descritor;
 
 /*! \brief Estrutura de um indice de descritores. */
 typedef struct {
-	Descritor *vetor;	/**< Vetor dinamico que contem os descritores do indice. */
-	int tamanho;		/**< Tamanho do vetor e consequantemente do indice. */
-	int alocado;		/**< Espaco alocado para o vetor do indice. Como nos demais indices, cresce dinamicamente com o tamanho do vetor. */
-	int valorHash;		/**< Valor da funcao de espalhamento dos descritores do indice. */
+  Descritor *vetor;	/**< Vetor dinamico que contem os descritores do indice. */
+  int tamanho;		/**< Tamanho do vetor e consequantemente do indice. */
+  int alocado;		/**< Espaco alocado para o vetor do indice. Como nos demais indices, cresce dinamicamente com o tamanho do vetor. */
+  int valorHash;		/**< Valor da funcao de espalhamento dos descritores do indice. */
 } IndDesc;
 
 /** 

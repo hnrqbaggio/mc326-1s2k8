@@ -1,0 +1,195 @@
+\documentclass[10pt,a4paper,draft]{article}
+\usepackage[utf-8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\title{\textbf{TP4 - Relatório}}
+\author{\textbf{Grupo 24} \\
+ Henrique Baggio - 071139 \\
+ Claudio Neto    - 070488 \\
+ Victor Carmona  - 073805}
+
+\pagenumbering{arabic}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Introdução}
+Neste trabalho, admitimos que os arquivos de indices usados no TP3 são grandes
+demais para ficar inteiros na memoria. O objetivo é, então, dividir cada
+indice em vários arquivos e distribuir as chaves entre os arquivos,
+carregando o arquivo correspondente a uma chave no momento que for
+necessario.
+
+\section{Objetivo}
+Para distribuir as chaves pelos arquivos da maneira mais uniforme possível,
+o programa deveria usar uma função de espalhamento, que realiza uma operação
+sobre uma chave para determinar em qual arquivo de indice ela deve ser armazenada.
+
+Nesta versão, o programa também deveria ser capaz de realizar uma busca baseada
+no conteúdo das imagens presentes na base de dados.
+
+\section{Funcionalidades}
+Do ponto de vista do usuário, a única funcionalidade nova nesta versão é a
+busca por conteúdo, que analisa a semelhança entre as imagens baseda num
+descritor criado para cada uma.
+
+As funcionalidades da versão 3.0 foram mantidas, exceto a listagem geral de
+todas as obras da base de dados.
+
+Em relação à estrutura do programa, surgiu a distribuição dos indices em
+diversos arquivos e o espalhamento das chaves dos mesmos pelos arquivos usando
+uma função de hash.
+
+\newpage 
+\section{Detalhes de Implementação}
+
+\subsection{Índices}
+Assim como na versão 3.0, durante a sua execução, o programa mantém na memória
+o indice primário, os quator indices secundários e, a partir desta versão, um
+indice de descritores das imagens da base.
+
+A principal diferença está no fato de que agora, antes de realizar alguma
+operação sobre uma chave, o programa deve verificar a qual parte do indice esta
+chave pertence. Para isto, ele calcula o valor da \text{Função de Hash} da chave
+e carrega para a memória o arquivo correspontente ao valor encontrado, caso seja
+diferente do valor do indice atual.
+
+No disco, os arquivos de um mesmo índice tem um nome formado pelo tipo de campo
+da obra ao qual se referem, e um sufixo numérico que indica o valor da Função
+Hash das chaves do arquivo.
+
+Há uma mundaça em relação aos indices secundários: Antes, a estrutura de listas
+invertidas de chaves primarias correspontentes a uma chave secundária ficava
+armazenada no mesmo arquivo do indice. Agora, como há vários arquivos de
+vetores de chaves secundarias, optou-se por manter toda a estrutura de listas
+invertidas num mesmo (e grande) arquivo, denomindado \textbf{BigFile}. Assim,
+todas as listas invertidas de um mesmo indice estão num único BigFile, que possui uma
+única \textbf{Avail List}.
+
+Neste TP, surgiu o índice de descritores das imagens. São estruturas que
+contem, para cada obra, a sua chave primaria, o seu descritor e o identificador
+da imagem. Optamos por armazenar os identificadores para diminuir o número de
+acessos à base de dados durante a \textsf{busca por conteúdo}. Este índice usa
+uma função de espalhamanto diferente dos demais, baseada no descritor da imagem.
+
+\subsection{Busca por Conteúdo}
+A busca por conteúdo retorna uma lista de imagens semelhantes a uma imagem dada
+pelo usuário, baseando-se no descritor. A lista de imagens é ordenada de acordo
+com a similaridade, um número real entre 0 e 1, inclusive, que indice o quanto
+a imagem é parecida com a imagem de referencia. O resultado é informado um
+HTML, podendo o usuario ver os dados de cada obra, a imagem da mesma e o valor
+da similaridade.
+
+As funções que manipulam as imagens estão numa biblioteca chamada libimg, que é
+capaz de carregar, calcular o descritor e a similaridade de imagens no formato
+JPEG, GIF e PNG. Ela não foi implementada pelo nosso grupo, mas sim
+fornecida pelo professor da disciplina.
+
+\newpage 
+\subsection{Melhorias no código}
+Houve mudanças na implementação dos tipos de dados dos índices primário e
+secundário. Agora, eles armazenas informações como o valor do hash das suas
+chaves, o tamanho da base de dados ou do BigFile, e o tipo de campo ao qual 
+se fererem (somente os secundários).
+
+Encapsular estas informações permitiu reduzir o número de parâmetros nas
+funções que manipulam estes índices, tornando o código mais claro e de fácil
+manutenção.
+
+Outra mudanças foi a criação de uma biblioteca de constantes e uma de tipos de
+dados, armazenando os elementos semelhantes num único local, melhorando a
+manutenção do código.
+
+Criamos uma função que carrega ou cria todos os índices secundários de uma só
+vez, para evitar ter que percorrer a base de dados quatro vezes. Agora há uma
+única passagem pela base em caso de criação dos índices.
+
+Finalmente esta versão conseguiu melhorar as funções de busca que apresentavam repetição de código e desorganização na separação das tarefas de cada uma. Foi criada uma função que faz a busca no índice primário, \textit{buscaPk}, através de uma chave e guarda o NRR do registro numa estrutura temporária, uma especie de buffer de onde os resultados serão lidos pela função que imprime a saída no arquivo HTML.
+
+As funções que fazem a busca nos índices secundários e de descritores utilizam \textit{buscaPk} pra obter as chaves primárias associadas a suas respecitivas chaves.
+
+Para fazer interface destas novas funções com o \textit{main}, foram criadas funções intermediarias, que fazem a busca nos índices e passam os resultados para a função que gera o HTML - são uma especie de adapter, para evitar a repetição, no main, de mensagens para o usuário e para poder acessar a função \textit{gravaHtml}, cujo escopo é restrito a biblioteca de busca.
+
+A função \textit{gravaHtml} é usada para poder gerar o arquivo HTML com os resultados das buscas. Ela faz o acesso à Base de Dados usando os valores dos NRRs dos registros, que estão no buffer de busca. Vale ressaltar que estes NRRs são coerentes com o índice primário, uma vez que são obtidos a partir dele e apenas armazenados para poderem ser processados de uma soh vez.
+
+A Estrutura de Busca cridada para permitir as mudanças citadas acima está descrita na documentação do código fonte e é composta por um vetor de NRRs, um de similaridades e uma string que informa a chave que originou os resultados armazenados, além de inteiros que servem para controlar o espaço alocado para a própria estrutura, como nos índices.
+
+A documentação das funções e tipos de dados também foi melhorada, e usamos o
+Doxygen para a criação automática de arquivos de referência do programa.
+
+\newpage 
+\subsection{As Funções de Hash}
+O programa possui duas funções de hash: Uma usada para espalhar as chaves dos índices 
+primários e secundários e outra para os descritores.
+\\
+
+A primeira, chamada \textit{hashFunction}, recebe uma string e calcula o produto de cada caractere pela sua posição no vetor, contando a partir de 1, para não perder o primeiro caractere. O número obtido eh dividido por uma constante H e a função retorna o resto dessa divisão.
+\\
+
+Esta função mostrou-se eficiente para distribuir as chaves através dos indices e, devido a sua fórmula, chaves que diferem apenas de um caractere ou que são anagramas, são mapeadas para posições diferentes da Hash Table. Observando os arquivos de índices produzidos pelo programa, vemos que estes tem um tamano em bytes bem uniforme, o que mostra que a função se comportou bem, como se esperava.
+\\
+
+Outro detalhe, é que a função ignora espaços, para que as chaves primárias não fossem mapeadas para valores mal distribuídos. Esse detalhe em nada afeta os índices primários, uma vez que as chaves destes são palavras unitárias.
+\\
+
+A segunda função de espalhamento, \textit{hashDescritor}, como o próprio nome indica, é usada nos descritores e foi proposta pelo monitor da disciplina: Ela recebe um char e conta os bits ligados nesse descritor. O espaço amostral dessa função seriam valores de 0 a 8, porém há apenas um valor de descritor que seria mapeado para os extremos, no caso, um descritor com nenhum bit ligado (imagem totalmente preta) e um com todos os bits ligados (imagem branca). Temos então, na prática, apenas 7 posições para distribuir as chaves.
+\\
+
+Observando os arquivos de índices de descritores gerados pelo programa, percebemos uma frequência muito mais alta de valores intermediários da função hashDescritor, sendo os maiores arquivos aqueles que correspondem aos valores 4 e 3.
+
+\newpage 
+\section{Manual de Uso}
+No inicio do programa surgem mensagens que informam ao usuário se os índices estão sendo carregados ou criados, pois no caso de uma base de dados realmente grande, isso pode demorar um pouco.
+
+Em seguida, surge o menu principal, com os seguintes itens:
+
+\subsection{Inserir nova obra}
+Inicia a operação de inserção, solicitando ao usuário os dados da nova obra de arte. Permanece inserindo até que o usuário resolva voltar ao menu principal.
+
+\subsection{Buscar obra}
+Há, nesta versão, os seguintes tipos de busca, na ordem em que aparecem no menu de busca.
+
+\subsubsection{Busca por titulo}
+Realiza a busca por palavra do titulo da obra, retornando no arquivo HTML todas as obras com essa palavra.
+
+\subsubsection{Busca por tipo}
+Faz a busca por palavra do tipo da obra, retornando todas as ocorrências.
+
+\subsubsection{Busca por autor}
+Busca obras usando uma palavra do nome do autor, retornando todas as obras cujo autor contenha o nome fornecido.
+
+\subsubsection{Busca por ano}
+Retorna todas as obras com o mesmo ano de publicação.
+
+\subsubsection{Busca por titulo completo}
+Faz a busca usando o título completo da obra. Uma vez que esse título é único, produz um único resultado.
+
+\subsubsection{Busca por conteudo}
+Realiza a busca das imagens semelhantes a uma imagem de referência cujo nome é fornecido pelo usuário. Fornece uma lista semelhante às das demais buscas, mas com um campo adicional que indica a \textit{similaridade} entre a obra e a de referência.
+
+\subsection{Remover registro}
+Ao remover um registro, o usuário deve fazer uma busca e então entrar com o titulo completo da obra que deseja remover. Após a operação, exibi-se no HTML os dados da obra.
+
+\section{Bugs}
+O único bug restante no trabalho está na função da libimg que carrega imagens no formato GIF. Há trechos de memória que não estão sendo desalocados. Infelizmente, não conseguimos entender o funcionamento da função para poder consertá-la, e tivemos que deixar como estava.
+
+Outros problemas que surgiram durante o desenvolvimento foram corrgidos de forma satisfatória, como informar qual imagem da base de dados não pode ser carregada por exemplo, dando ao usuário informções sobre o erro que abortou o programa.
+
+\section{Dificuldades}
+A maior dificuldade desse TP foi adaptar a libimg ao programa. A biblioteca apresentava uma falha que gerava um leak muito grande, da ordem de centenas de MB, oq travava os computadores e atrasou o andamento do trabalho. Esse erro da biblioteca só foi reconhecido dois dias após o início do uso da mesma. Praticamente todo o trabalho dessa versão esteve na parte ds busca por conteúdo, que demorou mais do que o previsto devido ao tempo gasto com a libimg.
+
+Outros problemas como imagens com defeito na base de dados causavam paradas abruptas no programa, em situações que nem mesmo o uso do \textit{gdb} pode ajudar.
+
+Por fim, os problemas foram resolvidos, a biblioteca foi editada, e o trabalho final não tem bugs conhecidos e tem um desempenho satisfatório.
+
+\section{Informações Adicionais}
+\subsection{\textbf{Documentação do Código Fonte}}
+Veja arquivos na pasta Docs/
+
+\subsection{\textbf{Página do Projeto}}
+http://code.google.com/p/mc326-1s2k8/
+
+\end{document}

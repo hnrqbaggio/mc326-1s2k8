@@ -1,0 +1,43 @@
+=========
+TODO LIST
+=========
+
+== PREVISÕES DE ENTREGAS ==
+
+(TP4)
+- SABADO, 14.
+
+
+== TAREFAS GERAIS ==
+- Numeros magicos
+  	  cacar e exterminar todos! =]
+- Se der tempo, melhorar o HTML
+
+== BELO ==
+
+(TP4)
+- Testar, testar muito e ver cada furo.
+
+(TP5)
+- Planejar relatorio. Fazer paralelamente ao desenvolvimento, 
+para ter ele pronto junto com o programa.
+
+
+== MATAO ==
+
+(TP4)
+- Mudar o termo "PK" nos menus.
+- Corrigindo pequenos erros herdados da versão 3.0
+
+(TP5)
+- Estudar B+.
+
+
+== BAGGIO ==
+
+(TP4)
+- Documentar as novas funcoes de busca e o novo tipo de dados nelas usado.
+
+(TP5)
+- Comecando.
+

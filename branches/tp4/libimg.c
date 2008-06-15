@@ -19,9 +19,16 @@ char CalculaDescritor(char* NomeImagem)
   int imr,img,imb;
   int i;
   Imagem* im=Imagem_le(NomeImagem);
+
+
+  /* Alterado pelo Grupo 24 para evitar acessar uma imagem que nao foi aberta. */
+  if (!im) {
+    printf("\nO arquivo %s nao pode ser aberto, abortanto programa.\n\n", NomeImagem);
+    exit(0);
+  }
+
+
   h=faz_hist(im);
-  
-  
 
   for (i=0;i<256;i++)
     {
@@ -362,7 +369,8 @@ Imagem* le_jpeg(char* nome_arq_jpeg){
   
   /* Abre o arquivo */
   if ((infile = fopen(nome_arq_jpeg, "rb")) == NULL) {
-    fprintf(stderr, "O arquivo %s nao pode ser aberto\n", nome_arq_jpeg);
+    /* Alterado pelo Grupo 24 para tratar excecoes em qualquer tipo de imagem. */
+    /*fprintf(stderr, "O arquivo %s nao pode ser aberto\n", nome_arq_jpeg);*/
     return NULL;
   }
   

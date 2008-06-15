@@ -106,6 +106,16 @@ Criamos uma função que carrega ou cria todos os índices secundários de uma s
 vez, para evitar ter que percorrer a base de dados quatro vezes. Agora há uma
 única passagem pela base em caso de criação dos índices.
 
+Finalmente esta versão conseguiu melhorar as funções de busca que apresentavam repetição de código e desorganização na separação das tarefas de cada uma. Foi criada uma função que faz a busca no índice primário, \textit{buscaPk}, através de uma chave e guarda o NRR do registro numa estrutura temporária, uma especie de buffer de onde os resultados serão lidos pela função que imprime a saída no arquivo HTML.
+
+As funções que fazem a busca nos índices secundários e de descritores utilizam \textit{buscaPk} pra obter as chaves primárias associadas a suas respecitivas chaves.
+
+Para fazer interface destas novas funções com o \textit{main}, foram criadas funções intermediarias, que fazem a busca nos índices e passam os resultados para a função que gera o HTML - são uma especie de adapter, para evitar a repetição, no main, de mensagens para o usuário e para poder acessar a função \textit{gravaHtml}, cujo escopo é restrito a biblioteca de busca.
+
+A função \textit{gravaHtml} é usada para poder gerar o arquivo HTML com os resultados das buscas. Ela faz o acesso à Base de Dados usando os valores dos NRRs dos registros, que estão no buffer de busca. Vale ressaltar que estes NRRs são coerentes com o índice primário, uma vez que são obtidos a partir dele e apenas armazenados para poderem ser processados de uma soh vez.
+
+A Estrutura de Busca cridada para permitir as mudanças citadas acima está descrita na documentação do código fonte e é composta por um vetor de NRRs, um de similaridades e uma string que informa a chave que originou os resultados armazenados, além de inteiros que servem para controlar o espaço alocado para a própria estrutura, como nos índices.
+
 A documentação das funções e tipos de dados também foi melhorada, e usamos o
 Doxygen para a criação automática de arquivos de referência do programa.
 
@@ -153,16 +163,13 @@ Faz a busca usando o título completo da obra. Uma vez que esse título é únic
 \subsubsection{Busca por conteudo}
 Realiza a busca das imagens semelhantes a uma imagem de referência cujo nome é fornecido pelo usuário. Fornece uma lista semelhante às das demais buscas, mas com um campo adicional que indica a \textit{similaridade} entre a obra e a de referência.
 
-\subsection{Listar todas as obras}
-Realiza uma listagem geral de todas as obras da base de dados. Devido a divisão do índices em vários arquivos, uma saída ordenada implicaria num grande número de acessos ao disco. Como esta funcionalidade não era mais obrigatória, preferiu-se manter a saída desordenada, servindo apenas como uma análise superficial das obras na base.
-
 \subsection{Remover registro}
 Ao remover um registro, o usuário deve fazer uma busca e então entrar com o titulo completo da obra que deseja remover. Após a operação, exibi-se no HTML os dados da obra.
 
 \section{Bugs}
 O único bug restante no trabalho está na função da libimg que carrega imagens no formato GIF. Há trechos de memória que não estão sendo desalocados. Infelizmente, não conseguimos entender o funcionamento da função para poder consertá-la, e tivemos que deixar como estava.
 
-Outros problemas que surgiram durante o desenvolvimento foram corrgidos de forma satisfatória.
+Outros problemas que surgiram durante o desenvolvimento foram corrgidos de forma satisfatória, como informar qual imagem da base de dados não pode ser carregada por exemplo, dando ao usuário informções sobre o erro que abortou o programa.
 
 \section{Dificuldades}
 A maior dificuldade desse TP foi adaptar a libimg ao programa. A biblioteca apresentava uma falha que gerava um leak muito grande, da ordem de centenas de MB, oq travava os computadores e atrasou o andamento do trabalho. Esse erro da biblioteca só foi reconhecido dois dias após o início do uso da mesma. Praticamente todo o trabalho dessa versão esteve na parte ds busca por conteúdo, que demorou mais do que o previsto devido ao tempo gasto com a libimg.
@@ -170,4 +177,12 @@ A maior dificuldade desse TP foi adaptar a libimg ao programa. A biblioteca apre
 Outros problemas como imagens com defeito na base de dados causavam paradas abruptas no programa, em situações que nem mesmo o uso do \textit{gdb} pode ajudar.
 
 Por fim, os problemas foram resolvidos, a biblioteca foi editada, e o trabalho final não tem bugs conhecidos e tem um desempenho satisfatório.
+
+\section{Informações Adicionais}
+\textbf{Documentação do Código Fonte}
+Veja arquivos na pasta Docs/
+
+\textbf{Página do Projeto}
+http://code.google.com/p/mc326-1s2k8/
+
 \end{document}

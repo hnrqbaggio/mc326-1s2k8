@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <ctype.h>
 #include "hash.h"
 #include "avail.h"
@@ -109,13 +110,6 @@ IndPrim * trocaIndPrim(IndPrim * indice, char * chave);
 */
 void liberaIndices(IndPrim *indPrim, IndSec *indTitulo, IndSec *indTipo,
 IndSec *indAutor, IndSec *indAno, IndDesc *indDescritor);
-
-/** @brief Transforma para maiuscula a string passada como parametro.
- * 
- * @param chave String a ser mudada para maiuscula.
- * @return void.
-*/
-void maiuscula(char *chave);
 
 /** 
  * @brief Funcao de comparacao para as funcoes qsort e bsearch da stdlib.h.

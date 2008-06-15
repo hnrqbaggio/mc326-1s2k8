@@ -96,11 +96,11 @@ int main(int argc, char **argv){
         strcpy(obra2.titulo, obra.titulo);
         
         /*Passo todas as strings para maiuscula para nao ocorrer conflito nas pesquisas*/
-        maiuscula(obra2.titulo);
-        maiuscula(obra.titulo);
-        maiuscula(obra.tipo);
-        maiuscula(obra.autor);
-        maiuscula(obra.ano);
+        
+        
+        
+        
+        
         
         /*Insercao nos indices secundarios*/
         /*titulo*/

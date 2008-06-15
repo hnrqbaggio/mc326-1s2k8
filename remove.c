@@ -64,7 +64,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
   arq = fopen(nomeArq, "r+");
    
    /*Jogo a chave para maiuscula para nao ocorrer conflito com o BIG FILE*/
-   maiuscula(chave);
+   
   token = strtok(chave, " ,.-");
 
 

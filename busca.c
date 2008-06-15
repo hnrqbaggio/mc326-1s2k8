@@ -20,10 +20,12 @@ void gravaHtml(resultadosBusca *, FILE *);
   de saida. Um "adapter" para o main. */
 void buscaPrimario(IndPrim *primario, FILE* base) {
 	
-  Pk *temp;
+
   resultadosBusca *busca = NULL;
+  Pk *temp = (Pk *) malloc(sizeof(Pk));
 	
   leTexto(temp->pk, sizeof(temp->pk), "Digite a PK da Obra: ");
+  preencher(temp->pk, sizeof(temp->pk));
 
   busca = buscaPk(temp, primario, base, NULL);
 
@@ -37,6 +39,8 @@ void buscaPrimario(IndPrim *primario, FILE* base) {
   }
 
   if (busca) liberaBusca(busca);
+
+  free(temp);
 	
 }
 
@@ -51,7 +55,6 @@ void buscaSecudario(IndPrim * primario, IndSec * secundario, FILE * base) {
   printf("Digite uma palavra: ");
   scanf("%s", temp);
 
-  maiuscula(temp);
   secundario = trocaIndSec(secundario, temp);
 
   busca = buscaSk(temp, secundario, primario, base);
@@ -127,9 +130,9 @@ resultadosBusca * buscaPk(Pk * chave, IndPrim * indice, FILE * base, resultadosB
   }
 
   /*Abro o indice relativo a pk a ser buscada*/
-  maiuscula(chave->pk);
   indice = trocaIndPrim(indice, chave->pk);
-  
+
+    
   temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
 
   if (temp) { /* Registro encontrado */

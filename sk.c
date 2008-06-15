@@ -91,10 +91,10 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/
-				maiuscula(obra.titulo);
-				maiuscula(obra.tipo);
-				maiuscula(obra.autor);
-				maiuscula(indPrim->vetor[i].pk);
+				
+				
+				
+				
 				strcpy(pkAux, indPrim->vetor[i].pk);
 				
 				/* Para cada indice, faz a inserção das chaves. */
@@ -379,15 +379,8 @@ int compareSk(const void *a, const void *b) {
   /* Calculo do tamanho das strings. */
   x = a2->lenght;
   y = b2->lenght;
-
-  /* Copia os valores dos parametros, convertendo pra maiuscula */
-  for (i = 0; i <= x; i++) a2->key[i] = toupper(a2->key[i]);
-  a2->key[i] = '\0';
-
-  for (i = 0; i <= y; i++) b2->key[i] = toupper(b2->key[i]);
-  b2->key[i] = '\0';
  
-  return strcmp(a2->key, b2->key);
+  return strcasecmp(a2->key, b2->key);
 
 }
 

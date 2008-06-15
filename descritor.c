@@ -61,7 +61,7 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 				
 				/*Coloca tudo em maiuscula para nao 
 				 * occorer discrepancia entre os dados buscados*/
-				maiuscula(indPrim->vetor[i].pk);
+				
 				
 				/* Calcula o descritor da imagem lida da base. */
 				sprintf(imagem, "%s%s", "img/", obra.imagem);

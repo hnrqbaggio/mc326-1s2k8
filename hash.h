@@ -7,6 +7,7 @@
 #define HASH_H_
 
 #include <string.h>
+#include <ctype.h>
 #include "constantes.h"
 
 /** 

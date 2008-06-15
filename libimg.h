@@ -1,6 +1,9 @@
-/** @file libimg.h
- * @brief Biblioteca fornecida.
-*/
+/** 
+ * @file libimg.h
+ * @brief Biblioteca que trabalha com os tipos de imagens existentes na base de dados.
+ * Ela foi fornecida pelo monitor da disciplina, mas ha trechos onde o nosso 
+ * grupo fez adaptacoes para corrigir alguns erros.
+ */
 
 
 /* victor matheus de araujo oliveira

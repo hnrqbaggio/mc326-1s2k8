@@ -15,48 +15,76 @@
 
 
 /**
- * @brief Chama a funcao de busca para um determinado indice secundario, 
+ * @brief Chama a funcao de busca para um determinado o indice primario, 
  * exibindo mensdagens para o usuario. Eh um pequeno adapter para evitar 
- * repeticao de codocgo no main.
+ * repeticao de codigo no main.
+ * 
+ * @param primario O indice primario atual.
+ * @param base A base de dados.
+ */
+void buscaPrimario(IndPrim * primario, FILE * base);
+
+/**
+ * @brief Analoga a buscaPrimario, chamando a funcao de busca
+ * para um indice secundario, e exibindo mensagens para o usuario..
  * 
  * @param primario O indice primario atual.
  * @param secundario O indice secundario onde sera feita a busca,
- * @base A base de dados.
+ * @param base A base de dados.
  */
-
-
-void buscaDescritor(IndDesc *, IndPrim *, FILE *);
-void buscaSecudario(IndPrim *, IndSec *, FILE *);
-void buscaPrimario(IndPrim *primario, FILE * base);
-
-resultadosBusca * buscaPk(Pk *, FILE *, IndPrim *, resultadosBusca *);
+void buscaSecudario(IndPrim * primario, IndSec * secundario, FILE * base);
 
 /**
- * @brief Realiza uma busca por palavra inteira na base de dados, produzindo
- * uma saida com uma lista de todas as obras que possuem a chave secundaria buscada.
+ * @brief Analoga a buscaPrimario e buscaSecundario, chamando a funcao de busca
+ * para um indice de descritores, e exibindo mensagens para o usuario..
+ * 
+ * @param descritores O indice de descritores onde sera feita a busca,
+ * @param primario O indice primario atual.
+ * @param base A base de dados.
+ */
+void buscaDescritor(IndDesc * descritores, IndPrim * primario, FILE * base);
+
+
+/**
+ * @brief Realiza uma busca por chave primaria na base de dados, armazenando 
+ * numa estrutura de resposta o NRR do registo.
+ * 
+ * @param chave A chave de busca.
+ * @param prim O indice primario (pose ser atualizado durante a operacao, devido ao hash).
+ * @param base O ponteiro para a base de dados.
+ * @param busca O ponteiro para a estrutura de resposta, que pode ser atulizada caso 
+ * esta funcao esteja sendo usada pelas demais funcoes de busca.
+ */
+resultadosBusca * buscaPk(Pk * chave, IndPrim * prim, FILE * base, resultadosBusca * busca);
+
+/**
+ * @brief Realiza uma busca por palavra inteira na base de dados, encontrando 
+ * a chave no indice secundario e passando a chave primarias associadas para a 
+ * funcao que realiza busca no inidice primario.
  * 
  * @param chave A chave de busca.
  * @param prim O indice primario (pose ser atualizado durante a operacao, devido ao hash).
  * @param sec O indice secundario (tambem pode ser atualizado).
  * @param base O ponteiro para a base de dados.
  */
-resultadosBusca * buscaSk(char *chave, IndPrim *prim, IndSec *sec, FILE *base);
+resultadosBusca * buscaSk(char *chave, IndSec *sec, IndPrim *prim, FILE *base);
 
 
 /**
- * @brief Realiza uma busca por conteudo nas imagens da base de dados, usando
- * a similaridade entre as mesmas e uma imagem de referencia.
+ * @brief Realiza uma busca por similaridade entre as imagens na base de dados 
+ * e uma imagem de referencia, passando a chave primarias associadas para a 
+ * funcao que realiza busca no inidice primario.
  * 
  * @param arqImagem O nome da imagem de referencia.
  * @param descr O inidice de descritores (pose ser atualizado durante a operacao, devido ao hash).
  * @param prim O indice primario (tambem pode ser atualizado).
  * @param base O ponteiro para a base de dados.
  */
-resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *descr, IndPrim *prim, FILE *base);
+resultadosBusca * buscaPorConteudo(char * arqImagem, IndDesc * descr, IndPrim * prim, FILE * base);
 
-
-void listaBase(FILE *base, IndPrim *indice);
-
-void liberaBusca(resultadosBusca *);
+/** 
+ * @brief Libera a memoria utilizada para armazenar os resultados de uma busca. 
+ * @param result O ponteiro para a estrutura de busca que sera liberada. */
+void liberaBusca(resultadosBusca * result);
 
 #endif

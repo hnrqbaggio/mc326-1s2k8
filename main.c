@@ -18,7 +18,7 @@
 int main(int argc, char **argv){
 
   int ent, option, end;
-  TObra obra, obra2;
+  TObra obra, obra2, *rem;
   resultadosBusca *remove = NULL;
   char nome[TAM_NOME_ARQ+10];
  
@@ -40,9 +40,13 @@ int main(int argc, char **argv){
   /* Indice de descritores. */
   IndDesc *indDescritor;
 
+	menuInicio();
+
   /*Abre a availList da base, a base e o indice primario*/
   availBase = openAvail(ARQ_AVAIL_BASE);
   arq = abreCatalogo(ARQ_BASE);
+  
+  
   ind = iniciaPk(arq, ind);
   
   /* Atribui valores convenientes os campos dos indices e aloca espaco pros mesmos. */
@@ -61,14 +65,14 @@ int main(int argc, char **argv){
   
   /*Abre os indices secundarios*/
   constroiSecundarios(ind, arq, secTitulo, secTipo, secAutor, secAno, &availTitulo, &availTipo, &availAutor, &availAno);
+
+  /* Abre o indice de descritores. */
   constroiIndDesc(indDescritor, ind, arq);
 	
   elem = (Pk *) malloc(sizeof(Pk));
+  rem = (TObra *) malloc(sizeof(TObra));
 
-  /*Entrada do programa*/
-  printf("|------------------------------------|\n");
-  printf("|Catalogo de Obras de Arte - Grupo 24|\n");
-  printf("|------------------------------------|\n");
+	menuBoasVindas();
 
   /*Looping do menu do programa*/
   do {
@@ -81,19 +85,22 @@ int main(int argc, char **argv){
       /*Looping de insercao*/
       do {
         /*leitura da obra a ser inserida e gravacao no indice primario*/
-        obra = *(leObra(ind, &obra));
+        if (leObra(ind, &obra));
+        
+        
         
 	/*Grava a obra inserida na base de dados*/
         end = gravaObra(obra, arq, &availBase, ind);
         
         /*Obra2 sera inserida na base. obra sera usada na insereSk*/
         strcpy(obra2.titulo, obra.titulo);
+        
         /*Passo todas as strings para maiuscula para nao ocorrer conflito nas pesquisas*/
-        maiuscula(obra2.titulo);
-        maiuscula(obra.titulo);
-        maiuscula(obra.tipo);
-        maiuscula(obra.autor);
-        maiuscula(obra.ano);
+        
+        
+        
+        
+        
         
         /*Insercao nos indices secundarios*/
         /*titulo*/
@@ -176,34 +183,35 @@ int main(int argc, char **argv){
       } while (option != 0);
       break;
 
-    case 3:
-      /*Mostra a base inteira em ordem ASCII, no html*/
-      /*listaBase(arq, ind);*/
-      break;
-
-    case 4: /* Remocao */
+    case 3: /* Remocao */
       leTexto(elem->pk, sizeof(elem->pk), "Digite a PK da Obra: ");
       preencher(elem->pk, sizeof(elem->pk));
       elem->nrr = -1;
 
       /*Faz a pesquisa da pk e mostra no html*/
-      remove = buscaPk(elem, arq, ind, remove);
+      remove = buscaPk(elem, ind, arq, remove);
      
       /*Se encontrou obra de arte*/
       if(remove != NULL) {
         
+        leRegistro(rem, remove->nrrs[0], arq);
+        
         /*Remove do indice primario e da base de dados*/
-        ind = removePk(elem->pk, ind, arq, &availBase);
+        ind = removePk(rem->titulo, ind, arq, &availBase);
 
         /*Remove todas as Sks */
-        secTitulo = removeSk(remove->obras[0].titulo, secTitulo, elem->pk, &availTitulo);
-        secTipo   = removeSk(remove->obras[0].tipo,   secTipo,   elem->pk, &availTipo);
-        secAutor  = removeSk(remove->obras[0].autor,  secAutor,  elem->pk, &availAutor);
-        secAno    = removeSk(remove->obras[0].ano,    secAno,    elem->pk, &availAno);
+        secTitulo = removeSk(rem->titulo, secTitulo, rem->titulo, &availTitulo);
+        secTipo   = removeSk(rem->tipo,   secTipo,   rem->titulo, &availTipo);
+        secAutor  = removeSk(rem->autor,  secAutor,  rem->titulo, &availAutor);
+        secAno    = removeSk(rem->ano,    secAno,    rem->titulo, &availAno);
+
+		/* Remove do indice de descritores. */
+		indDescritor = removeDesc(elem->pk, indDescritor);
+	
+      	/*Libera remove, que e alocado dentro da funcao consulta*/
+      	liberaBusca(remove);
       }
 
-      /*Libera remove, que e alocado dentro da funcao consulta*/
-      liberaBusca(remove);
 
       break;
 

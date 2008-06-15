@@ -17,7 +17,7 @@
  * @param obra Obra a ser retornada para insercao dos indices secundarios.
  * @return int Inteiro: se a insercao foi feita com sucesso (1) ou  nao (0).
  */
-TObra * leObra(IndPrim *ind, TObra *obra);
+int leObra(IndPrim *ind, TObra *obra);
 
 /** @brief Leitura dos campos do tipo texto: Titulo,Tipo e Autor.  
  *

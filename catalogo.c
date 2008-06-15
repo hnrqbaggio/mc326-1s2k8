@@ -96,7 +96,8 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
   tam = &(indice->tamanho);
 
   if (arq_ind != NULL) { /* existe o arquivo */
-
+  	
+	fprintf(stdout, "Carregando indice primario... ");
     /*Pego o tamanho da base*/
     fscanf(arq_ind, FORMATO_INT, &(indice->tamBase));
 		
@@ -109,11 +110,11 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
     
   } else { /* vai ter que gerar a partir da base */
    
+   fprintf(stdout, "Construindo indice primario... ");
+   
     while(fgets(pkAux, TAM_TITULO+1, base)) {
     	
-    	
       
-      maiuscula(pkAux);
       /*Abre o indice relativo a pkAux*/
       indice = trocaIndPrim(indice, pkAux);
 		  
@@ -133,8 +134,11 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
     /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
     qsort(indice->vetor, *tam, sizeof(Pk), compare);
   }
- 
+
+	fprintf(stdout, "OK\n");
+  
   return indice;
+
 }
 
 /*  Realiza a ordenacao do indice usando qsort. */
@@ -179,17 +183,8 @@ int compare(const void *a, const void *b) {
 
   str1 = (*(Pk *)a).pk;
   str2 = (*(Pk *)b).pk;
-
-  /* Copia os valores dos parametros, convertendo pra maiuscula */
-  for (i = 0; i <= TAM_TITULO; i++) {
-    str1[i] = toupper(str1[i]);
-    str2[i] = toupper(str2[i]);
-  }
-
-  str1[i] = '\0';
-  str2[i] = '\0';
- 
-  return strcmp(str1, str2);
+  
+  return strcasecmp(str1, str2);
 }
 
 /* Realoca espaco para o vetor caso seja necessario. */
@@ -201,22 +196,6 @@ IndPrim * realocaIndPrim(IndPrim *ind) {
   }
 
   return ind;
-}
-
-/*Gera cabecalho do HTML*/
-FILE * headHtml(FILE *b) {
-  /* Inicio do arquivo HTML. Insere o cabecalho da tabela. */
-  fprintf(b, "%s", "<html><head><title>Consulta do catalogo de obras de arte</title></head>");
-  fprintf(b, "%s","<body><table border=\"1\" width=\"800\" font= 'Arial'><tr><th colspan ='3' align=\"center\"><font size='6' color='red'><b>Consulta do catalogo de obras de arte</b></th></tr>");
-
-  return b;
-}
-
-/*Gera o final do HTML*/
-FILE * endHtml(FILE *b) {
-  
-  fprintf(b, "%s", "</table></body></html>");
-  return b;
 }
 
 
@@ -277,16 +256,6 @@ IndPrim * trocaIndPrim(IndPrim * indice, char *chave) {
   return indice;
 }
 
-/*Transforma para maiuscula a string passada como parametro*/
-void maiuscula(char *chave) {
-
-  int i;
-	
-  /* Copia os valores dos parametros, convertendo pra maiuscula */
-  for (i = 0; i < strlen(chave); i++) chave[i] = toupper(chave[i]);
-  chave[i] = '\0';
-  	
-}
 
 /*Funcao que libera os mallocs/reallocs utilizados*/
 void liberaIndices(IndPrim * indPrim, IndSec *indTitulo,
@@ -309,4 +278,17 @@ void liberaIndices(IndPrim * indPrim, IndSec *indTitulo,
   free(indDescritor);
 	
   return;
+}
+
+void leRegistro(TObra *obra, int nrr, FILE *base) {
+	
+	fseek(base, TAM_REG * nrr, SEEK_SET);
+	
+	/* Le cada campo da obra. */
+    fgets(obra->titulo, TAM_TITULO + 1, base);
+    fgets(obra->tipo,   TAM_TIPO + 1,   base);
+    fgets(obra->autor,  TAM_AUTOR + 1,  base); 
+    fgets(obra->ano,    TAM_ANO + 1,    base);
+    fgets(obra->valor,  TAM_VALOR + 1,  base);
+    fgets(obra->imagem, TAM_IMAGEM + 1, base);
 }

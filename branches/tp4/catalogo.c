@@ -114,7 +114,7 @@ IndPrim * iniciaPk(FILE *base, IndPrim *indice) {
    
     while(fgets(pkAux, TAM_TITULO+1, base)) {
     	
-      maiuscula(pkAux);
+      
       /*Abre o indice relativo a pkAux*/
       indice = trocaIndPrim(indice, pkAux);
 		  
@@ -183,17 +183,8 @@ int compare(const void *a, const void *b) {
 
   str1 = (*(Pk *)a).pk;
   str2 = (*(Pk *)b).pk;
-
-  /* Copia os valores dos parametros, convertendo pra maiuscula */
-  for (i = 0; i <= TAM_TITULO; i++) {
-    str1[i] = toupper(str1[i]);
-    str2[i] = toupper(str2[i]);
-  }
-
-  str1[i] = '\0';
-  str2[i] = '\0';
- 
-  return strcmp(str1, str2);
+  
+  return strcasecmp(str1, str2);
 }
 
 /* Realoca espaco para o vetor caso seja necessario. */
@@ -265,16 +256,6 @@ IndPrim * trocaIndPrim(IndPrim * indice, char *chave) {
   return indice;
 }
 
-/*Transforma para maiuscula a string passada como parametro*/
-void maiuscula(char *chave) {
-
-  int i;
-	
-  /* Copia os valores dos parametros, convertendo pra maiuscula */
-  for (i = 0; i < strlen(chave); i++) chave[i] = toupper(chave[i]);
-  chave[i] = '\0';
-  	
-}
 
 /*Funcao que libera os mallocs/reallocs utilizados*/
 void liberaIndices(IndPrim * indPrim, IndSec *indTitulo,

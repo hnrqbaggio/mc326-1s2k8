@@ -16,44 +16,49 @@ typedef struct {
   char imagem[TAM_IMAGEM + 1];   /**< Imagem correspondente. */
 } TObra;
 
+/**
+ * @brief Estrutura que ira representar uma folha da Arvore B+.
+ */
+typedef struct {
+	int numChaves; /**< Numero de chaves no arquivo de indice. */
+	int id; /**< ID que indica o arquivo de indice ao qual a folha esta associada. */
+	char * chave; /** A maior chave do indice (lexicograficamente). */
+} BTLeaf;
+
+/** 
+ * @brief Estrutura que representa um noh da Arvore B+. 
+ */
+typedef struct {
+	int numChaves; /**< Numero de chaves no noh. Usado para controlar operacoes da arvore. */
+	char chaves[B_ORDER-1][TAM_TITULO]; /**< vetor de strings que sao os delimitadores das chaves. */
+	int filhos[B_ORDER]; /**< Vetor de ponteiros para os filhos do noh. */
+	int level; /**< Nivel do noh - sua altura. A raiz tem level = altura - 1. */
+} BTNode;
+
 /*! \brief Estrutura usada para representar uma chave primaria. */
 typedef struct {
-  char pk[TAM_TITULO + 1]; /**< String usada para armazenar a chave primaria propriamente dita. */
-  int nrr;    					/**< Numero relativo do registro na base de dados. */
-} Pk;
+  char key[TAM_TITULO + 1]; /**< String usada para armazenar a chave primaria propriamente dita. */
+  int nrr;    					   /**< Numero relativo do registro na base de dados. */
+} indexKey;
 
 /*! \brief Estrutura que representa o indice primario. */
-typedef struct {
-  Pk * vetor;    /**< Vetor eh um vetor dinamico que ira armazenar os elementos de indice.*/
-  int tamanho;   /**< Eh o numero de elementos validos, assim, indica tambem a proxima posicao livre do vetor. */
-  int alocado;   /**< Espaco reservado na memoria para o vetor. Aumanta conforme o tamanho do indice se iguala a ele. */
-  int tamBase;   /**< Tamanho da base de dados. Usado nas operacoes de insercao quando a avail list eh vazia. */
-  int valorHash; /**< Valor da funcao de espalhamento para as strings das chaves primarias contidas no indice. */
-} IndPrim;
+typedef struct index {
+  indexKey * vetor;    
+  int tamanho;   
+  int alocado;   
+  int tamFile;
+  int id;   
+  char tipoCampo[15];
+  BTNode *root; 
+  struct index * (*carrega) (struct index *, FILE *);
+  struct index * (*grava) (struct index *);
+} Index;
 
 /*!
  * \brief	Este inteiro sera usado para representar a cabeca de uma avail
  * 			list, que sera um a lista invertida de posicoes livres no disco.
  */
 typedef int availList;
-
-/*! \brief Estrutura que representa uma chave secundaria. */
-typedef struct {
-  char key[TAM_TITULO+1]; 	/**< String que eh a chave propriamente dita. */
-  int next; 					/**< Apontador para a proxima chave no indice. */
-  int lenght;					/**< Tamanho da string que contem a chave. */
-} Sk;
-
-/*! \brief Estrutura que representa um indice secundario. */
-typedef struct {
-  Sk *vetor; 								/**< Vetor dinamico de chaves secundarias. */
-  int tamanho;								/**< Tamanho do vetor do indice. */
-  int alocado;								/**< Espaco alocado para o vetor. Cresce dinamicamente com o /tamanho/ */
-  int tamDisco;							/**< Tamanho do BIGFILE ao qual o indice eh associado. Usado para controlar operacoes de insercao. */
-  int valorHash;							/**< Valor da funcao de espalhamento das chaves do indice. */
-  char tipoCampo[TAM_NOME_ARQ+1];	/**< Tipo de campo da \a Obra ao qual o indice esta associado. */
-} IndSec;
-
 
 /*! \brief Estrutura de um descritor de imagem. */
 typedef struct {
@@ -86,5 +91,7 @@ typedef struct {
   int alocado; 				/**< Espaco alocado pros vetores, aumenta sobre demanda. */
   char chave[TAM_TITULO]; 	/**< Uma string que indica a chave que resultou nestes resultados. */
 } resultadosBusca;
+
+
 
 #endif /*TIPOS_H_*/

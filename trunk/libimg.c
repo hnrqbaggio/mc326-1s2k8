@@ -9,7 +9,7 @@
 
 char CalculaDescritor(char* NomeImagem)
 {
-  char descritor=0;
+  unsigned char descritor=0;
   Hist h;
   double sr =0,sg =0,sb =0;
   double msr=0,msg=0,msb=0;

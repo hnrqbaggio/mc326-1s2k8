@@ -179,7 +179,6 @@ IndPrim * gravaPk(IndPrim *indice) {
  */
 int compare(const void *a, const void *b) {
   char *str1, *str2;
-  int i;
 
   str1 = (*(Pk *)a).pk;
   str2 = (*(Pk *)b).pk;

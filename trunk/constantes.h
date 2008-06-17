@@ -73,6 +73,19 @@
 #define ARQ_HTML ("resultados.html")
 /** @} */
 
+/** @{ 
+ * @name Constantes da Arvore B+.
+ */
+/**  
+ * @brief Esta constante representa o tamanho de um bloco 
+ * associado a uma folha na arvore.
+ */
+#define BLOCK_SIZE 5
+
+/** @brief Ordem da Arvore B+, ou seja, o numero de chaves num mesmo noh. */
+#define B_ORDER 10
+/** @} */
+
 /** @{
  * @name Constantes para gravacao de campos numericos.
  */
@@ -81,33 +94,6 @@
 
 /** Define para o numero de digitos dos inteiros. */
 #define TAM_NUMERO 8
-/** @} */
-
-/** @{
- * @name Constantes usadas como parametros na funcao geraHtml.
- */
-/**
- * Adiciona tanto o cabecalho quanto o fim do html. 
- * Usado quando eh uma consulta de um registro especifico. 
- */
-#define ALL 0 
-#define HEAD 1 /**< Deve ser inserido um cabecalho no html */
-#define END 2 /**< Deve fechar as tags do html. */
-
-/** 
- * Diferencia os registros que nao sao nem inicio nem 
- * fim da listagem, logo, devem apenas ser inseridos 
- */
-#define MEIO 3
-/** @}*/
-
-/** @{
- * @name Constantes usadas para determinar o tipo do campo para o indice. 
- */
-#define TITULO 0
-#define TIPO 1
-#define AUTOR 2
-#define ANO 3
 /** @} */
 
 /** @{ 

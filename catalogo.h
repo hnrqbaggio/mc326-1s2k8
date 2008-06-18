@@ -13,6 +13,8 @@
 #include <ctype.h>
 #include "hash.h"
 #include "avail.h"
+#include "bplus.h"
+#include "sk.h"
 
 /** Funcoes de manipulacao da base de dados **/
   
@@ -51,7 +53,7 @@ int gravaObra(TObra obra, FILE * base, availList * avBase, Index * primario);
  * 
  * @return Um ponteiro para o indice primario atualizado.
  */
-Index * iniciaPk(FILE * base, Index * primario);
+void iniciaPk(FILE * base, Index * primario);
 
 /**
   * @brief Carrega o indice primario para a memoria de acordo com o id especificado.
@@ -78,7 +80,7 @@ void gravaIndicePrim(Index *indice);
  * 
  * return O Indice alocado com valores iniciais.
  */
-Index * makeIndice(char *tipoIndice);
+
 
 /** 
  * @brief Realiza a ordenacao do indice.
@@ -146,5 +148,8 @@ int compare(const void *a, const void *b);
  * @param base A base de dados. 
  */
 void leRegistro(TObra *obra, int nrr, FILE *base);
+
+
+
 
 #endif

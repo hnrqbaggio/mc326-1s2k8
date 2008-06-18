@@ -47,13 +47,13 @@ int main(int argc, char **argv){
   arq = abreCatalogo(ARQ_BASE);
   
   
-  indPrim = iniciaPk(arq, indPrim);
+  iniciaPk(arq, indPrim);
   
   /* Atribui valores convenientes os campos dos indices e aloca espaco pros mesmos. */
-  secTitulo = makeIndice(ARQ_IS_TITULO);
-  secTipo   = makeIndice(ARQ_IS_TIPO);
-  secAutor  = makeIndice(ARQ_IS_AUTOR);
-  secAno    = makeIndice(ARQ_IS_ANO);
+  secTitulo = makeIndex(ARQ_IS_TITULO);
+  secTipo   = makeIndex(ARQ_IS_TIPO);
+  secAutor  = makeIndex(ARQ_IS_AUTOR);
+  secAno    = makeIndex(ARQ_IS_ANO);
    
   /* Carrega as avail lists dos arquivos. */
   availTitulo = openAvail(ARQ_AVAIL_TITULO);

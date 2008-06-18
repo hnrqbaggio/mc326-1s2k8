@@ -117,4 +117,8 @@
 #define TAM_NOME_ARQ 256
 /** @} */
 
+#define EXTENSAO_FOLHA ".flh"
+#define EXTENSAO_ID ".bid"
+#define EXTENSAO_NODE ".nod"
+
 #endif /*CONSTANTES_H_*/

@@ -17,7 +17,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 		fprintf(stdout, "Carregando indices secundários... ");
 		
 		/* Carrega chaves do arquivo. */
-		titulo->carrega(titulo, 0);
+	titulo->carrega(titulo, 0);
     tipo->carrega(tipo, 0);
     autor->carrega(autor, 0);
     ano->carrega(ano, 0);
@@ -233,7 +233,7 @@ void gravaIndiceSecun(Index *sec) {
   fprintf(fsk, FORMATO_INT, sec->tamFile);
 
   for (i = 0; i < sec->tamanho; i++) {
-    fprintf(fsk, FORMATO_INT, sizeof(sec->vetor[i].key));  /* grava o tamanho da sk */
+    fprintf(fsk, FORMATO_INT, (int) sizeof(sec->vetor[i].key));  /* grava o tamanho da sk */
     fprintf(fsk, "%s", sec->vetor[i].key);            /* grava a key */
     fprintf(fsk, FORMATO_INT, sec->vetor[i].nrr);    /* grava o proximo elemento na lista invertida */
   }

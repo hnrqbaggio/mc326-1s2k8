@@ -50,8 +50,9 @@ typedef struct index {
   int id;   
   char tipoCampo[15];
   BTNode *root; 
-  struct index * (*carrega) (struct index *, FILE *);
-  struct index * (*grava) (struct index *);
+  int rootId;
+  void (*carrega) (struct index *, int);
+  void (*grava) (struct index *);
 } Index;
 
 /*!

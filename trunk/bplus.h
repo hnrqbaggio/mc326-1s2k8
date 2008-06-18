@@ -60,17 +60,36 @@
   */
 
 #include <stdio.h>
-#include <string.g>
+#include <string.h>
 #include "tipos.h"
+#include "index.h"
 
-BTNode * makeNode();
-BTLeaf * makeLeaf();
+BTNode * makeNode(int);
+BTLeaf * makeLeaf(int);
 
 int insert(char *key, BTNode *node, Index *indice);
-int insertInLeaf(char *key, BTLeaf *leaf, Index *indice);
+int search(char *key, BTNode *node, Index *indice);
+int insertInLeaf(char *key, BTLeaf *leaf);
 
 void merge(BTNode *);
-void split(BTNode *);
+void split(BTNode *, BTNode *);
 
+/* Faz a leitura de uma pagina para um noh. */
+void loadNode(BTNode *node, int id, char * campo);
+
+/* Carrega uma folha do disco, a partir do id. */
+BTLeaf * loadLeaf(int id, char *tipoCampo);
+
+/* Cria um novo noh, e uma pagina associada a ele, com um novo ID. */
+int createNewNode(BTNode **novoFilho, int nivel, char *campo);
+
+/* Grava os dados de um noh na sua pagina. */
+void writeNode(BTNode *filho, int nodeId, char *tipoCampo);
+void writeLeaf(BTLeaf *folha, char * tipoCampo);
+
+/* Obtem o ID para um novo noh ou folha. */
+int getId(char *);
+
+void rootOverFlow(Index *);
 
 #endif /*BPLUS_H_*/

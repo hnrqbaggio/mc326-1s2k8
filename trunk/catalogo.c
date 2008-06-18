@@ -77,23 +77,19 @@ int gravaObra(TObra obra, FILE *arq, availList *avail, Index *indice){
 
 /*** Funcoes de manipulacao do indice primario. ***/
 /* funcao que carrega o indice do arquivo ou monta-o a partir da base */
-Index * iniciaPk(FILE *base, Index *indice) {
+void iniciaPk(FILE *base, Index *indice) {
 	
   FILE *arq_ind; /* arquivo onde estao os indices, caso exista */
   char pkAux[TAM_TITULO+1], nome[TAM_NOME_ARQ];
   int offset, id;
-  int *tam, position = 0;      
+  int *tam, position = 0, temp;
   /* apontador pro numero de elementos do vetor de
      indice. Pra facilitar a leitura do codigo. */
 
   /*Inicializando indice*/
-  indice = (Index *) malloc(sizeof(Index));
-  indice->vetor = (indexKey *) malloc(sizeof(indexKey) * VETOR_MIN);
-  indice->alocado = VETOR_MIN;
-  indice->tamanho = 0;
-  indice->id = 0;
-
-  /*Abro o indicePk-hash = 0*/
+  indice = makeIndex(ARQ_PK);
+  indice->rootId = createNewNode(&(indice->root), 1, indice->tipoCampo);
+	  
   sprintf(nome, "%s%d%s", ARQ_PK, indice->id, EXTENSAO_PK);
   arq_ind = fopen(nome, "r");
   
@@ -102,6 +98,7 @@ Index * iniciaPk(FILE *base, Index *indice) {
   if (arq_ind != NULL) { /* existe o arquivo */
   	
 	fprintf(stdout, "Carregando indice primario... ");
+	
     /*Pego o tamanho da base*/
     fscanf(arq_ind, FORMATO_INT, &(indice->tamFile));
 		
@@ -118,14 +115,10 @@ Index * iniciaPk(FILE *base, Index *indice) {
    
     while(fgets(pkAux, TAM_TITULO+1, base)) {
     	
-      
-      /*Abre o indice relativo a pkAux*/
-      
-      
-      /***********************************/
-      
-                /*B+*/
-      /**************************************/
+      /* Busca o indice onde sera inseriada a chave, e retorna seu ID. */
+      /* Por enquanto ainda nao faz nada. */
+      id = search(pkAux, indice->root, indice);
+
       trocaIndice(indice, id);
 		  
       /*Copio a pk para o indice primario*/
@@ -139,6 +132,14 @@ Index * iniciaPk(FILE *base, Index *indice) {
       /* Usamos apenar tamanho e nao tamanho-1 pois iniciamos o nrr em zero. */
       offset = TAM_REG * (++position);
       fseek(base, offset, SEEK_SET);
+      
+      /* Atualiza a B+ TREE */
+      temp = insert(pkAux, indice->root, indice);
+      
+      if (temp == -1) { /* Overflow do ROOT. */
+      	rootOverFlow(indice);
+      }
+      
     }
 
     /* Como o indice neste caso nao esta ordenado, precisamos ordena-lo */
@@ -146,8 +147,6 @@ Index * iniciaPk(FILE *base, Index *indice) {
   }
 
 	fprintf(stdout, "OK\n");
-  
-  return indice;
 
 }
 
@@ -209,8 +208,6 @@ Index * makeIndice(char *tipoIndice) {
   indice->tamFile = 0;
   indice->id = 0;
   indice->root = 0;
-  indice->carrega = 0;/*Depende do tipoIndice*/
-  indice->grava = 0;/*Depende do tipoIndice*/
   strcpy(indice->tipoCampo, tipoIndice);
   
   return indice;
@@ -308,3 +305,5 @@ void leRegistro(TObra *obra, int nrr, FILE *base) {
     fgets(obra->valor,  TAM_VALOR + 1,  base);
     fgets(obra->imagem, TAM_IMAGEM + 1, base);
 }
+
+

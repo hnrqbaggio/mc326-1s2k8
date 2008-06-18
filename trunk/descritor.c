@@ -11,12 +11,12 @@ IndDesc * inicializaDescritor() {
 	return d;
 }
 
-void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
+void constroiIndDesc(IndDesc * indDesc, Index *indPrim, FILE *base) {
 	
 	char nomeArq[TAM_NOME_ARQ+10], imagem[TAM_NOME_ARQ+10], valor;
 	FILE *arqDesc;
 	TObra obra;
-	int i, j, cont;
+	int i, j, cont, id;
 	
 	sprintf(nomeArq, "%s%d%s", ARQ_DESCRITOR, indDesc->valorHash, EXTENSAO_DESC);
 	
@@ -44,13 +44,13 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 		for(j=0; j<= H; j++) {
 		
 		/*Gravo indice primario*/
-		gravaPk(indPrim);
+		gravaIndicePrim(indPrim);
 		
-	  	indPrim->valorHash = j;
+    indPrim->id = j;
 	
 		/*Abro o novo indice*/
 		indPrim->tamanho = 0;
-		abrePk(indPrim);
+		carregaIndicePrim(indPrim, id);
 		
 			/*Percorre os indices primarios*/
 			for (i = 0; i < indPrim->tamanho; ++i) {
@@ -71,7 +71,7 @@ void constroiIndDesc(IndDesc * indDesc, IndPrim *indPrim, FILE *base) {
 				indDesc = trocaIndDesc(indDesc, valor);
 				
 				/* Faz a inserção do descritor no indice. */
-				indDesc = insereDesc(indDesc, indPrim->vetor[i].pk, valor, obra.imagem, 0);
+				indDesc = insereDesc(indDesc, indPrim->vetor[i].key, valor, obra.imagem, 0);
 				
 			}
 		}

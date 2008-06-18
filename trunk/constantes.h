@@ -102,14 +102,16 @@
 /** Constante usada para indicar o fim de uma lista invertida. */
 #define FIM_DE_LISTA -1
 
-/** Constante usada na funcao de espalhamento dos indices primarios e secundarios. */
-#define H 53
-
 /** 
  * Constante para fazer reallocs mais eficientes. A primeira alocacao
  * sera feita com esse valor, e dobrando sempre que atingir o maximo 
  */
 #define VETOR_MIN 20
+
+/**
+ * Define do hash
+*/
+#define H 50
 
 /** Tamanho do nome de um arquivo. */
 #define TAM_NOME_ARQ 256

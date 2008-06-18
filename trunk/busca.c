@@ -18,14 +18,14 @@ void gravaHtml(resultadosBusca *, FILE *);
 
 /*Esta funcao unifica o processo de busca por PK e criacao de arquivo
   de saida. Um "adapter" para o main. */
-void buscaPrimario(IndPrim *primario, FILE* base) {
+void buscaPrimario(Index *primario, FILE* base) {
 	
 
   resultadosBusca *busca = NULL;
-  Pk *temp = (Pk *) malloc(sizeof(Pk));
+  indexKey *temp = (indexKey *) malloc(sizeof(indexKey));
 	
-  leTexto(temp->pk, sizeof(temp->pk), "Digite a PK da Obra: ");
-  preencher(temp->pk, sizeof(temp->pk));
+  leTexto(temp->key, sizeof(temp->key), "Digite a PK da Obra: ");
+  preencher(temp->key, sizeof(temp->key));
 
   busca = buscaPk(temp, primario, base, NULL);
 
@@ -47,15 +47,20 @@ void buscaPrimario(IndPrim *primario, FILE* base) {
 
 /* Esta funcao unifica o processo de busca por SK e criacao de arquivo
   de saida. Um "adapter" para o main. */
-void buscaSecudario(IndPrim * primario, IndSec * secundario, FILE * base) {
+void buscaSecudario(Index *primario, Index *secundario, FILE * base) {
 	
   char temp[TAM_TITULO+1];
   resultadosBusca *busca;
+  int id;
 	
   printf("Digite uma palavra: ");
   scanf("%s", temp);
 
-  secundario = trocaIndSec(secundario, temp);
+  /***************************/
+  /*      B+        */
+  /**************************/
+  
+  trocaIndice(secundario, id);
 
   busca = buscaSk(temp, secundario, primario, base);
 
@@ -74,7 +79,7 @@ void buscaSecudario(IndPrim * primario, IndSec * secundario, FILE * base) {
 
 /*Esta funcao unifica o processo de busca por conteudo e criacao de arquivo
   de saida. Um "adapter" para o main. */
-void buscaDescritor(IndDesc *descritores, IndPrim *primario, FILE *base) {
+void buscaDescritor(IndDesc *descritores, Index *primario, FILE *base) {
 
   char temp[TAM_TITULO];
 
@@ -104,9 +109,9 @@ void buscaDescritor(IndDesc *descritores, IndPrim *primario, FILE *base) {
 /* Faz a busca de uma PK no indice primario. 
    Aloca espaco para o vetor de resposta. 
    Esse espaco eh liberado por uma funcao especifica. */
-resultadosBusca * buscaPk(Pk * chave, IndPrim * indice, FILE * base, resultadosBusca * result) {
-  
-  Pk *temp;
+resultadosBusca * buscaPk(indexKey * chave, Index * indice, FILE * base, resultadosBusca * result) {
+  int id;
+  indexKey *temp;
 
   /* Criando a estrutura de resposta. */
   /* Quando a funcao eh usada diretamente. */
@@ -117,7 +122,7 @@ resultadosBusca * buscaPk(Pk * chave, IndPrim * indice, FILE * base, resultadosB
     result->tamanho = 0;
     result->nrrs = (int *) malloc(sizeof(int) * result->alocado);
     result->similaridades = (double *) malloc(sizeof(double)  * result->alocado);
-    strcpy(result->chave, chave->pk);
+    strcpy(result->chave, chave->key);
     
     /* Desativa a similaridade. Se ela for necessaria, sera ativada no lugar certo. */
     result->similaridades[0] = -1;
@@ -130,10 +135,14 @@ resultadosBusca * buscaPk(Pk * chave, IndPrim * indice, FILE * base, resultadosB
   }
 
   /*Abro o indice relativo a pk a ser buscada*/
-  indice = trocaIndPrim(indice, chave->pk);
+  
+  /***********************************************/
+  /*        B+        */
+  /***********************************************/
+  trocaIndice(indice, id);
 
     
-  temp = (Pk *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(Pk), compare);
+  temp = (indexKey *) bsearch(chave, indice->vetor, indice->tamanho, sizeof(indexKey), compare);
 
   if (temp) { /* Registro encontrado */
 	result->nrrs[result->tamanho] = temp->nrr; 	/* Armazena o NRR no buffer de resposta. */
@@ -149,12 +158,12 @@ resultadosBusca * buscaPk(Pk * chave, IndPrim * indice, FILE * base, resultadosB
  * Faz a busca das PKs associadas a uma SK no indice secundario, 
  * e passa para a funcao que faz a busca no indice primario. 
  */
-resultadosBusca * buscaSk(char *chave, IndSec *indSecun, IndPrim *indPrim, FILE *base) {
+resultadosBusca * buscaSk(char *chave, Index *indSecun, Index *indPrim, FILE *base) {
   int offset; /* Inteiro para os seeks no BigFile. */
 
 	/* Chaves auxiliares. */
-  Sk temp, *result; 
-  Pk temp2;
+  indexKey temp, *result; 
+  indexKey temp2;
 
   resultadosBusca *busca = NULL; /* Estrutura que ira armazenar os resultados da busca. */
   
@@ -167,21 +176,20 @@ resultadosBusca * buscaSk(char *chave, IndSec *indSecun, IndPrim *indPrim, FILE 
 
   /*Busca chave no indice secundario*/
   strcpy(temp.key, chave);
-  temp.lenght = strlen(chave);
-  temp.next = -1;
-  
-  result = (Sk*) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(temp), compareSk);
+  temp.nrr = -1;
+
+  result = (indexKey*) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(temp), compare);
   
   if (result) { /*Encontrou chave*/
     
-    temp2.nrr = result->next;
+    temp2.nrr = result->nrr;
     
     while (temp2.nrr != -1) { /* Percorre o BigFile lendo as PKs de cada resultado. */
       
       offset = temp2.nrr * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
       fseek(fsk, offset, SEEK_SET);
       
-      fgets(temp2.pk, TAM_TITULO+1, fsk);
+      fgets(temp2.key, TAM_TITULO+1, fsk);
       fscanf(fsk, FORMATO_INT, &(temp2.nrr));
       
       /* Busca a PK obtida no indice primario. */
@@ -199,11 +207,11 @@ resultadosBusca * buscaSk(char *chave, IndSec *indSecun, IndPrim *indPrim, FILE 
   return busca;
 }
 
-resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *indPrim, FILE *base) {
+resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *indice, Index *indPrim, FILE *base) {
 	
   int i, n;
   IndDesc *resposta;
-  Pk temp;
+  indexKey temp;
   FILE *teste;
   resultadosBusca *busca = NULL;
   
@@ -227,7 +235,7 @@ resultadosBusca * buscaPorConteudo(char *arqImagem, IndDesc *indice, IndPrim *in
 
   for (i = resposta->tamanho-1; i >= 0 && n > 0; --i, n--) {
 
-    strcpy(temp.pk, resposta->vetor[i].pk);
+    strcpy(temp.key, resposta->vetor[i].pk);
 
     busca = buscaPk(&temp, indPrim, base, busca);
     busca->similaridades[busca->tamanho-1] = resposta->vetor[i].similaridade;

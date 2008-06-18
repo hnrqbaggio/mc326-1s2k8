@@ -1,16 +1,5 @@
 #include "hash.h"
 
-int hashFunction(char * chave) {
-	int h = 0, i;
-	
-	/* O toupper eh necessario para deixar o hash compativel com a busca. */
-	for (i = 0; i < strlen(chave); i++) {
-		if (chave[i] != ' ') h += (toupper(chave[i]) * (i + 1)) % H;
-	}
-	
-	return h % H;
-}
-
 int hashDescritor(char descritor) {
 	int n = 0, m;
 	

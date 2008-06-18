@@ -1,10 +1,11 @@
 #include "leitura.h"
 
 /*Funcao de leitura da obra de arte a ser inserida*/
-int leObra (IndPrim *ind, TObra *obra) {
+int leObra (Index *ind, TObra *obra) {
 
-  Pk *chave = (Pk *) malloc(sizeof(Pk));
-  Pk *result = NULL;
+  indexKey *chave = (indexKey *) malloc(sizeof(indexKey));
+  indexKey *result = NULL;
+  int id = 0;
 			
   printf("\nEntre com os dados de uma obra.\n");
 
@@ -14,23 +15,23 @@ int leObra (IndPrim *ind, TObra *obra) {
   preencher(obra->titulo, sizeof(obra->titulo));
 
   /*Verifica se ja existe a obra no catalogo*/
-  
-  strcpy(chave->pk, obra->titulo);
-
+  strcpy(chave->key, obra->titulo);
 	
+  /*************   B+ AQUI  *****************/
+  
+  
 	/*Abro o indice primario relativo a obra a ser inserida*/
-	ind = trocaIndPrim(ind, chave->pk);
+	trocaIndice(ind, id);
   
   /*Busco no indice que ja esta aberto*/ 
   chave->nrr = ind->tamanho; /* eh bom inicializar, entao jah coloca o nrr certo */
-  result = (Pk *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(Pk), compare);
+  result = (indexKey *) bsearch(chave, ind->vetor, ind->tamanho, sizeof(indexKey), compare);
     
   if (result) { /* registro ja existente */
-  	
     printf("Obra ja catalogada. Insercao nao concluida.\n");
     
   } else { 
-  	
+    
     leTexto(obra->tipo, sizeof(obra->tipo), "Tipo (ate 100 caracteres): ");
     leTexto(obra->autor, sizeof(obra->autor), "Autor (ate 125 caracteres): ");
 
@@ -49,19 +50,21 @@ int leObra (IndPrim *ind, TObra *obra) {
 		
     /* verifica se o indice precisa de mais espaco. */
     (ind->tamanho)++;
-    ind = realocaIndPrim(ind);
+    realocaIndice(ind);
 
     /* atualizacao do indice */	
     ind->vetor[ind->tamanho-1] = *chave;
     
+    /*Ordeno o indice*/
+    ordenaIndice(ind);
+    
   printf("\n------------------------\n");
   printf("Obra inserida com exito.\n");
   printf("------------------------\n");
-  
   }
-	    
+	   
 	free(chave);
-    return (result)? 1 : 0; 
+  return (result)? 1 : 0; 
 }
 
 /* Funcao para a leitura dos campos de texto */

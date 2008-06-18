@@ -15,7 +15,7 @@
 #include "avail.h"
 
 /** Funcoes de manipulacao da base de dados **/
-
+  
 /**
  * @brief Abre um arquivo que sera a base de dados. 
  * 
@@ -38,64 +38,71 @@ void fechaCatalogo(FILE * base);
  * @param primario O indice primario.
  * @return O nrr da obra inserida ou o tamanho da base.
  */
-int gravaObra(TObra obra, FILE * base, availList * avBase, IndPrim * primario);
+int gravaObra(TObra obra, FILE * base, availList * avBase, Index * primario);
 
 
-/*** Funcoes de manipulacao do indice ***/
+/*** Funcoes de manipulacao de indice ***/
 /** 
  * @brief Carrega o indice primario do arquivo para a memoria. 
  * Cria o indice caso o arquivo nao exista.
  * 
  * @param base A base de dados.
- * @param indice O indice primario que sera carregado.
+ * @param primario O indice primario que sera carregado.
  * 
  * @return Um ponteiro para o indice primario atualizado.
  */
-IndPrim * iniciaPk(FILE * base, IndPrim * indice);
+Index * iniciaPk(FILE * base, Index * primario);
 
 /**
-  * @brief Abre o arquivo de indice primario correspondente ao valor de hash 
-  * e carrega pra RAM.
+  * @brief Carrega o indice primario para a memoria de acordo com o id especificado.
   * 
-  * @param indice O indice primario.
-  * @return O indice atualizado.
+  * @param indice O indice primario alocado em memoria.
+  * @param id Id do indice a ser carregado.
   */
-IndPrim * abrePk(IndPrim * indice);
+void carregaIndicePrim(Index * indice, int id);
 
 /**
- * @brief Grava o indice da memoria para o arquivo. 
+ * @brief Grava o indice primario da memoria para o arquivo. 
  * 
- * @param indice Indice primario.
- * @return Indice primario.
+ * @param indice Indice a ser gravado.
 */
-IndPrim * gravaPk(IndPrim *indice);
+void gravaIndicePrim(Index *indice);
+
+/** @brief Inicializa um indice, alocando memoria 
+ * para a sua propria estrutura e tambem para o vetor de keys.
+ * Tambem inicializa os demais campos do indice com valores 
+ * apropriados.
+ * 
+ * @param tipoIndice Uma string que determina o campo da obra
+ * ao qual o indice se refere.
+ * 
+ * return O Indice alocado com valores iniciais.
+ */
+Index * makeIndice(char *tipoIndice);
 
 /** 
- * @brief Realiza a ordenacao de indice um indice primario.
+ * @brief Realiza a ordenacao do indice.
+ * 
  * @param indice O indice a ser ordenado.
- * @return O indice ordenado.
  */
-void ordenaIndice(IndPrim * indice);
+void ordenaIndice(Index * indice);
 
 /** @brief Funcao usada para realocar espaco para o vetor do indice caso seja necessario. 
  * 
  * Ela verifica se o numero de elementos e sufuciente para o espaco alocado para o vetor 
  * e reservar mais caso seja necessario.
  *
- * @param ind Indice Primario.
- * @return Indice Primario.  
+ * @param indice O indice a ser realocado ou nao. 
  */
-IndPrim * realocaIndPrim(IndPrim *ind);
+void realocaIndice(Index *indice);
 
 /**
- * @brief Troca os indices primarios.
+ * @brief Troca de indice de acordo com a id do arquivo a ser aberto.
  * 
- * @param indice Indice primario.
- * @param chave String a ser calculada o valor do hash para ser aberto o
- * indice correspondente.
- * @return Indice primario.
+ * @param indice Indice a ser trocado.
+ * @param id Id do arquivo a ser aberto e carregado para a memoria.
 */
-IndPrim * trocaIndPrim(IndPrim * indice, char * chave);
+void trocaIndice(Index * indice, int id);
 
 /**
  * @brief Libera os indices e vetores alocados na utilizacao do programa.
@@ -108,8 +115,8 @@ IndPrim * trocaIndPrim(IndPrim * indice, char * chave);
  * @param indDescritor Indice secundario do descritor de imagens.
  * @return void
 */
-void liberaIndices(IndPrim *indPrim, IndSec *indTitulo, IndSec *indTipo,
-IndSec *indAutor, IndSec *indAno, IndDesc *indDescritor);
+void liberaIndices(Index *indPrim, Index *indTitulo, Index *indTipo,
+Index *indAutor, Index *indAno, IndDesc *indDescritor);
 
 /** 
  * @brief Funcao de comparacao para as funcoes qsort e bsearch da stdlib.h.

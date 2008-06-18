@@ -18,7 +18,7 @@
  * @param avail Avail list da base.
  * @return Indice primario atualizado.
  */
-IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail);
+Index * removePk(char *chave, Index *indPrim, FILE *base, availList *avail);
 
 /** @brief Funcao q remove uma entrada de um indice secundario.
  * 
@@ -28,7 +28,7 @@ IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail);
  * @param avail Avail list do indice secundario.
  * @return Indice secundario atualizado.
  */
-IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail);
+Index * removeSk(char *chave, Index *indSecun, char *pk, availList *avail);
 
 
 /**

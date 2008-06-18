@@ -36,7 +36,7 @@ IndDesc * inicializaDescritor();
  * @param base O ponteiro para o arquivo da base de dados.
  * return void
 */
-void constroiIndDesc(IndDesc * indDesc, IndPrim * indPrim, FILE *base);
+void constroiIndDesc(IndDesc * indDesc, Index * indPrim, FILE *base);
 
 /** 
  * @brief Troca o indice descritor atual por outro 

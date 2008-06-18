@@ -1,57 +1,32 @@
 #include "sk.h"
 #include "catalogo.h"
 
-IndSec * inicializaSecundario(char *tipoCampo) {
-	
-	IndSec * indice = (IndSec *) malloc(sizeof(IndSec));
-	
-	indice->vetor = (Sk *) malloc(sizeof(Sk) * VETOR_MIN);
-	indice->tamanho = 0;
-	indice->alocado = VETOR_MIN;
-	indice->tamDisco = 0;
-	indice->valorHash = 0;
-	strcpy(indice->tipoCampo, tipoCampo);
-	
-	return indice;
-}
-
-void constroiSecundarios(IndPrim *indPrim, FILE *base, 
-IndSec *titulo, IndSec*tipo, IndSec *autor, IndSec *ano, 
+void constroiSecundarios(Index *indPrim, FILE *base, 
+Index *titulo, Index*tipo, Index *autor, Index *ano, 
 availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno) {
 	
-	int i, j;
+	int i, j, id;
 	char nomeTitulo[TAM_NOME_ARQ+10], nomeTipo[TAM_NOME_ARQ+10], nomeAutor[TAM_NOME_ARQ+10], nomeAno[TAM_NOME_ARQ+10];
 	char pkAux[TAM_TITULO+1];
 	FILE *arqTitulo, *arqTipo, *arqAutor, *arqAno;         /* Arquivos de chaves secundarias. */
 	FILE *arqPkTitulo, *arqPkTipo, *arqPkAutor, *arqPkAno; /* Arquivos de chaves primarias. */
 	TObra obra;
 	
-	/* Tenta abrir os arquivos de indice de hash iguais a zero. */
-	sprintf(nomeTitulo, "%s%d%s", titulo->tipoCampo, titulo->valorHash, EXTENSAO_SK);
-	sprintf(nomeTipo,   "%s%d%s", tipo->tipoCampo,   tipo->valorHash,   EXTENSAO_SK);
-	sprintf(nomeAutor,  "%s%d%s", autor->tipoCampo,  autor->valorHash,  EXTENSAO_SK);
-	sprintf(nomeAno,    "%s%d%s", ano->tipoCampo,    ano->valorHash,    EXTENSAO_SK);
-	
-	arqTitulo = fopen(nomeTitulo, "r");
-	arqTipo   = fopen(nomeTipo,   "r");
-	arqAutor  = fopen(nomeAutor,  "r");
-	arqAno    = fopen(nomeAno,    "r");
-	
 	if (arqTitulo && arqTipo && arqAutor && arqAno) { /* Se existem todos os arquivos. */
 		
 		fprintf(stdout, "Carregando indices secundários... ");
 		
 		/* Carrega chaves do arquivo. */
-		titulo = carregaSk(titulo, arqTitulo);
-		tipo   = carregaSk(tipo,   arqTipo);
-		autor  = carregaSk(autor,  arqAutor);
-		ano    = carregaSk(ano,    arqAno);
+		titulo->carrega(titulo, 0);
+    tipo->carrega(tipo, 0);
+    autor->carrega(autor, 0);
+    ano->carrega(ano, 0);
 		
-		/* Atualiza o valor hash dos indices. */
-		titulo->valorHash = 0;
-		tipo->valorHash   = 0;
-		autor->valorHash  = 0;
-		ano->valorHash    = 0;
+		/* Atualiza o valor dos ids dos indices. */
+		titulo->id = 0;
+		tipo->id   = 0;
+		autor->id  = 0;
+		ano->id    = 0;
 		
 		fclose(arqTitulo);
 		fclose(arqTipo);
@@ -75,13 +50,13 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 		for(j=0; j<= H; j++) {
 		
 		/*Gravo indice primario*/
-		gravaPk(indPrim);
+		indPrim->grava(indPrim);
 		
-	  	indPrim->valorHash = j;
+	  indPrim->id = j;
 	
 		/*Abro o novo indice*/
 		indPrim->tamanho = 0;
-		abrePk(indPrim);
+		indPrim->carrega(indPrim, id);
 		
 			/*Percorre os indices primarios*/
 			for (i = 0; i < indPrim->tamanho; ++i) {
@@ -89,14 +64,7 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 				/* Le o registro. */
 				leRegistro(&obra, indPrim->vetor[i].nrr, base);				
 				
-				/*Coloca tudo em maiuscula para nao 
-				 * occorer discrepancia entre os dados buscados*/
-				
-				
-				
-				
-				strcpy(pkAux, indPrim->vetor[i].pk);
-				
+				strcpy(pkAux, indPrim->vetor[i].key);
 				/* Para cada indice, faz a inserção das chaves. */
 				titulo = insereSk(titulo, arqPkTitulo, pkAux, obra.titulo, avTitulo);
 				tipo   = insereSk(tipo,   arqPkTipo,   pkAux, obra.tipo,   avTipo);
@@ -118,56 +86,32 @@ availList * avTitulo, availList * avTipo, availList * avAutor, availList * avAno
 	
 }
 
-IndSec * carregaSk(IndSec *indSk, FILE *arqSk){
-
-  int tamSk = 0;
-  Sk *sk = (Sk *) malloc(sizeof(Sk));
-
-	/* Le o tamanho do arquivo que contem as chaves primarias do indice secundario. */
-	fscanf(arqSk, FORMATO_INT, &(indSk->tamDisco));
+Index * insereSk(Index *indSecun, FILE *fsk, char *pk, char *campo, availList *avail) {
 	
-  /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
-  while (fscanf(arqSk, FORMATO_INT, &(sk->lenght)) != EOF){
-    fgets(sk->key, 1 + sk->lenght, arqSk);
-    fscanf(arqSk, FORMATO_INT, &(sk->next));
-		
-    /*Gravo no vetor de Sk e atualizo o tamanho deste*/
-    strcpy(indSk->vetor[tamSk].key, sk->key);
-    indSk->vetor[tamSk].next = sk->next;
-    indSk->vetor[tamSk].lenght = sk->lenght;
-    tamSk++;
-    indSk->tamanho = tamSk;
-
-    /*Verifica se precisa ser realocado memoria*/
-    indSk = realocaIndSec(indSk);	
-  }
-
-  free(sk);
-  return indSk;
-}
-
-IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList *avail) {
-	
-  Sk * sk = (Sk *) malloc(sizeof(Sk)), *sk2;
-  Sk * result;
+  indexKey * sk = (indexKey *) malloc(sizeof(indexKey)), *sk2;
+  indexKey * result;
   char * token;
-  int tam, offset, temp;
+  int tam, offset, temp, tamToken, id;
 
   /* Quebra a string em varios tokens */
   token = strtok(campo, " ,.-");
 
   while (token) { /* Realiza a insercao para cada novo token existente na string. */
 
-	/* Realiza o Hash do token. */
-	indSecun = trocaIndSec(indSecun, token);
+	/* Realiza o busca na arvore */
+  
+  /*********************************************/
+  /*        B+        */
+  /*********************************/
+  trocaIndice(indSecun, id);
 	
    /* Inicializa os valores num elemento que usarei como chave da
       busca binaria no indice. */
    strcpy(sk->key, token);
-   sk->next = -1;
-   sk->lenght = strlen(token);
+   sk->nrr = -1;
+   tamToken = strlen(token);
 
-   result = (Sk*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+   result = (indexKey*) bsearch(sk, indSecun->vetor, indSecun->tamanho, sizeof(indexKey), compare);
 
    /* Mais um ponteiro pra regiao atual, pra poder liberar depois. */
    sk2 = sk; 
@@ -180,13 +124,12 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
     } else { /* Nao ha nenhuma ocorrencia da SK, insere um novo elemento no vetor do indice */
 			
       /*Verifica se nao precisa ser realocado espaco*/
-      indSecun = realocaIndSec(indSecun);
+      realocaIndice(indSecun);
 			
       /*Insere a SK no final do vetor*/
       tam = indSecun->tamanho;
       strcpy(indSecun->vetor[tam].key, sk->key);
-      indSecun->vetor[tam].next = sk->next;
-      indSecun->vetor[tam].lenght = sk->lenght;
+      indSecun->vetor[tam].nrr = sk->nrr;
 
       sk = &(indSecun->vetor[tam]);
 			
@@ -208,23 +151,23 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
 
       /* Vai inserir o novo elemento na lista da SK. */
       fseek(fsk, -1*TAM_NUMERO, SEEK_CUR); 
-      fprintf(fsk, FORMATO_INT, sk->next);
-      sk->next = temp;
+      fprintf(fsk, FORMATO_INT, sk->nrr);
+      sk->nrr = temp;
 
     } else {
       /* Calcula onde termina a parte do indice que fica no disco.
-       * tamDisco indica o numero de PKs no disco, o acrescimo do
+       * tamFile indica o numero de PKs no disco, o acrescimo do
        * tamanho numero eh devido ao cabecalho do arquivo. */
-      offset = indSecun->tamDisco * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
+      offset = indSecun->tamFile * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
 
       /* Insere a nova PK no fim da parte em disco. Com o proximo
 	 elemento sendo o primeiro da lista da qual sk eh a cabeca. */
 			fseek(fsk, offset, SEEK_SET); 
       fprintf(fsk, "%s", pk);
-      fprintf(fsk, FORMATO_INT, sk->next);
-      sk->next = indSecun->tamDisco;
+      fprintf(fsk, FORMATO_INT, sk->nrr);
+      sk->nrr = indSecun->tamFile;
 
-      (indSecun->tamDisco)++;
+      (indSecun->tamFile)++;
     }
     
     sk = sk2;
@@ -232,14 +175,49 @@ IndSec * insereSk(IndSec *indSecun, FILE *fsk, char *pk, char *campo, availList 
   }
 
   /*Ordena o vetor de SKs*/
-  qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+  qsort(indSecun->vetor, indSecun->tamanho, sizeof(indexKey), compare);
 
   free(sk);
 	
   return indSecun;
 }
 
-void gravaIndSk(IndSec *sec) {
+/*Abre o arquivo correspondente ao id e carrega-o para a memoria.*/
+void carregaIndiceSecun(Index *indSk, int id){
+
+  int tamSk = 0;
+  int tamKey = 0;
+  FILE *arqSk;
+  char nome[TAM_NOME_ARQ];
+  indexKey *sk = (indexKey *) malloc(sizeof(indexKey));
+  
+  sprintf(nome, "%s%d%s", indSk->tipoCampo, id, EXTENSAO_SK);
+  arqSk = fopen(nome, "r");
+  
+  /*Se o arquivo existe*/
+  if(arqSk) {
+    /* Le o tamanho do arquivo que contem as chaves primarias do indice secundario. */
+    fscanf(arqSk, FORMATO_INT, &(indSk->tamFile));
+    
+    /*Enquanto nao chega ao final do arquivo, leio tamanho, key e next*/
+    while (fscanf(arqSk, FORMATO_INT, &(tamKey)) != EOF){
+      fgets(sk->key, 1 + tamKey, arqSk);
+      fscanf(arqSk, FORMATO_INT, &(sk->nrr));
+    
+      /*Gravo no vetor de Sk e atualizo o tamanho deste*/
+      strcpy(indSk->vetor[tamSk].key, sk->key);
+      indSk->vetor[tamSk].nrr = sk->nrr;
+      tamSk++;
+      indSk->tamanho = tamSk;
+
+      /*Verifica se precisa ser realocado memoria*/
+      realocaIndice(indSk); 
+    }
+  }
+  free(sk);
+}
+
+void gravaIndiceSecun(Index *sec) {
 
   FILE *fsk;
   int i = 0, tam;
@@ -248,76 +226,17 @@ void gravaIndSk(IndSec *sec) {
   /*Tamanho da PK gravada no disco*/
   tam = TAM_TITULO + TAM_NUMERO; 
   
-  sprintf(nomeArq, "%s%d%s", sec->tipoCampo, sec->valorHash, EXTENSAO_SK);
+  sprintf(nomeArq, "%s%d%s", sec->tipoCampo, sec->id, EXTENSAO_SK);
   fsk = fopen(nomeArq,"w");
   
   /* Gravo o tamanho do arquivo de chaves primarias. */
-  fprintf(fsk, FORMATO_INT, sec->tamDisco);
+  fprintf(fsk, FORMATO_INT, sec->tamFile);
 
   for (i = 0; i < sec->tamanho; i++) {
-    fprintf(fsk, FORMATO_INT, sec->vetor[i].lenght);  /* grava o tamanho da sk */
+    fprintf(fsk, FORMATO_INT, sizeof(sec->vetor[i].key));  /* grava o tamanho da sk */
     fprintf(fsk, "%s", sec->vetor[i].key);            /* grava a key */
-    fprintf(fsk, FORMATO_INT, sec->vetor[i].next);    /* grava o proximo elemento na lista invertida */
+    fprintf(fsk, FORMATO_INT, sec->vetor[i].nrr);    /* grava o proximo elemento na lista invertida */
   }
-
-  fclose(fsk);
   
-  return;
+  fclose(fsk);
 }
-
-
-IndSec * trocaIndSec(IndSec *indSecun, char *chave) {
-	
-  	int hashChave, tamanho = indSecun->tamDisco;
-  	char nome[TAM_NOME_ARQ+10];
-  	FILE *ind;
-
-  	hashChave = hashFunction(chave);
-
-  	if (hashChave == indSecun->valorHash) return indSecun;
-
-  	gravaIndSk(indSecun); /* Tem que trocar de indice: salva o atual e carrega outro. */
-	
-  	sprintf(nome, "%s%d%s", indSecun->tipoCampo, hashChave, EXTENSAO_SK);
-  	ind = fopen(nome, "r");
-
-	if (ind) {
-  		indSecun = carregaSk(indSecun, ind);
-	
-  		fclose(ind);
-  		
-	} else {
-		indSecun->tamanho = 0; /* Se o arquivo não existe, o indice eh vazio. */
-	}
-
-	/* Atualiza o valor hash do indice. */
-  	indSecun->valorHash = hashChave;
-  	indSecun->tamDisco = tamanho;
-
-  	return indSecun;
-}
-
-
-
-
-/* Realoca espaco para o vetor caso seja necessario. */
-IndSec * realocaIndSec(IndSec *sec) {
-
-  if (sec->tamanho == sec->alocado) {
-    sec->alocado = 2*(sec->alocado);
-    sec->vetor = (Sk *) realloc(sec->vetor, sizeof(Sk) * sec->alocado);
-  }
-  return sec;
-
-}
-
-/* Funcao de comparacao utilizada pela bsearch. */
-int compareSk(const void *a, const void *b) {
-
-  Sk *a2 = (Sk *)a;
-  Sk *b2 = (Sk *)b;
- 
-  return strcasecmp(a2->key, b2->key);
-
-}
-

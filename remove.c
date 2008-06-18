@@ -1,14 +1,14 @@
 #include "remove.h"
 
-IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail) {
-  Pk temp, *result;
+Index * removePk(char *chave, Index *indPrim, FILE *base, availList *avail) {
+  indexKey temp, *result;
   int offset, fim;
 
-  strcpy(temp.pk, chave);
+  strcpy(temp.key, chave);
   temp.nrr = -1; /* Soh pra manter inicializado. */
 
 	/*Como o indice primario ja esta correto, devido a consulta realizada anteriormente, nao troco de indice primario*/
-  result = (Pk *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(Pk), compare);
+  result = (indexKey *) bsearch(&temp, indPrim->vetor, indPrim->tamanho, sizeof(indexKey), compare);
 
   /* Apesar da chave ser valida, eh bom evitar um segfault por uso indevido da funcao. */
   if (result) {
@@ -24,13 +24,13 @@ IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail) 
     /* Atualiza o indice. */
     fim = indPrim->tamanho-1;
 
-    strcpy(temp.pk, result->pk);
+    strcpy(temp.key, result->key);
     temp.nrr = result->nrr;
 
-    strcpy(result->pk, indPrim->vetor[fim].pk);
+    strcpy(result->key, indPrim->vetor[fim].key);
     result->nrr = indPrim->vetor[fim].nrr;
 
-    strcpy(indPrim->vetor[fim].pk, temp.pk);
+    strcpy(indPrim->vetor[fim].key, temp.key);
     indPrim->vetor[fim].nrr = temp.nrr;
 
     (indPrim->tamanho)--;
@@ -52,12 +52,13 @@ IndPrim * removePk(char *chave, IndPrim *indPrim, FILE *base, availList *avail) 
 }
 
 /*Remove a chave do indice secundario*/
-IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
+Index * removeSk(char *chave, Index *indSecun, char *key, availList *avail) {
 
   FILE *arq;
-  Sk temp, *result;
+  indexKey temp, *result;
   char *token, pk2[TAM_TITULO+1], nomeArq[TAM_NOME_ARQ];
   int offset, prox, fim, atual, ant, tmp; /* Variaveis auxiliares para se trabalhar com a lista invertida. */
+  int id;
 
   /*Arquivo que contem as pks dos indices secundarios*/
   sprintf(nomeArq, "%s%s", indSecun->tipoCampo, EXTENSAO_PK);	
@@ -71,18 +72,20 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
   while (token) {
 
     strcpy(temp.key, token);
-    temp.next = -1;
-    temp.lenght = strlen(token);
+    temp.nrr = -1;
 
 		/*Troco o indice secundario*/
-		indSecun = trocaIndSec(indSecun, temp.key);
+    /*********************************/
+    /*      b+          */
+    /**********************************/
+		trocaIndice(indSecun, id);
 		
-    result = (Sk *) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(temp), compareSk);
+    result = (indexKey *) bsearch(&temp, indSecun->vetor, indSecun->tamanho, sizeof(temp), compare);
 
     if (result) {
       /* Deslocamento para escrever no arquivo.  
-       * next * PK + cabecalho, pra poder escrever no campo numerico. */
-      offset = result->next * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
+       * nrr * PK + cabecalho, pra poder escrever no campo numerico. */
+      offset = result->nrr * (TAM_TITULO + TAM_NUMERO) + TAM_NUMERO;
     
       /* Agora, temos q remover a chave da lista invertida. Ha uma
 	 particularidade quando a chave esta no primeiro elemento da
@@ -94,43 +97,43 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
       fgets(pk2, TAM_TITULO+1, arq);
       fscanf(arq, FORMATO_INT, &prox);
 
-      if (!strcmp(pk, pk2)) { /* o primeiro elemento da lista sera removido. */
+      if (!strcmp(key, pk2)) { /* o primeiro elemento da lista sera removido. */
 
 	tmp = *avail;
-	*avail = result->next;
+	*avail = result->nrr;
 	fseek(arq, -TAM_NUMERO, SEEK_CUR); /* Vai colocar o reg no inicio da lista invertida. */
 	fprintf(arq, FORMATO_INT, tmp);
 
 	if (prox != -1) {
-	  result->next = prox;
+	  result->nrr = prox;
 
 	} else {
 
   		/* Guarda um 'ponteiro' pra atual. */
 		ant = prox;
-		atual = result->next;
+		atual = result->nrr;
 		
 	  /* Atualiza o indice. */
 	  fim = indSecun->tamanho-1;
 
 	  strcpy(temp.key, result->key);
-	  temp.next = result->next;
+	  temp.nrr = result->nrr;
 
 	  strcpy(result->key, indSecun->vetor[fim].key);
-	  result->next = indSecun->vetor[fim].next;
+	  result->nrr = indSecun->vetor[fim].nrr;
 
 	  strcpy(indSecun->vetor[fim].key, temp.key);
-	  indSecun->vetor[fim].next = temp.next;
+	  indSecun->vetor[fim].nrr = temp.nrr;
 
 	  (indSecun->tamanho)--;
 
-	  qsort(indSecun->vetor, indSecun->tamanho, sizeof(Sk), compareSk);
+	  qsort(indSecun->vetor, indSecun->tamanho, sizeof(indexKey), compare);
 	
 	}
 	
       } else {
 
-	atual = result->next;
+	atual = result->nrr;
     
 	while (prox != -1) {
 
@@ -140,7 +143,7 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
 
 	  fgets(pk2, TAM_TITULO+1, arq);
 
-	  if (!strcmp(pk, pk2)) {
+	  if (!strcmp(key, pk2)) {
       
 	    atual = prox;
 	    fscanf(arq, FORMATO_INT, &prox);
@@ -182,11 +185,11 @@ IndSec * removeSk(char *chave, IndSec *indSecun, char *pk, availList *avail) {
  * seuquencial, mas mesmo assim, tem-se, no pior caso, uma operacao em
  * tempo O(n).
  */
-IndDesc * removeDesc(char *pk, IndDesc *descritores) {
+IndDesc * removeDesc(char *key, IndDesc *descritores) {
   int i;
 
   /* Percorre o vetor ate achar a PK do descritor a ser removido. */
-  for (i = 0; strcmp(descritores->vetor[i].pk, pk) != 0 && i < descritores->tamanho; i++);
+  for (i = 0; strcmp(descritores->vetor[i].pk, key) != 0 && i < descritores->tamanho; i++);
 
   for (++i; i < descritores->tamanho; i++) {
     strcpy(descritores->vetor[i].pk, descritores->vetor[i+1].pk);

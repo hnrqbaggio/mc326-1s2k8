@@ -41,7 +41,7 @@ typedef struct {
   int nrr;    					   /**< Numero relativo do registro na base de dados. */
 } indexKey;
 
-/*! \brief Estrutura que representa o indice primario. */
+/*! \brief Estrutura que representa o indice generico. */
 typedef struct index {
   indexKey * vetor;    
   int tamanho;   

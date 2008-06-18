@@ -22,7 +22,7 @@
  * @param primario O indice primario atual.
  * @param base A base de dados.
  */
-void buscaPrimario(IndPrim * primario, FILE * base);
+void buscaPrimario(Index * primario, FILE * base);
 
 /**
  * @brief Analoga a buscaPrimario, chamando a funcao de busca
@@ -32,7 +32,7 @@ void buscaPrimario(IndPrim * primario, FILE * base);
  * @param secundario O indice secundario onde sera feita a busca,
  * @param base A base de dados.
  */
-void buscaSecudario(IndPrim * primario, IndSec * secundario, FILE * base);
+void buscaSecudario(Index * primario, Index * secundario, FILE * base);
 
 /**
  * @brief Analoga a buscaPrimario e buscaSecundario, chamando a funcao de busca
@@ -42,7 +42,7 @@ void buscaSecudario(IndPrim * primario, IndSec * secundario, FILE * base);
  * @param primario O indice primario atual.
  * @param base A base de dados.
  */
-void buscaDescritor(IndDesc * descritores, IndPrim * primario, FILE * base);
+void buscaDescritor(IndDesc * descritores, Index * primario, FILE * base);
 
 
 /**
@@ -55,7 +55,7 @@ void buscaDescritor(IndDesc * descritores, IndPrim * primario, FILE * base);
  * @param busca O ponteiro para a estrutura de resposta, que pode ser atulizada caso 
  * esta funcao esteja sendo usada pelas demais funcoes de busca.
  */
-resultadosBusca * buscaPk(Pk * chave, IndPrim * prim, FILE * base, resultadosBusca * busca);
+resultadosBusca * buscaPk(indexKey * chave, Index * prim, FILE * base, resultadosBusca * busca);
 
 /**
  * @brief Realiza uma busca por palavra inteira na base de dados, encontrando 
@@ -67,7 +67,7 @@ resultadosBusca * buscaPk(Pk * chave, IndPrim * prim, FILE * base, resultadosBus
  * @param sec O indice secundario (tambem pode ser atualizado).
  * @param base O ponteiro para a base de dados.
  */
-resultadosBusca * buscaSk(char *chave, IndSec *sec, IndPrim *prim, FILE *base);
+resultadosBusca * buscaSk(char *chave, Index *sec, Index *prim, FILE *base);
 
 
 /**
@@ -80,7 +80,7 @@ resultadosBusca * buscaSk(char *chave, IndSec *sec, IndPrim *prim, FILE *base);
  * @param prim O indice primario (tambem pode ser atualizado).
  * @param base O ponteiro para a base de dados.
  */
-resultadosBusca * buscaPorConteudo(char * arqImagem, IndDesc * descr, IndPrim * prim, FILE * base);
+resultadosBusca * buscaPorConteudo(char * arqImagem, IndDesc * descr, Index * prim, FILE * base);
 
 /** 
  * @brief Libera a memoria utilizada para armazenar os resultados de uma busca. 

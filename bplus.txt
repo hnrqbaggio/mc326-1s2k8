@@ -1,0 +1,62 @@
+Inserção
+Busca
+Remoção
+
+split
+
+Carrega Node
+Grava Node
+le registro
+
+== Inserção ==
+abre o node
+se folha
+
+	procura a posição onde inserir
+	(verifica repetição)
+	fecha o noh.
+	
+senão
+
+	encontra a sub-arvore correspondente
+	
+	fecha o node atual
+	chama a recursão para a sub-arvore
+	
+	se overflow do filho
+		
+		carrega esquerda
+		se esquerda tem espaco
+			copia n primeiro valores pra esquerda
+			o ultimo valor vira a chave do filho estourado
+			vaza!
+			
+		carrega o direito
+		se direita tem espaço
+			copia os n valores finais pra direita
+			o ultimo valor vira a chave da direita
+		
+		senão
+			cria novo filho
+			split(filho)
+			
+se overflow return -1
+se inseriu retorna 1
+senao return 0 (reperticao)
+
+
+split(node, novo)
+	
+	
+
+== TIPOS ==
+NODE
+	tamanho
+	chaves[B]
+	filhos[B+1]
+	left *
+	right *
+	
+BTREE
+	root
+	

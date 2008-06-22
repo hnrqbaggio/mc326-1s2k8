@@ -1,135 +1,77 @@
 #include "bplus.h"
 
-int insert(char *key, BTNode *node, Index *indice) {
+int insert(pk *key, int nodeId) {
+	 
+  int i = 0, j, idFilho, result, middle, tamanho;
+  pk *middle;
+  BTNode *node;
 
-  /* Busca a chave no vetor de separadores. */
-  /* while chave > sep[i], i++
-   * 
-   * se nevel == 1;
-   *  carrega folha;
-   * 	temp = insertInLeaf(key);
-   * 
-   * 	if (overflow(indice))
-   * 		criar nova folha;
-   * 		indice = indice->carrega(indice);
-   * 		cria novo indice;
-   * 		copia metade do indice atual pro novo;
-   * 		salva ambos os indices;
-   * 		abre espaco;
-   * 		insere key em seps[i];
-   * 		insere id da nova folha em filhos[i];
-   * 
-   * senao
-   * 	aloca novo noh filho = carrega o filho[i];
-   *  temp = insert(key, filho, indice);
-   * 
-   * 	se overflow(filho)
-   * 		cria novo filho;
-   * 		copio metade dos seps e ids pro novo;
-   * 		abre espaco
-   * 		insere key em seps[i];
-   * 		insere id do novo filho em seps[i];
-   * 
-   * if overflow return -1
-   * else return temp
-   * 
-   */
+  node = makeNode();
+  carrega(node, nodeId);
 	 
-  int i = 0, j, temp, meio, id;
-  BTNode *filho, *novoFilho;
-  Index * novoIndice, * swap;
+  while (key > node->chaves[i] && i < node->numChaves) i++;
 	 
-  while (strcmp(key, node->chaves[i]) > 0 && i < node->numChaves) i++;
-	 
-  if (node->level == 1) { /* O Node eh pai de uma folha. */
-	 	
-    if(node->chaves[0][0] == '\0') {
-      strcpy(node->chaves[0], key); /* Caso particular */
-      (node->numChaves)++;
-    }
-	 	
-    if(i >= node->numChaves) strcpy(node->chaves[i-1], key); 
-	 	
-    if (indice->tamanho == BLOCK_SIZE) { /* Overflow do indice. */
-	 		
-      novoIndice = makeIndex(indice->tipoCampo); 
-      meio = indice->tamanho / 2;
-	 		
-      /* Copia metade dos dados de um indice para outro. */
-      for(j = meio; j < indice->tamanho; j++) {
-	strcpy(novoIndice->vetor[j].key, indice->vetor[meio-j].key);
-	novoIndice->vetor[j].nrr =  indice->vetor[meio-j].nrr;
-      }
-	 		
-      /* Atualiza tamanhos e ID. */
-      novoIndice->tamanho = meio;
-      indice->tamanho -= meio;
-      novoIndice->tamFile = indice->tamFile;
-      novoIndice->id = getId(indice->tipoCampo);
-	 		
-      /* Faz uma troca de indices, para manter a ordenacao e evitar muita copia de dados. */
-      swap = novoIndice; novoIndice = indice; indice = swap;
-	 		
-      /* Grava os indices nos arquivos. */
-      indice->grava(indice);
-      novoIndice->grava(novoIndice);
-	 		
-      for(j = node->numChaves; j > i; j--) {
-	node->filhos[j] = node->filhos[j-1];
-	strcpy(node->chaves[j-1], node->chaves[j-2]);
-      }
+  if (node->leaf == TRUE) { /* O Node eh uma folha. */
+
+    if (node->chave[i] == pk->key) return FALSE; /* Repeticao. */	
+    
+    /* Abre espaco para a nova chave no vetor de chaves do noh. */
+    j = node->numChaves;
+    node->chaves[j] = node->chaves[--j];
+    for(; j >= i; j--) {
       node->filhos[j] = node->filhos[j-1];
-	 		
-      strcpy(node->chaves[i], key);
-      node->filhos[i] = novoIndice->id;
-
+      node->chaves[j] = node->chaves[j-1];
     }
-	 	
+    node->chaves[i] = pk->key;
+    node->filhos[i] = pk->pointer;
+
+    (node->numChaves)++;
+    	 	
   } else { /* O node eh pai de outro node. */
+    
+    idFilho = node->filhos[i];
+    writeNode(node);
+    free(node);
+
+    result = insert(key, idFilho);
 	 	
-    /* Aloca espaco para o node. */
-    filho = makeNode(node->level - 1);
-	 	
-    /* Carrega os dados da pagina para o node. */
-    loadNode(filho, node->filhos[i], indice->tipoCampo);
-	 	
-    /* Chama a insercao recursivamente. */
-    temp = insert(key, filho, indice);
-	 	
-    if (temp == -1) { /* Overflow do filho. */
-	 	
-      /* Aloca memoria para um novo node e retorna o ID para ele. */
-      id = createNewNode(&novoFilho, node->level - 1, indice->tipoCampo);
-	 		
-      /* Divide as chaves entre os nos. */
-      split(filho, novoFilho);
-	 		
-      /* Abre espaco para a nova chave no vetor de chaves do noh. */
-      for(j = node->numChaves; j > i; j--) {
-	node->filhos[j] = node->filhos[j-1];
-	strcpy(node->chaves[j-1], node->chaves[j-2]);
-      }
-      node->filhos[j] = node->filhos[j-1];
-	 		
-      /* A chave media do filho quebrado eh inserida neste noh. */
-      strcpy(node->chaves[i], novoFilho->chaves[novoFilho->numChaves]);
-      node->filhos[i] = id;
-	 		
-      /* Salva ambos os filhos nas suas paginas. */
-      writeNode(filho, node->filhos[i+1], indice->tipoCampo);
-      writeNode(novoFilho, id, indice->tipoCampo);
-	 		
-      /* libera a memoria dos filhos. */
-      free(filho);
-      free(novoFilho);
-    }
-	 	
-  }
-	 
-  if (node->numChaves == B_ORDER) return -1; /* Overflow */
-  else return temp; /* Insercao bem sucedida eh 1, caso contrario eh zero. */
+    if (result == OVERFLOW) { /* Overflow do filho. */
+
+      node = makeNode();
+      carrega(node, nodeId);
+
+      r = rotation(idFilho, node->filhos[i-1], LEFT); /* Rotacao a esquerda. */
+
+      if (r) return TRUE;
+      else r = rotation(idFilho, node->filhos[i+1], RIGHT);
+
+      if (r) reurn TRUE;
+
+      else {/* Nenhum tem espaco. */
+	middle = split(idFilho);
+
+	j = node->numChaves;
+	node->chaves[j] = node->chaves[--j];
+	for(; j >= i; j--) {
+	  node->filhos[j] = node->filhos[j-1];
+	  node->chaves[j] = node->chaves[j-1];
+	}
+
+	node->chaves[i] = middle->key;
+	node->filhos[i+1] = middle->pointer;
 	
+	(node->numChaves)++;
+
+	free(middle);
+      }
+    }
+  }
+  tamanho = node->numCahves;
+	 
+  if (tamanho == B_ORDER) return OVERFLOW;
+  else return result;	
 }
+
 
 /* Aloca memoria para um novo node. */
 BTNode * makeNode(int level) {

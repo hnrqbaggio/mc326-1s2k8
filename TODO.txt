@@ -6,6 +6,7 @@ TODO LIST
 
 
 == TAREFAS GERAIS ==
+reescrever main.c
 
 == MATAO ==
 função de split

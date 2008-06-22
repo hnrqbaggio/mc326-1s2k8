@@ -2,11 +2,18 @@
 #define BPLUS_H_
 #include <stdio.h>
 
+#define TRUE 1
+#define FALSE 0
+#define OVERFLOW -1
+
+#define RIGHT 1
+#define LEFT 2
+
 typedef struct {
 	int numChaves; /**< Numero de chaves no noh. Usado para controlar operacoes da arvore. */
  	int chaves[B_ORDER-1] /**< vetor de strings que sao os delimitadores das chaves. */
 	int filhos[B_ORDER]; /**< Vetor de ponteiros para os filhos do noh. */
-	int level; /**< Nivel do noh - sua altura. A raiz tem level = altura - 1. */
+	int leaf; /**< Nivel do noh - sua altura. A raiz tem level = altura - 1. */
 	int left;
 	int right;
 } BTNode;

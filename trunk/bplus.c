@@ -17,7 +17,7 @@ int insert(pk *key, int nodeId) {
     
     /* Abre espaco para a nova chave no vetor de chaves do noh. */
     j = node->numChaves;
-    node->chaves[j] = node->chaves[--j];
+    node->chaves[j] = node->chaves[(--j)];
     for(; j >= i; j--) {
       node->filhos[j] = node->filhos[j-1];
       node->chaves[j] = node->chaves[j-1];
@@ -51,7 +51,7 @@ int insert(pk *key, int nodeId) {
       	middle = split(idFilho);
       
       	j = node->numChaves;
-      	node->chaves[j] = node->chaves[--j];
+      	node->chaves[j] = node->chaves[(--j)];
       	for(; j >= i; j--) {
       	  node->filhos[j] = node->filhos[j-1];
       	  node->chaves[j] = node->chaves[j-1];
@@ -82,13 +82,14 @@ BTNode * makeNode() {
 /**
  * @brief Carrega um arquivo da arvore para memoria (BTNode).
  * 
- * @param 
- * @param 
+ * @param node Onde ser a armazenado o arquivo lido.
+ * @param nodeId Id do arquivo a ser carregado
 */
 void readNode(BTNode *node, int nodeId) {
   
   FILE *file;
   char nomeArq[TAM_NOME_ARQ];
+  int i;
   
   sprintf(nomeArq, "%d%s", nodeId, EXTENSAO_NODE);
   file = fopen(nomeArq, "r");
@@ -96,9 +97,31 @@ void readNode(BTNode *node, int nodeId) {
   if (file) { /*Se o arquivo existe*/
     
     /*Leitura dos campos do arquivo*/
-     
     
+    /*Leitura se e folha ou no*/
+    fscanf(file, "%d", &node->leaf);
+    
+    /*Leitura do numero de chaves*/
+    fprintf(file, "%d", node->numChaves);
+    
+    /*leitura das chaves*/
+    for ( i = 0; i < node->numChaves; ++i) {
+      fprintf(file, "%d", node->chaves[i]);
+    }
+    
+    /*Leitura dos apontadores ou nrrs, caso seja folha*/
+    for ( i = 0; i <= node->numChaves; ++i) {
+      fprintf(file, "%d", node->filhos[i]);
+    }
+    
+    /*Leitura dos irmaos da esquerda e da direita (-1 caso nao seja folha)*/
+    fprintf(file, "%d", node->left);
+    fprintf(file, "%d", node->right);
+    
+    fclose(file); 
   }
+    /*Colocando id do arquivo na estrutura*/
+    node->id = nodeId;
 }
 
 /*Grava os dados do no em memoria para o arquivo*/
@@ -106,12 +129,30 @@ void writeNode(BTNode *node) {
   
   FILE *file;
   char nomeArq[TAM_NOME_ARQ];
+  int i;
   
   sprintf(nomeArq, "%d%s", node->id, EXTENSAO_NODE);
   file = fopen(nomeArq, "w");
   
-  /*Grvacao dos dados*/
+  /*Gravacao dos dados*/
   
+  /*Gravacao se e folha ou no*/
+  fprintf(file, "%d ", node->leaf);
+  /*Gravacao do numero de chaves*/
+  fprintf(file, "%d ", node->numChaves);
+  /*Gravacao das chaves*/
+  for (i = 0; i < node->numChaves; ++i) {
+    fprintf(file, "%d ", node->chaves[i]);
+  }
+  /*Gravacao dos apontadores ou nrrs, caso seja folha*/
+  for (i = 0; i <= node->numChaves; ++i) {
+    fprintf(file, "%d ", node->filhos[i]);
+  }
+  /*Gravacao dos irmaos da esquerda e da direita (-1 caso nao seja folha)*/
+  fprintf(file, "%d ", node->left);
+  fprintf(file, "%d ", node->right);
+  
+  fclose(file);
 }
 
 /*Pega o id do arquivo da arvore a ser gravado. */

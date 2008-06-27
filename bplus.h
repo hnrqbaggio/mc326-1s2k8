@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DEBUG
+
 /**
  * Definicoes para facilitar a vizualizacao do codigo da arvore B+
 */
@@ -15,7 +17,7 @@
 /**
  * Ordem da arvore b+.
 */
-#define B_ORDER 2
+#define B_ORDER 5
 
 /**
  * Tamanho maximo do nome do arquivo.
@@ -33,12 +35,12 @@
 #define EXTENSAO_NODE ".bplus"
 
 typedef struct {
-	int numChaves; /**< Numero de chaves no noh. Usado para controlar operacoes da arvore. */
- 	int chaves[B_ORDER-1]; /**< vetor de inteiros que sao os delimitadores das chaves. */
+  int numChaves; /**< Numero de chaves no noh. Usado para controlar operacoes da arvore. */
+  int chaves[B_ORDER-1]; /**< vetor de inteiros que sao os delimitadores das chaves. */
   int filhos[B_ORDER]; /**< Vetor de ponteiros para os filhos do noh. */
-	int leaf; /**< Nivel do noh - sua altura. A raiz tem level = altura - 1. */
-	int left; /**< Apontador para esquerda. */
-	int right;/**< Apontador para direita.*/
+  int leaf; /**< Nivel do noh - sua altura. A raiz tem level = altura - 1. */
+  int left; /**< Apontador para esquerda. */
+  int right;/**< Apontador para direita.*/
   int id; /**<Id do arquivo para ser gravado em disco. */
 } BTNode;
 
@@ -46,6 +48,7 @@ typedef struct {
   int key; /**<Inteiro que e a pk do indice.*/
   int pointer; /**<Inteiro usado como o nrr do indice primario. */
 } pk;
+
 
 /* Funcoes */
 
@@ -75,7 +78,7 @@ BTNode * makeNode();
  * @param node O no em memoria onde sera armazenado.
  * @param nodeId O id do arquivo a ser carregado.
 */
-void readNode(BTNode *node, int nodeId);
+int readNode(BTNode *node, int nodeId);
 
 /**
  * @brief Grava um no da arvore para o disco.
@@ -108,6 +111,7 @@ pk split(int nodeId);
 */
 int rotation(int id, int idIrmao, const int tipo);
 
+void rootOverflow(BTNode *root);
 
 void leRegistro(); /* Pegar em catalogo.c */
 
@@ -116,7 +120,7 @@ void leRegistro(); /* Pegar em catalogo.c */
  * @brief Funcao recursiva de busca na arvore.
  * 
  * @param key A chave a ser buscada.
- * @param BTNode O no atual a ser buscado.
+ * @param node O no atual a ser buscado.
  * return O ponteiro do arquivo de indice a ser aberto.
 */
 int search(char *key, BTNode *node);

@@ -1,13 +1,18 @@
 #include "bplus.h"
 
 int insert(pk *key, int nodeId) {
-	 
-  int i = 0, j, idFilho, result, tamanho;
+  int i = 0, j, idFilho, result, *tamanho;
   pk middle;
   BTNode *node;
+  
+#ifdef DEBUG
+  fprintf(stderr, "Inserção em Node %d\n", nodeId);
+#endif
 
   node = makeNode();
   readNode(node, nodeId);
+
+  tamanho = &(node->numChaves);
 	 
   while (key->key > node->chaves[i] && i < node->numChaves) i++;
 	 
@@ -17,7 +22,7 @@ int insert(pk *key, int nodeId) {
     
     /* Abre espaco para a nova chave no vetor de chaves do noh. */
     j = node->numChaves;
-    node->chaves[j] = node->chaves[(--j)];
+    node->filhos[j+1] = node->filhos[j];
     for(; j >= i; j--) {
       node->filhos[j] = node->filhos[j-1];
       node->chaves[j] = node->chaves[j-1];
@@ -26,6 +31,8 @@ int insert(pk *key, int nodeId) {
     node->filhos[i] = key->pointer;
 
     (node->numChaves)++;
+
+    writeNode(node);
     	 	
   } else { /* O node eh pai de outro node. */
     
@@ -51,8 +58,8 @@ int insert(pk *key, int nodeId) {
       	middle = split(idFilho);
       
       	j = node->numChaves;
-      	node->chaves[j] = node->chaves[(--j)];
-      	for(; j >= i; j--) {
+      	node->chaves[j] = node->chaves[(j-1)];
+      	for(j=j-1; j >= i; j--) {
       	  node->filhos[j] = node->filhos[j-1];
       	  node->chaves[j] = node->chaves[j-1];
         }
@@ -62,11 +69,11 @@ int insert(pk *key, int nodeId) {
       	
       	(node->numChaves)++;
       }
+      writeNode(node);
     }
   }
-  tamanho = node->numChaves;
 	 
-  if (tamanho == B_ORDER) return OVERFLOW;
+  if (*tamanho == B_ORDER) return OVERFLOW;
   else return result;	
 }
 
@@ -85,11 +92,14 @@ BTNode * makeNode() {
  * @param node Onde ser a armazenado o arquivo lido.
  * @param nodeId Id do arquivo a ser carregado
 */
-void readNode(BTNode *node, int nodeId) {
+int readNode(BTNode *node, int nodeId) {
   
   FILE *file;
   char nomeArq[TAM_NOME_ARQ];
   int i;
+ 
+  /*Colocando id do arquivo na estrutura*/
+  node->id = nodeId;
   
   sprintf(nomeArq, "%d%s", nodeId, EXTENSAO_NODE);
   file = fopen(nomeArq, "r");
@@ -102,26 +112,29 @@ void readNode(BTNode *node, int nodeId) {
     fscanf(file, "%d", &node->leaf);
     
     /*Leitura do numero de chaves*/
-    fprintf(file, "%d", node->numChaves);
+    fscanf(file, "%d", &node->numChaves);
     
     /*leitura das chaves*/
     for ( i = 0; i < node->numChaves; ++i) {
-      fprintf(file, "%d", node->chaves[i]);
+      fscanf(file, "%d", &node->chaves[i]);
     }
     
     /*Leitura dos apontadores ou nrrs, caso seja folha*/
     for ( i = 0; i <= node->numChaves; ++i) {
-      fprintf(file, "%d", node->filhos[i]);
+      fscanf(file, "%d", &node->filhos[i]);
     }
     
     /*Leitura dos irmaos da esquerda e da direita (-1 caso nao seja folha)*/
-    fprintf(file, "%d", node->left);
-    fprintf(file, "%d", node->right);
+    fscanf(file, "%d", &node->left);
+    fscanf(file, "%d", &node->right);
     
     fclose(file); 
+    return 1;
+    
+  } else {
+    return 0; /* Nao existe o arquivo. */
   }
-    /*Colocando id do arquivo na estrutura*/
-    node->id = nodeId;
+
 }
 
 /*Grava os dados do no em memoria para o arquivo*/
@@ -137,20 +150,28 @@ void writeNode(BTNode *node) {
   /*Gravacao dos dados*/
   
   /*Gravacao se e folha ou no*/
-  fprintf(file, "%d ", node->leaf);
+  fprintf(file, "%d\n", node->leaf);
+
   /*Gravacao do numero de chaves*/
-  fprintf(file, "%d ", node->numChaves);
+  fprintf(file, "%d\n", node->numChaves);
+
   /*Gravacao das chaves*/
   for (i = 0; i < node->numChaves; ++i) {
     fprintf(file, "%d ", node->chaves[i]);
   }
+
+  fprintf(file, "\n");
+
   /*Gravacao dos apontadores ou nrrs, caso seja folha*/
   for (i = 0; i <= node->numChaves; ++i) {
     fprintf(file, "%d ", node->filhos[i]);
   }
+
+  fprintf(file, "\n");
+
   /*Gravacao dos irmaos da esquerda e da direita (-1 caso nao seja folha)*/
-  fprintf(file, "%d ", node->left);
-  fprintf(file, "%d ", node->right);
+  fprintf(file, "%d\n", node->left);
+  fprintf(file, "%d\n", node->right);
   
   fclose(file);
 }
@@ -183,6 +204,10 @@ pk split(int nodeId) {
   BTNode *node = makeNode();
   BTNode *new = makeNode();
   
+#ifdef DEBUG
+  fprintf(stderr, "Split node %d\n", nodeId);
+#endif
+
   /*Carrego o filho que tem overflow*/
   readNode(node, nodeId);
   
@@ -215,4 +240,21 @@ int rotation(int idFilho, int idIrmao, const int tipo) {
   
   return 0;
 }
+
+void rootOverflow(BTNode *root) {
+  pk middle;
+		
+  root->id = getId(); /* Pega um novo ID para o antigo root. */
+  writeNode(root);
+	
+  middle = split(root->id);
+
+  root->filhos[0] = root->id;
+  root->chaves[0] = middle.key;
+  root->filhos[1] = middle.pointer;
+	
+  root->numChaves = 1;
+	
+}
+
 

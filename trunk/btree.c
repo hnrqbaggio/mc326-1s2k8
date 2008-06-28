@@ -1,23 +1,32 @@
 #include "btree.h"
 
-BTree * makeTree() {
+void makeRoot() {
   int i;
-  BTree * temp = malloc(sizeof(BTree));
-	
-  temp->root = makeNode();
-  temp->root->id = 0;
-  temp->root->numChaves = 0; 
-  temp->root->leaf = TRUE;
-  temp->root->left = -1;
-  temp->root->right = -1;
+  BTNode *root;
+  
+  root = makeNode();
+  root->id = 0;
+  root->numChaves = 0; 
+  root->leaf = TRUE;
+  root->left = -1;
+  root->right = -1;
 
-  for (i = 0; i < B_ORDER-1; i++) {
-    temp->root->chaves[i] = 0;
-    temp->root->filhos[i] = 0;
+  for (i = 0; i < B_ORDER; i++) {
+    root->chaves[i] = -1;
+    root->filhos[i] = -1;
   }
-  temp->root->filhos[i] = 0; /* O ponteiro extra. */
+  root->filhos[i] = -1; /* O ponteiro extra. */
 	
-  return temp;
+  writeNode(root);
+  free(root);
+
+}
+
+BTree * makeTree() {
+  BTree *tree = (BTree *)malloc(sizeof(BTree));
+  tree->root = 0;
+
+  return tree;  
 }
 
 void BTreeInsert(BTree * tree, int key, int nrr) {
@@ -27,7 +36,7 @@ void BTreeInsert(BTree * tree, int key, int nrr) {
   temp.key = key;
   temp.pointer = nrr;
 	
-  result = insert(&temp, tree->root->id);
+  result = insert(&temp, tree->root);
 	
   if (result == OVERFLOW) {
 		
@@ -35,7 +44,7 @@ void BTreeInsert(BTree * tree, int key, int nrr) {
     fprintf(stderr, "Root OverFlow\n");
 #endif
 		 
-    rootOverflow(tree->root);
+    rootOverflow();
   }
 	
 }
@@ -43,12 +52,14 @@ void BTreeInsert(BTree * tree, int key, int nrr) {
 void loadIndex(BTree *tree, FILE *base) {
   int temp;
   int key, nrr = 0;
+
+  BTNode *root = makeNode();
 	
-  temp = readNode(tree->root, tree->root->id);
+  temp = readNode(root, tree->root);
 	
   if (!temp) { /* nao existe arquivo zero. */
 
-    writeNode(tree->root); /* Escreve o root atual no seu arquivo. */
+    makeRoot();
 		
     while(!feof(base)) {
       fscanf(base, "%04d", &key);

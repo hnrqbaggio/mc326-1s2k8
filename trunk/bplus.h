@@ -36,8 +36,8 @@
 
 typedef struct {
   int numChaves; /**< Numero de chaves no noh. Usado para controlar operacoes da arvore. */
-  int chaves[B_ORDER-1]; /**< vetor de inteiros que sao os delimitadores das chaves. */
-  int filhos[B_ORDER]; /**< Vetor de ponteiros para os filhos do noh. */
+  int chaves[B_ORDER]; /**< vetor de inteiros que sao os delimitadores das chaves. */
+  int filhos[B_ORDER+1]; /**< Vetor de ponteiros para os filhos do noh. */
   int leaf; /**< Nivel do noh - sua altura. A raiz tem level = altura - 1. */
   int left; /**< Apontador para esquerda. */
   int right;/**< Apontador para direita.*/
@@ -111,7 +111,7 @@ pk split(int nodeId);
 */
 int rotation(int id, int idIrmao, const int tipo);
 
-void rootOverflow(BTNode *root);
+void rootOverflow();
 
 void leRegistro(); /* Pegar em catalogo.c */
 

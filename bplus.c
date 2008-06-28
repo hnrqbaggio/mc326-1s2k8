@@ -1,7 +1,7 @@
 #include "bplus.h"
 
 int insert(pk *key, int nodeId) {
-  int i = 0, j, idFilho, result, *tamanho;
+  int i = 0, j, idFilho, result = FALSE, tamanho;
   pk middle;
   BTNode *node;
   
@@ -12,13 +12,11 @@ int insert(pk *key, int nodeId) {
   node = makeNode();
   readNode(node, nodeId);
 
-  tamanho = &(node->numChaves);
-	 
   while (key->key > node->chaves[i] && i < node->numChaves) i++;
 	 
   if (node->leaf == TRUE) { /* O Node eh uma folha. */
 
-    if (node->chaves[i] == key->key) return FALSE; /* Repeticao. */	
+    if (node->chaves[i] == key->key) return result; /* Repeticao. */	
     
     /* Abre espaco para a nova chave no vetor de chaves do noh. */
     j = node->numChaves;
@@ -30,9 +28,10 @@ int insert(pk *key, int nodeId) {
     node->chaves[i] = key->key;
     node->filhos[i] = key->pointer;
 
-    (node->numChaves)++;
+    tamanho = ++(node->numChaves);
 
     writeNode(node);
+    result = TRUE;
     	 	
   } else { /* O node eh pai de outro node. */
     
@@ -58,22 +57,22 @@ int insert(pk *key, int nodeId) {
       	middle = split(idFilho);
       
       	j = node->numChaves;
-      	node->chaves[j] = node->chaves[(j-1)];
-      	for(j=j-1; j >= i; j--) {
+	node->filhos[j+1] = node->filhos[j];
+	for(; j > i; j--) {
       	  node->filhos[j] = node->filhos[j-1];
       	  node->chaves[j] = node->chaves[j-1];
         }
       
-      	node->chaves[i] = middle.key;
-      	node->filhos[i+1] = middle.pointer;
+      	node->chaves[j] = middle.key;
+      	node->filhos[j+1] = middle.pointer;
       	
-      	(node->numChaves)++;
+      	tamanho = ++(node->numChaves);
       }
       writeNode(node);
     }
   }
 	 
-  if (*tamanho == B_ORDER) return OVERFLOW;
+  if (tamanho == B_ORDER) return OVERFLOW;
   else return result;	
 }
 
@@ -82,6 +81,9 @@ BTNode * makeNode() {
   BTNode * resp = (BTNode *) malloc (sizeof(BTNode));
 	
   resp->numChaves = 0;
+
+  resp->left = -1;
+  resp->right = -1;
 	
   return resp;
 }
@@ -203,6 +205,7 @@ pk split(int nodeId) {
   int meio, j;
   BTNode *node = makeNode();
   BTNode *new = makeNode();
+  BTNode *right = makeNode();
   
 #ifdef DEBUG
   fprintf(stderr, "Split node %d\n", nodeId);
@@ -210,21 +213,47 @@ pk split(int nodeId) {
 
   /*Carrego o filho que tem overflow*/
   readNode(node, nodeId);
+  readNode(right, node->right);
   
-  meio = node->numChaves / 2 +1;
+  meio = node->numChaves / 2 + 1;
   
+  new->id = getId();
   /* Copia metade dos dados de um indice para outro. */
-  for(j = meio; j < node->numChaves; j++) {
-    new->chaves[j-meio] = node->chaves[j];
-    new->filhos[j-meio+1] = node->filhos[j-1];
+  if(node->leaf) { /* Folha */
+
+    for(j = meio; j < node->numChaves; j++) {
+      new->chaves[j-meio] = node->chaves[j];
+      new->filhos[j-meio] = node->filhos[j];
+    }
+
+    new->leaf = TRUE;
+    node->numChaves = meio;
+    new->numChaves = j-meio;
+  
+  } else { /* Tronco */
+
+    for(j = meio; j < node->numChaves; j++) {
+      new->chaves[j-meio] = node->chaves[j];
+      new->filhos[j-meio] = node->filhos[j];
+    }
+    new->filhos[j-meio] = node->filhos[j];
+
+    new->leaf = FALSE;
+
+    node->numChaves = meio-1;
+    new->numChaves = j-meio;
+
   }
-      
-  node->numChaves = meio-1;
-  new->numChaves = j;
   
   /*Atualizo os apontadores e retorno pk, que contem a chave a ser inserida no pai.*/
-  retorno.key = new->chaves[0];
+  retorno.key = node->chaves[node->numChaves];
   retorno.pointer = new->id;
+
+  /* Atualiza ponteiros */
+  node->right = new->id;
+  new->left = node->id;
+  new->right = right->id;
+  right->left = new->id;
   
   /*Gravo os novos arquivos na base, libero memoria.*/
   writeNode(new);
@@ -237,12 +266,45 @@ pk split(int nodeId) {
 
 /*Rotacao de acordo com o parametro LEFT/RIGHT */
 int rotation(int idFilho, int idIrmao, const int tipo) {
-  
+
+  /* Ficou pra pois... */
+  if (1) return 0;
+
+  int j;
+  BTNode *filho, *irmao;
+  irmao = makeNode();
+  readNode(irmao, idIrmao);
+
+  if (irmao->numChaves >= B_ORDER - 1) return 0;
+
+  filho = makeNode();
+  readNode(filho, idFilho);
+
+  if (tipo == LEFT) {
+    
+    irmao->chaves[irmao->numChaves] = filho->chaves[0];
+    irmao->filhos[irmao->numChaves+1] = filho->filhos[0];
+
+    for(j = 0; j < filho->numChaves; j++) {
+      filho->filhos[j] = filho->filhos[j+1];
+      filho->chaves[j] = filho->chaves[j+1];
+    }
+    filho->chaves[j] = filho->chaves[j+1];
+
+  } else {
+
+
+  }
+
   return 0;
 }
 
-void rootOverflow(BTNode *root) {
+void rootOverflow() {
   pk middle;
+  BTNode * root;
+
+  root = makeNode();
+  readNode(root, 0);
 		
   root->id = getId(); /* Pega um novo ID para o antigo root. */
   writeNode(root);
@@ -254,6 +316,12 @@ void rootOverflow(BTNode *root) {
   root->filhos[1] = middle.pointer;
 	
   root->numChaves = 1;
+  root->leaf = FALSE;
+
+  root->id = 0;
+
+  writeNode(root);
+  free(root);
 	
 }
 

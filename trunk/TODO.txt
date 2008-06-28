@@ -3,18 +3,21 @@ TODO LIST
 =========
 
 == PREVISÕES DE ENTREGAS ==
-
+Terça-feira, 01/07.
 
 == TAREFAS GERAIS ==
-reescrever main.c
 
-== MATAO ==
-função de split
-getid
+> Rotação
 
-== BAGGIO ==
-criar uma base de dados nova.
-write e read
-
-
-
+> Atualizar ponteiros
+	Isso tem que ver se tah fazendo jah.
+	
+> Busca
+	Eh bem simples. Mas jah fazer a função que faz a interface da arvore com o main.
+	
+> Remoção
+	Função remove
+	Função merge
+	Manter numero minimo de preenchimento
+	Interface com o main
+	

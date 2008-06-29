@@ -11,6 +11,7 @@
 #define TRUE 1
 #define FALSE 0
 #define OVERFLOW -1
+#define UNDERFLOW -1
 #define RIGHT 1
 #define LEFT 2
 
@@ -110,6 +111,7 @@ pk split(int nodeId);
  * @return 1 caso rotacao ocorra com sucesso, 0 caso nao ocorra a rotacao.
 */
 int rotation(int id, int idIrmao, const int tipo);
+int removeRotation(int filho, int irmao, const int tipo);
 
 void rootOverflow();
 

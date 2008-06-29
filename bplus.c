@@ -391,3 +391,90 @@ int search(BTNode *node, int procura){
 
   }
 }
+
+
+int remove(pk *key, int nodeId) {
+  
+  int i = 0, j, idFilho, result = FALSE, tamanho;
+  pk middle;
+  BTNode *node;
+  
+#ifdef DEBUG
+  fprintf(stderr, "Remocao em Node %d\n", nodeId);
+#endif
+
+  node = makeNode();
+  readNode(node, nodeId);
+
+  while (key->key > node->chaves[i] && i < node->numChaves) i++;
+	 
+  if (node->leaf == TRUE) { /* O Node eh uma folha. */
+
+    if (node->chaves[i] == key->key) {
+      
+      for(j = i; j < node->numChaves-1; j++) {
+	node->filhos[j] = node->filhos[j+1];
+	node->chaves[j] = node->chaves[j+1];
+      }
+      
+      tamanho = (node->numChaves)--;
+      writeNode(node);
+      free(node);
+      result = TRUE;
+    }
+
+    	 	
+  } else { /* O node eh pai de outro node. */
+    
+    idFilho = node->filhos[i];
+    writeNode(node);
+    free(node);
+
+    result = remove(key, idFilho);
+	 	
+    if (result == UNDERFLOW) { /* Overflow do filho. */
+
+      node = makeNode();
+      readNode(node, nodeId);
+
+      if (i > 0 && (result = removeRotation(idFilho, node->filhos[i-1], LEFT)) && result != -1) { 
+
+	node->chaves[i-1] = result;
+
+      } else if (i < node->numChaves && (result = removeRotation(idFilho, node->filhos[i+1], RIGHT)) && result != -1) {
+
+	node->chaves[i] = result;
+
+      } else {/* Nenhum tem espaco. */
+      	if (i > 0) merge(node->chaves[i], idFilho, node->filhos[i-1]);
+	else merge(node->chaves[i], idFilho, node->filhos[i+1]);
+
+	for(j = i; j < node->numChaves-1; j++) {
+	  node->filhos[j] = node->filhos[j+1];
+	  node->chaves[j] = node->chaves[j+1];
+	}
+      
+	tamanho = (node->numChaves)--;
+	writeNode(node);
+	free(node);
+	result = TRUE;
+
+      }
+      writeNode(node);
+      free(node);
+      result = TRUE;
+    }
+  }
+	 
+  if (tamanho < MINIMO) return UNDERFLOW;
+  else return result;
+  
+}
+
+void merge(int key, int idFilho, int idIrmao) {
+  
+}
+
+int removeRotation(int filho, int irmao, const int tipo) {
+  return -1;
+}

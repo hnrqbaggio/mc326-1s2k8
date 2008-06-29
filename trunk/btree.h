@@ -13,5 +13,6 @@ void  makeRoot();
 BTree * makeTree();
 void loadIndex(BTree *, FILE *);
 int BTreeInsert(BTree * tree, int key);
+int BTreeRemove(BTree * tree, int key);
 
 #endif /*BTREE_H_*/

@@ -395,10 +395,9 @@ int search(BTNode *node, int procura){
 }
 
 
-int remove(pk *key, int nodeId) {
+int removeKey(int key, int nodeId) {
   
   int i = 0, j, idFilho, result = FALSE, tamanho;
-  pk middle;
   BTNode *node;
   
 #ifdef DEBUG
@@ -408,18 +407,17 @@ int remove(pk *key, int nodeId) {
   node = makeNode();
   readNode(node, nodeId);
 
-  while (key->key > node->chaves[i] && i < node->numChaves) i++;
+  while (node->chaves[i] < key && i < node->numChaves) i++;
 	 
   if (node->leaf == TRUE) { /* O Node eh uma folha. */
-
-    if (node->chaves[i] == key->key) {
+    if (node->chaves[i] == key) {
       
       for(j = i; j < node->numChaves-1; j++) {
 	node->filhos[j] = node->filhos[j+1];
 	node->chaves[j] = node->chaves[j+1];
       }
       
-      tamanho = (node->numChaves)--;
+      tamanho = --(node->numChaves);
       writeNode(node);
       free(node);
       result = TRUE;
@@ -427,12 +425,14 @@ int remove(pk *key, int nodeId) {
 
     	 	
   } else { /* O node eh pai de outro node. */
-    
+    i++;
     idFilho = node->filhos[i];
+    tamanho = node->numChaves;
+
     writeNode(node);
     free(node);
 
-    result = remove(key, idFilho);
+    result = removeKey(key, idFilho);
 	 	
     if (result == UNDERFLOW) { /* Overflow do filho. */
 
@@ -449,18 +449,14 @@ int remove(pk *key, int nodeId) {
 
       } else {/* Nenhum tem espaco. */
       	if (i > 0) merge(node->chaves[i], idFilho, node->filhos[i-1]);
-	else merge(node->chaves[i], idFilho, node->filhos[i+1]);
-
+	else merge(node->chaves[i], node->filhos[i+1], idFilho);
+			
 	for(j = i; j < node->numChaves-1; j++) {
-	  node->filhos[j] = node->filhos[j+1];
 	  node->chaves[j] = node->chaves[j+1];
+	  node->filhos[j+1] = node->filhos[j+2];
 	}
-      
-	tamanho = (node->numChaves)--;
-	writeNode(node);
-	free(node);
-	result = TRUE;
-
+			      
+	tamanho = --(node->numChaves);
       }
       writeNode(node);
       free(node);
@@ -474,6 +470,30 @@ int remove(pk *key, int nodeId) {
 }
 
 void merge(int key, int idFilho, int idIrmao) {
+  BTNode *filho, *irmao;
+  int i;
+
+#ifdef DEBUG
+  fprintf(stderr, "merge node %d with %d\n", idFilho, idIrmao);
+#endif
+
+  irmao = makeNode(); 
+  filho = makeNode();
+  readNode(irmao, idIrmao); 
+  readNode(filho, idFilho);
+
+  if (filho->leaf != 1) irmao->chaves[irmao->numChaves] = key;
+    
+  for (i = 0; i < filho->numChaves; i++) {
+    irmao->chaves[irmao->numChaves] = filho->chaves[i];
+    irmao->filhos[irmao->numChaves] = filho->filhos[i];
+    (irmao->numChaves)++;
+  }
+  irmao->filhos[irmao->numChaves] = filho->filhos[i];
+  
+  writeNode(irmao);
+  free(irmao); 
+  free(filho);
   
 }
 
@@ -498,7 +518,6 @@ int removeRotation(int key, int idFilho, int idIrmao, const int tipo) {
   filho = makeNode();
   readNode(filho, idFilho);
 
-
   if (filho->leaf) {
 
     if (tipo == RIGHT) {
@@ -515,8 +534,8 @@ int removeRotation(int key, int idFilho, int idIrmao, const int tipo) {
       
     } else {
 
-      filho->chaves[numChaves] = key;
-      filho->filhos[numChaves] = irmao->filhos[0];
+      filho->chaves[filho->numChaves] = key;
+      filho->filhos[filho->numChaves] = irmao->filhos[0];
       (filho->numChaves)++;
 
       for(j = 0; j < irmao->numChaves-1; j++) {
@@ -547,8 +566,8 @@ int removeRotation(int key, int idFilho, int idIrmao, const int tipo) {
 
     } else {
 
-      filho->chaves[numChaves] = key;
-      filho->filhos[numChaves+1] = irmao->filhos[0];
+      filho->chaves[filho->numChaves] = key;
+      filho->filhos[filho->numChaves+1] = irmao->filhos[0];
       (filho->numChaves)++;
 
       for(j = 0; j < irmao->numChaves-1; j++) {
@@ -568,6 +587,6 @@ int removeRotation(int key, int idFilho, int idIrmao, const int tipo) {
   free(irmao); free(filho);
 
   /*Rotacao concluida com sucesso*/
-  return chave;
+  return retorno;
   
 }

@@ -19,12 +19,11 @@
  * Ordem da arvore b+.
 */
 #define B_ORDER 5
-#define MINIMO (B_ORDEM/2)
 
 /**
  * Preenchimento minimo do no da arvore.
 */
-#define MINIMO B_ORDER/2
+#define MINIMO (B_ORDER/2)
 
 /**
  * Tamanho maximo do nome do arquivo.
@@ -122,13 +121,14 @@ int rotation(int id, int idIrmao, const int tipo);
 /**
  * @brief Funcao que faz rotacao no no/folha da arvore para a funcao de remocao.
  * 
+ * @param key Chave do pai a ser adicionada em um dos filhos.
  * @param idFilho O arquivo a receber uma chave da rotacao.
  * @param idIrmao O arquivo a fornecer, caso possivel, uma chave para idFilho.
  * @param tipo LEFT/RIGHT Define se a rotacao e para esquerda ou direita. 
  * @return -1 caso nao ocorra rotacao, caso contrario, retorna um inteiro
  * que e a chave a ser atualizada.
 */
-int removeRotation(int idFilho, int idIrmao, const int tipo);
+int removeRotation(int key, int idFilho, int idIrmao, const int tipo);
 
 void rootOverflow();
 
@@ -144,9 +144,9 @@ void leRegistro(); /* Pegar em catalogo.c */
 */
 int search(BTNode *node, int procura);
 
-int remove(pk *key, int nodeId);
+int removeKey(int key, int nodeId);
 
-int merge();
+void merge(int, int, int);
 
 
 #endif /*BPLUS_H_*/

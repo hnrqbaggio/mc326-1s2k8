@@ -71,3 +71,10 @@ void loadIndex(BTree *tree, FILE *base) {
     }
   }
 }
+
+
+int BTreeRemove(BTree * tree, int key) {
+	
+  return removeKey(key, tree->root);
+	
+}

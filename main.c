@@ -48,6 +48,12 @@ int main(int argc, char **argv){
       result = search(&btree, procura);
       break;
     case 3:
+      printf("Digite a chave a ser inserida: ");
+      scanf("%d", &chave);
+      result = BTreeRemove(btree, chave);
+
+      if (result) printf("Insercao bem sucedida!\n");
+      else printf("Insercao mal sucedida. Verifique repeticao!\n");
       break;
     case 0:
       break;

@@ -5,12 +5,13 @@
 
 
 typedef struct {
-	int root;
+  int root;
+  int tamBase;
 } BTree;
 
 void  makeRoot();
 BTree * makeTree();
 void loadIndex(BTree *, FILE *);
-void BTreeInsert(BTree * tree, int key, int nrr);
+int BTreeInsert(BTree * tree, int key);
 
 #endif /*BTREE_H_*/

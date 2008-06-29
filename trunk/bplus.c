@@ -46,14 +46,15 @@ int insert(pk *key, int nodeId) {
       node = makeNode();
       readNode(node, nodeId);
 
-      result = rotation(idFilho, node->filhos[i-1], LEFT); /* Rotacao a esquerda. */
+      if (i > 0 && (result = rotation(idFilho, node->filhos[i-1], LEFT)) && result != -1) { 
 
-      if (result) return TRUE;
-      else result = rotation(idFilho, node->filhos[i+1], RIGHT);
+	node->chaves[i-1] = result;
 
-      if (result) return TRUE;
+      } else if (i < node->numChaves && (result = rotation(idFilho, node->filhos[i+1], RIGHT)) && result != -1) {
 
-      else {/* Nenhum tem espaco. */
+	node->chaves[i] = result;
+
+      } else {/* Nenhum tem espaco. */
       	middle = split(idFilho);
       
       	j = node->numChaves;
@@ -69,6 +70,7 @@ int insert(pk *key, int nodeId) {
       	tamanho = ++(node->numChaves);
       }
       writeNode(node);
+      result = TRUE;
     }
   }
 	 
@@ -180,7 +182,7 @@ void writeNode(BTNode *node) {
 
 /*Pega o id do arquivo da arvore a ser gravado. */
 int getId() {
-  int id = 0; /* O ID zero eh reservado para a primeira folha da arvore. */
+  int id = 0; 
   FILE *idFile;
   
   idFile = fopen(ARQUIVO_ID, "r");
@@ -267,16 +269,17 @@ pk split(int nodeId) {
 /*Rotacao de acordo com o parametro LEFT/RIGHT */
 int rotation(int idFilho, int idIrmao, const int tipo) {
 
- /* Ficou pra pois... */
-  if (1) return 0;
-
-  int j;
+  int j, chave;
   BTNode *filho, *irmao;
   irmao = makeNode();
   readNode(irmao, idIrmao);
 
   /*Caso o irmao esteja cheio, retorna*/
-  if (irmao->numChaves >= B_ORDER - 1) return 0;
+  if (irmao->leaf != TRUE || irmao->numChaves >= B_ORDER - 1) return -1;
+
+#ifdef DEBUG
+  fprintf(stderr, "Rotation!\n");
+#endif
 
   filho = makeNode();
   readNode(filho, idFilho);
@@ -291,20 +294,32 @@ int rotation(int idFilho, int idIrmao, const int tipo) {
       filho->chaves[j] = filho->chaves[j+1];
     }
 
+    chave = filho->chaves[0];
+
+
   } else {
    
     /*Abre espaco para que a chave a ser inserida no irmao seja a primeira da folha*/
-    for(j = irmao->numChaves; j >= 0; j--) {
+    for(j = irmao->numChaves; j > 0; j--) {
       irmao->filhos[j] = irmao->filhos[j-1];
       irmao->chaves[j] = irmao->chaves[j-1];
     }
     irmao->chaves[0] = filho->chaves[filho->numChaves-1];
     irmao->filhos[0] = filho->filhos[filho->numChaves-1];
+
+    chave = irmao->chaves[0];
   }
+
+  (filho->numChaves)--;
+  (irmao->numChaves)++;
+
+  writeNode(filho); writeNode(irmao);
+
+  free(irmao); free(filho);
 
   /*ROTACAO CONCLUIDA COM SUCESSO. PRECISA AGORA ATUALIZAR O PAI, QUE CHAMOU A ROTACAO DOS FILHOS   */
  
-  return 0;
+  return chave;
 }
 
 void rootOverflow() {

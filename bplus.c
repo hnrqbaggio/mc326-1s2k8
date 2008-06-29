@@ -267,7 +267,7 @@ pk split(int nodeId) {
 /*Rotacao de acordo com o parametro LEFT/RIGHT */
 int rotation(int idFilho, int idIrmao, const int tipo) {
 
-  /* Ficou pra pois... */
+ /* Ficou pra pois... */
   if (1) return 0;
 
   int j;
@@ -275,27 +275,35 @@ int rotation(int idFilho, int idIrmao, const int tipo) {
   irmao = makeNode();
   readNode(irmao, idIrmao);
 
+  /*Caso o irmao esteja cheio, retorna*/
   if (irmao->numChaves >= B_ORDER - 1) return 0;
 
   filho = makeNode();
   readNode(filho, idFilho);
 
-  if (tipo == LEFT) {
-    
+  if (tipo == LEFT) { /*Rotacao no irmao da esquerda*/
+   
     irmao->chaves[irmao->numChaves] = filho->chaves[0];
-    irmao->filhos[irmao->numChaves+1] = filho->filhos[0];
+    irmao->filhos[irmao->numChaves] = filho->filhos[0];
 
     for(j = 0; j < filho->numChaves; j++) {
       filho->filhos[j] = filho->filhos[j+1];
       filho->chaves[j] = filho->chaves[j+1];
     }
-    filho->chaves[j] = filho->chaves[j+1];
 
   } else {
-
-
+   
+    /*Abre espaco para que a chave a ser inserida no irmao seja a primeira da folha*/
+    for(j = irmao->numChaves; j >= 0; j--) {
+      irmao->filhos[j] = irmao->filhos[j-1];
+      irmao->chaves[j] = irmao->chaves[j-1];
+    }
+    irmao->chaves[0] = filho->chaves[filho->numChaves-1];
+    irmao->filhos[0] = filho->filhos[filho->numChaves-1];
   }
 
+  /*ROTACAO CONCLUIDA COM SUCESSO. PRECISA AGORA ATUALIZAR O PAI, QUE CHAMOU A ROTACAO DOS FILHOS   */
+ 
   return 0;
 }
 

@@ -407,9 +407,10 @@ int removeKey(int key, int nodeId) {
   node = makeNode();
   readNode(node, nodeId);
 
-  while (node->chaves[i] < key && i < node->numChaves) i++;
-	 
   if (node->leaf == TRUE) { /* O Node eh uma folha. */
+
+    while (node->chaves[i] < key && i < node->numChaves) i++;
+
     if (node->chaves[i] == key) {
       
       for(j = i; j < node->numChaves-1; j++) {
@@ -422,10 +423,11 @@ int removeKey(int key, int nodeId) {
       free(node);
       result = TRUE;
     }
-
     	 	
   } else { /* O node eh pai de outro node. */
-    i++;
+
+    while (node->chaves[i] <= key && i < node->numChaves) i++;
+
     idFilho = node->filhos[i];
     tamanho = node->numChaves;
 
@@ -439,11 +441,11 @@ int removeKey(int key, int nodeId) {
       node = makeNode();
       readNode(node, nodeId);
 
-      if (i > 0 && (result = removeRotation(node->chaves[i], idFilho, node->filhos[i-1], LEFT)) && result != -1) { 
+      if (i > 0 && (result = removeRotation(node->chaves[i-1], idFilho, node->filhos[i-1], RIGHT)) && result != -1) { 
 
-	node->chaves[i] = result;
+	node->chaves[i-1] = result;
 
-      } else if (i < node->numChaves && (result = removeRotation(node->chaves[i], idFilho, node->filhos[i+1], RIGHT)) && result != -1) {
+      } else if (i < node->numChaves && (result = removeRotation(node->chaves[i], idFilho, node->filhos[i+1], LEFT)) && result != -1) {
 
 	node->chaves[i] = result;
 
@@ -469,9 +471,31 @@ int removeKey(int key, int nodeId) {
   
 }
 
+void mergeTrunk(int key, BTNode *filho, BTNode *irmao) {
+  int i, j;
+
+  irmao->chaves[irmao->numChaves] = key;
+  
+  for (i = 0, j = irmao->numChaves + 1; i < filho->numChaves; i++, j++) {
+    irmao->chaves[j] = filho->chaves[i];
+    irmao->filhos[j] = filho->filhos[i];
+  }
+  irmao->filhos[j] = filho->filhos[i];
+  irmao->numChaves = j;
+}
+
+void mergeLeafs(BTNode *filho, BTNode *irmao) {
+  int i;
+
+  for (i = 0; i < filho->numChaves; i++) {
+    irmao->chaves[irmao->numChaves] = filho->chaves[i];
+    irmao->filhos[irmao->numChaves] = filho->filhos[i];
+    irmao->numChaves++;
+  }
+}
+
 void merge(int key, int idFilho, int idIrmao) {
   BTNode *filho, *irmao;
-  int i;
 
 #ifdef DEBUG
   fprintf(stderr, "merge node %d with %d\n", idFilho, idIrmao);
@@ -482,14 +506,11 @@ void merge(int key, int idFilho, int idIrmao) {
   readNode(irmao, idIrmao); 
   readNode(filho, idFilho);
 
-  if (filho->leaf != 1) irmao->chaves[irmao->numChaves] = key;
-    
-  for (i = 0; i < filho->numChaves; i++) {
-    irmao->chaves[irmao->numChaves] = filho->chaves[i];
-    irmao->filhos[irmao->numChaves] = filho->filhos[i];
-    (irmao->numChaves)++;
-  }
-  irmao->filhos[irmao->numChaves] = filho->filhos[i];
+  if (filho->leaf)
+    mergeLeafs(filho, irmao);
+  else
+    mergeTrunk(key, filho, irmao);
+  
   
   writeNode(irmao);
   free(irmao); 
@@ -606,4 +627,16 @@ int removeRotation(int key, int idFilho, int idIrmao, const int tipo) {
   /*Rotacao concluida com sucesso*/
   return retorno;
   
+}
+
+void rootUnderFlow() {
+  BTNode *root;
+  int newRootId;
+
+  root = makeNode();
+  readNode(root, 0); /* Alert! POG level 7 detected! */
+  newRootId = root->filhos[0]; /* Alert! Migueh Detected! */
+  readNode(root, newRootId);
+  root->id = 0;
+  writeNode(root);
 }

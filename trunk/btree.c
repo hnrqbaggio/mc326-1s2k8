@@ -74,7 +74,14 @@ void loadIndex(BTree *tree, FILE *base) {
 
 
 int BTreeRemove(BTree * tree, int key) {
-	
-  return removeKey(key, tree->root);
+  int retorno;
+
+  retorno = removeKey(key, tree->root);
+  
+  if (retorno == UNDERFLOW) { /* Root Underflow! */
+    rootUnderFlow();
+  }
+
+  return retorno;
 	
 }

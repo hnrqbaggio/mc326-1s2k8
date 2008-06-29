@@ -131,6 +131,7 @@ int rotation(int id, int idIrmao, const int tipo);
 int removeRotation(int key, int idFilho, int idIrmao, const int tipo);
 
 void rootOverflow();
+void rootUnderFlow();
 
 void leRegistro(); /* Pegar em catalogo.c */
 

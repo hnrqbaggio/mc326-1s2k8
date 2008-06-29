@@ -25,19 +25,20 @@ void makeRoot() {
 BTree * makeTree() {
   BTree *tree = (BTree *)malloc(sizeof(BTree));
   tree->root = 0;
+  tree->tamBase = 0;
 
   return tree;  
 }
 
-void BTreeInsert(BTree * tree, int key, int nrr) {
+int BTreeInsert(BTree * tree, int key) {
   int result;
   pk temp;
 	
   temp.key = key;
-  temp.pointer = nrr;
+  temp.pointer = (tree->tamBase)++;
 	
   result = insert(&temp, tree->root);
-	
+
   if (result == OVERFLOW) {
 		
 #ifdef DEBUG 
@@ -46,6 +47,8 @@ void BTreeInsert(BTree * tree, int key, int nrr) {
 		 
     rootOverflow();
   }
+
+  return result;
 	
 }
 
@@ -63,7 +66,7 @@ void loadIndex(BTree *tree, FILE *base) {
 		
     while(!feof(base)) {
       fscanf(base, "%04d", &key);
-      BTreeInsert(tree, key, nrr);
+      BTreeInsert(tree, key);
       nrr++;
     }
   }

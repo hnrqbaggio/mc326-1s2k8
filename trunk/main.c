@@ -13,7 +13,7 @@ int main(int argc, char **argv){
   /*Variavies auxiliares*/
   BTree * btree;
   FILE * base;
-  int option, chave, result;
+  int option, chave, result, procura;
    
   /*Abre base de dados*/
   base = fopen("base.dat", "r");
@@ -42,7 +42,10 @@ int main(int argc, char **argv){
       else printf("Insercao mal sucedida. Verifique repeticao!\n");
 
       break;
-    case 2:
+    case 2: 
+      printf("Digite a o numero a ser buscado: ");
+      scanf("%i", &procura);
+      result = search(&btree, procura);
       break;
     case 3:
       break;

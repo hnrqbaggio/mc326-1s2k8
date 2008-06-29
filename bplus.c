@@ -497,10 +497,82 @@ void merge(int key, int idFilho, int idIrmao) {
   
 }
 
+/*Funcao auxiliar para rotacao de uma folha*/
+int rotationLeaf(BTNode *filho, BTNode *irmao, const int tipo) {
+  int j, retorno;
+  
+  if (tipo == RIGHT) {
+      
+      for(j = filho->numChaves; j > 0; j--) {
+        filho->filhos[j] = filho->filhos[j-1];
+        filho->chaves[j] = filho->chaves[j-1];
+      }
 
+      filho->chaves[0] = irmao->chaves[irmao->numChaves-1];
+      filho->filhos[0] = irmao->filhos[irmao->numChaves-1];
+      
+      retorno = irmao->chaves[irmao->numChaves-1];   
+      
+    } else {
+
+      filho->chaves[filho->numChaves] = irmao->chaves[0];
+      filho->filhos[filho->numChaves] = irmao->filhos[0];
+      
+      for(j = 0; j < irmao->numChaves-1; j++) {
+        irmao->filhos[j] = irmao->filhos[j+1];
+        irmao->chaves[j] = irmao->chaves[j+1];
+      }
+
+      retorno = irmao->chaves[0];
+    }
+  (filho->numChaves)++;
+  (irmao->numChaves)--;
+  
+  return retorno;
+}
+
+/*Funcao auxiliar para rotacao de um no*/
+int rotationNode(int key, BTNode *filho, BTNode *irmao, const int tipo) {
+  int j, retorno;
+  
+  if (tipo == RIGHT) {
+   
+  /*Abre espaco para que a chave a ser inserida no filho seja a primeira da folha*/
+      j = filho->numChaves;
+      filho->filhos[j+1] = filho->filhos[j];
+      for(; j > 0; j--) {
+        filho->filhos[j] = filho->filhos[j-1];
+        filho->chaves[j] = filho->chaves[j-1];
+      }
+
+      filho->chaves[0] = key;
+      filho->filhos[0] = irmao->filhos[irmao->numChaves];
+      
+      retorno = irmao->chaves[irmao->numChaves-1];
+
+    } else {
+
+      filho->chaves[filho->numChaves] = key;
+      filho->filhos[filho->numChaves+1] = irmao->filhos[0];
+      
+      retorno = irmao->chaves[0];
+ 
+      for(j = 0; j < irmao->numChaves-1; j++) {
+        irmao->filhos[j] = irmao->filhos[j+1];
+        irmao->chaves[j] = irmao->chaves[j+1];
+      }
+      irmao->filhos[j] = irmao->filhos[j+1];
+      
+    }
+    (irmao->numChaves)--;
+    (filho->numChaves)++;
+    
+    return retorno;
+}
+  
 int removeRotation(int key, int idFilho, int idIrmao, const int tipo) {
   
-  int j, retorno;
+  int retorno;
   BTNode *filho, *irmao;
   irmao = makeNode();
   readNode(irmao, idIrmao);
@@ -520,68 +592,13 @@ int removeRotation(int key, int idFilho, int idIrmao, const int tipo) {
 
   if (filho->leaf) {
 
-    if (tipo == RIGHT) {
-      
-      for(j = filho->numChaves; j > 0; j--) {
-	filho->filhos[j] = filho->filhos[j-1];
-	filho->chaves[j] = filho->chaves[j-1];
-      }
-
-      filho->chaves[0] = irmao->chaves[irmao->numChaves-1];
-      filho->filhos[0] = irmao->filhos[irmao->numChaves-1];
-
-      retorno = irmao->chaves[irmao->numChaves-1];
-      
-    } else {
-
-      filho->chaves[filho->numChaves] = key;
-      filho->filhos[filho->numChaves] = irmao->filhos[0];
-      (filho->numChaves)++;
-
-      for(j = 0; j < irmao->numChaves-1; j++) {
-	irmao->filhos[j] = irmao->filhos[j+1];
-	irmao->chaves[j] = irmao->chaves[j+1];
-      }
-
-      retorno = irmao->chaves[0];
-
-    }
-
+    retorno = rotationLeaf(filho, irmao, tipo);
+    
   } else {
 
-    if (tipo == RIGHT) {
-   
-      /*Abre espaco para que a chave a ser inserida no irmao seja a primeira da folha*/
-      j = filho->numChaves;
-      filho->filhos[j] = filho->filhos[j-1];
-      for(j = j-1; j > 0; j--) {
-	filho->filhos[j] = filho->filhos[j-1];
-	filho->chaves[j] = filho->chaves[j-1];
-      }
-
-      filho->chaves[0] = key;
-      filho->filhos[0] = irmao->filhos[irmao->numChaves];
-    
-      retorno = irmao->chaves[irmao->numChaves-1];
-
-    } else {
-
-      filho->chaves[filho->numChaves] = key;
-      filho->filhos[filho->numChaves+1] = irmao->filhos[0];
-      (filho->numChaves)++;
-
-      for(j = 0; j < irmao->numChaves-1; j++) {
-	irmao->filhos[j] = irmao->filhos[j+1];
-	irmao->chaves[j] = irmao->chaves[j+1];
-      }
-      irmao->filhos[j] = irmao->filhos[j+1];
-    
-    }
-
+    retorno = rotationNode(key, filho, irmao, tipo);
   }
-
-  (filho->numChaves)++;
-  (irmao->numChaves)--;
+    
   writeNode(filho); writeNode(irmao);
 
   free(irmao); free(filho);

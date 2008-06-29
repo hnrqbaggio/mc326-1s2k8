@@ -19,6 +19,7 @@
  * Ordem da arvore b+.
 */
 #define B_ORDER 5
+#define MINIMO (B_ORDEM/2)
 
 /**
  * Preenchimento minimo do no da arvore.

@@ -317,8 +317,7 @@ int rotation(int idFilho, int idIrmao, const int tipo) {
 
   free(irmao); free(filho);
 
-  /*ROTACAO CONCLUIDA COM SUCESSO. PRECISA AGORA ATUALIZAR O PAI, QUE CHAMOU A ROTACAO DOS FILHOS   */
- 
+  /*Rotacao concluida com sucesso*/
   return chave;
 }
 
@@ -475,6 +474,60 @@ void merge(int key, int idFilho, int idIrmao) {
   
 }
 
-int removeRotation(int filho, int irmao, const int tipo) {
-  return -1;
+
+int removeRotation(int idFilho, int idIrmao, const int tipo) {
+  
+  int j, chave;
+  BTNode *filho, *irmao;
+  irmao = makeNode();
+  readNode(irmao, idIrmao);
+
+  /*Caso o irmao esteja sem chaves disponiveis, retorna*/
+  if (irmao->leaf != TRUE || irmao->numChaves <= MINIMO) return -1;
+
+#ifdef DEBUG
+  fprintf(stderr, "Remove Rotation!\n");
+#endif
+
+  filho = makeNode();
+  readNode(filho, idFilho);
+
+  if (tipo == LEFT) { /*Rotacao no irmao da esquerda*/
+   
+   /*Abre espaco para que a chave a ser inserida no irmao seja a primeira da folha*/
+    for(j = filho->numChaves; j > 0; j--) {
+      filho->filhos[j] = filho->filhos[j-1];
+      filho->chaves[j] = filho->chaves[j-1];
+    }
+    filho->chaves[0] = irmao->chaves[filho->numChaves-1];
+    filho->filhos[0] = irmao->filhos[filho->numChaves-1];
+   
+
+    chave = filho->chaves[0];
+
+
+  } else {
+    
+    filho->chaves[irmao->numChaves] = irmao->chaves[0];
+    filho->filhos[irmao->numChaves] = irmao->filhos[0];
+    
+    chave = irmao->chaves[0];
+
+    for(j = 0; j < irmao->numChaves; j++) {
+      irmao->filhos[j] = irmao->filhos[j+1];
+      irmao->chaves[j] = irmao->chaves[j+1];
+    }
+    
+  }
+
+  (filho->numChaves)--;
+  (irmao->numChaves)++;
+
+  writeNode(filho); writeNode(irmao);
+
+  free(irmao); free(filho);
+
+  /*Rotacao concluida com sucesso*/
+  return chave;
+  
 }

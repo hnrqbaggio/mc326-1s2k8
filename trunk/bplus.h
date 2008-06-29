@@ -21,6 +21,11 @@
 #define B_ORDER 5
 
 /**
+ * Preenchimento minimo do no da arvore.
+*/
+#define MINIMO B_ORDER/2
+
+/**
  * Tamanho maximo do nome do arquivo.
 */
 #define TAM_NOME_ARQ 60
@@ -108,10 +113,21 @@ pk split(int nodeId);
  * @param id O id do arquivo a ser rotacionado.
  * @param idIrmao O id do arquivo para onde sera transferido os dados de id.
  * @param tipo LEFT/RIGHT Define se a rotacao e para esquerda ou direita. 
- * @return 1 caso rotacao ocorra com sucesso, 0 caso nao ocorra a rotacao.
+ * @return -1 caso nao ocorra rotacao, caso contrario, retorna um inteiro
+ * que e a chave a ser atualizada.
 */
 int rotation(int id, int idIrmao, const int tipo);
-int removeRotation(int filho, int irmao, const int tipo);
+
+/**
+ * @brief Funcao que faz rotacao no no/folha da arvore para a funcao de remocao.
+ * 
+ * @param idFilho O arquivo a receber uma chave da rotacao.
+ * @param idIrmao O arquivo a fornecer, caso possivel, uma chave para idFilho.
+ * @param tipo LEFT/RIGHT Define se a rotacao e para esquerda ou direita. 
+ * @return -1 caso nao ocorra rotacao, caso contrario, retorna um inteiro
+ * que e a chave a ser atualizada.
+*/
+int removeRotation(int idFilho, int idIrmao, const int tipo);
 
 void rootOverflow();
 
@@ -127,7 +143,7 @@ void leRegistro(); /* Pegar em catalogo.c */
 */
 int search(BTNode *node, int procura);
 
-int remove();
+int remove(pk *key, int nodeId);
 
 int merge();
 

@@ -123,7 +123,7 @@ void leRegistro(); /* Pegar em catalogo.c */
  * @param node O no atual a ser buscado.
  * return O ponteiro do arquivo de indice a ser aberto.
 */
-int search(char *key, BTNode *node);
+int search(BTNode *node, int procura);
 
 int remove();
 

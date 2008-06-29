@@ -348,4 +348,42 @@ void rootOverflow() {
 	
 }
 
+/**
+ * @brief Funcao recursiva de busca na arvore.
+ * 
+ * @param key A chave a ser buscada.
+ * @param node O no atual a ser buscado.
+ * return O ponteiro do arquivo de indice a ser aberto.
+*/
 
+int search(BTNode *node, int procura){
+  int i = 0, nodeId, resposta;
+
+#ifdef DEBUG
+  fprintf(stderr, "Busca em Arvore \n");
+#endif
+
+  readNode(node, nodeId);
+
+  while (procura > node->chaves[i] && i < node->numChaves) i++;
+	 
+  if (node->leaf == TRUE) { /* O Node eh uma folha. */
+
+    if (node->chaves[i] == procura){
+      
+      resposta = node->filhos[i];
+      return resposta; /*Encontrou o resultado*/
+
+    }else{
+    
+      return 0;/*Nao encontrou o resultado esperado*/
+    
+    }
+    	 	
+  } else { /* O node eh pai de outro node. */
+    
+    resposta = search(&(node->filhos[i]), procura); 	
+    return resposta;
+
+  }
+}

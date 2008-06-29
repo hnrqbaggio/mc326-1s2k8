@@ -60,3 +60,27 @@ NODE
 BTREE
 	root
 	
+
+== Busca ==
+
+abre o node
+se folha
+
+	procura a o numero a ser buscado
+	se achar 
+
+	   	 retorna "Busca feita com sucesso"
+		 fecha o node
+
+	senão
+
+		retorna "numero não existente"
+		fecha o node
+	
+senão
+
+	encontra a sub-arvore correspondente (> ou <)
+	
+	fecha o node atual
+	chama a recursão para a sub-arvore
+	

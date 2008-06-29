@@ -357,25 +357,29 @@ void rootOverflow() {
 */
 
 int search(BTNode *node, int procura){
-  int i = 0, nodeId, resposta;
+  int i = 0, resposta;
 
 #ifdef DEBUG
   fprintf(stderr, "Busca em Arvore \n");
 #endif
 
-  readNode(node, nodeId);
-
-  while (procura > node->chaves[i] && i < node->numChaves) i++;
-	 
+  printf("%d\n" , i);
+  while (procura > node->chaves[i] && i < node->numChaves){ 
+    i++;
+    printf("%d\n" ,i);
+  }
+  printf("%d" , i);
   if (node->leaf == TRUE) { /* O Node eh uma folha. */
 
     if (node->chaves[i] == procura){
       
       resposta = node->filhos[i];
+      printf("Busca concluida com sucesso!\n");
       return resposta; /*Encontrou o resultado*/
 
     }else{
-    
+
+      printf("O numero %i nao foi encontrado\n", procura);
       return 0;/*Nao encontrou o resultado esperado*/
     
     }

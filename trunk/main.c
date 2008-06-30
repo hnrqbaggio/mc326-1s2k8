@@ -48,18 +48,22 @@ int main(int argc, char **argv){
       result = search(&btree, procura);
       break;
     case 3:
-      printf("Digite a chave a ser inserida: ");
+      printf("Digite a chave a ser removida: ");
       scanf("%d", &chave);
       result = BTreeRemove(btree, chave);
 
-      if (result) printf("Insercao bem sucedida!\n");
-      else printf("Insercao mal sucedida. Verifique repeticao!\n");
+      if (result) printf("Remocao bem sucedida!\n");
+      else printf("Remocao mal sucedida.\n");
       break;
     case 0:
       break;
     }
   } while(option);
   
+  /* Libera a memoria usada pela estrutura de arvore. */
+  free(btree);
+  free(base); /* E tambem o ponteiro do arquivo da base. */
+
   printf("Good bye!\n");
   return 0;
 }

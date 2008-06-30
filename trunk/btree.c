@@ -70,6 +70,8 @@ void loadIndex(BTree *tree, FILE *base) {
       nrr++;
     }
   }
+
+  free(root);
 }
 
 

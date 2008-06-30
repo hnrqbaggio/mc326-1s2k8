@@ -12,11 +12,11 @@ int insert(pk *key, int nodeId) {
   node = makeNode();
   readNode(node, nodeId);
 
-  while (key->key > node->chaves[i] && i < node->numChaves) i++;
+  while (node->chaves[i] <= key->key && i < node->numChaves) i++;
 	 
   if (node->leaf == TRUE) { /* O Node eh uma folha. */
 
-    if (node->chaves[i] == key->key) return result; /* Repeticao. */	
+    if (node->chaves[i-1] == key->key) return result; /* Repeticao. */	
     
     /* Abre espaco para a nova chave no vetor de chaves do noh. */
     j = node->numChaves;
@@ -31,6 +31,7 @@ int insert(pk *key, int nodeId) {
     tamanho = ++(node->numChaves);
 
     writeNode(node);
+    free(node);
     result = TRUE;
     	 	
   } else { /* O node eh pai de outro node. */
@@ -70,6 +71,7 @@ int insert(pk *key, int nodeId) {
       	tamanho = ++(node->numChaves);
       }
       writeNode(node);
+      free(node);
       result = TRUE;
     }
   }
@@ -260,8 +262,13 @@ pk split(int nodeId) {
   /*Gravo os novos arquivos na base, libero memoria.*/
   writeNode(new);
   writeNode(node);
+
+  if (right->id != -1) /* Existe o noh direito. */
+    writeNode(right);
+
   free(node);
   free(new);
+  free(right);
   
   return retorno;
 }
@@ -406,12 +413,13 @@ int removeKey(int key, int nodeId) {
 
   node = makeNode();
   readNode(node, nodeId);
+  tamanho = node->numChaves;
 
   if (node->leaf == TRUE) { /* O Node eh uma folha. */
 
     while (node->chaves[i] < key && i < node->numChaves) i++;
 
-    if (node->chaves[i] == key) {
+    if (i < node->numChaves && node->chaves[i] == key) {
       
       for(j = i; j < node->numChaves-1; j++) {
 	node->filhos[j] = node->filhos[j+1];
@@ -420,16 +428,15 @@ int removeKey(int key, int nodeId) {
       
       tamanho = --(node->numChaves);
       writeNode(node);
-      free(node);
       result = TRUE;
     }
+    free(node);
     	 	
   } else { /* O node eh pai de outro node. */
 
     while (node->chaves[i] <= key && i < node->numChaves) i++;
 
     idFilho = node->filhos[i];
-    tamanho = node->numChaves;
 
     writeNode(node);
     free(node);
@@ -466,7 +473,10 @@ int removeKey(int key, int nodeId) {
     }
   }
 	 
-  if (tamanho < MINIMO) return UNDERFLOW;
+  /* O Root eh uma excecao a regra de preenchimento minimo. */ 
+  /* Soh ha underflow do root quando seu tamanho eh zero. */
+  if ((tamanho < MINIMO && nodeId != 0) || tamanho == 0) return UNDERFLOW;
+  
   else return result;
   
 }
@@ -639,4 +649,5 @@ void rootUnderFlow() {
   readNode(root, newRootId);
   root->id = 0;
   writeNode(root);
+  free(root);
 }

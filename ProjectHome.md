@@ -1,0 +1,1 @@
+Neste projeto iremos aplicar os conceitos de manipulação de arquivos desenvolvendo uma aplicação que ira trabalhar com uma base de dados formada por obras de artes.
